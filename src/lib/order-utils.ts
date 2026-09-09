@@ -52,6 +52,34 @@ export function getFormatPrice(formatId: FormatId): number {
   return format ? format.price : 59.90;
 }
 
+export interface CepAddressResult {
+  cep: string;
+  logradouro: string;
+  complemento: string;
+  bairro: string;
+  localidade: string;
+  uf: string;
+  erro?: boolean | string;
+}
+
+export async function fetchCepAddress(cep: string): Promise<CepAddressResult | null> {
+  const cleanCep = cep.replace(/\D/g, '');
+  if (cleanCep.length !== 8) return null;
+
+  try {
+    const res = await fetch(`https://viacep.com.br/ws/${cleanCep}/json/`);
+    if (!res.ok) return null;
+    const data: CepAddressResult = await res.json();
+    if (data.erro === true || data.erro === 'true') {
+      return null;
+    }
+    return data;
+  } catch (err) {
+    console.error('Erro ao consultar CEP:', err);
+    return null;
+  }
+}
+
 export function buildWhatsAppMessage(order: PreparedOrder): string {
   const occasion = OCCASIONS.find((o) => o.id === order.data.occasion)?.title || order.data.occasion;
   const format = GIFT_FORMATS.find((f) => f.id === order.data.format)?.title || order.data.format;
@@ -66,9 +94,23 @@ export function buildWhatsAppMessage(order: PreparedOrder): string {
   if (order.data.contentTypes.contributors) contentList.push('Colaboradores');
   const contentsStr = contentList.length > 0 ? contentList.join(', ') : 'Não informado';
 
-  const recipientLocation = order.data.customerState
+  let locationLine = order.data.customerState
     ? `${order.data.customerCity}/${order.data.customerState.toUpperCase()}`
     : order.data.customerCity;
+
+  if (order.data.customerCep) {
+    const addressParts: string[] = [];
+    if (order.data.customerStreet) {
+      let street = order.data.customerStreet;
+      if (order.data.customerNumber) street += `, nº ${order.data.customerNumber}`;
+      if (order.data.customerComplement) street += ` (${order.data.customerComplement})`;
+      addressParts.push(street);
+    }
+    if (order.data.customerNeighborhood) addressParts.push(order.data.customerNeighborhood);
+    addressParts.push(locationLine);
+    addressParts.push(`CEP: ${order.data.customerCep}`);
+    locationLine = addressParts.join(' - ');
+  }
 
   return `Olá! Quero criar um presente Feito de Nós.
 
@@ -82,7 +124,7 @@ Conteúdos: ${contentsStr}
 Valor: ${order.formattedTotal}
 
 Meu nome: ${order.data.customerName}
-Cidade: ${recipientLocation}
+Endereço / Cidade: ${locationLine}
 
 Gostaria de receber as orientações para enviar as fotos, mensagens e áudios.`;
 }

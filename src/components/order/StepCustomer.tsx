@@ -1,10 +1,24 @@
 ﻿'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { OrderFormData } from '@/types/order';
-import { maskPhone, maskCep } from '@/lib/order-utils';
-import { User, Phone, Mail, MapPin, Truck, CheckSquare, Square, AlertCircle } from 'lucide-react';
+import { maskPhone, maskCep, fetchCepAddress } from '@/lib/order-utils';
+import {
+  User,
+  Phone,
+  Mail,
+  MapPin,
+  Truck,
+  CheckSquare,
+  Square,
+  AlertCircle,
+  Search,
+  CheckCircle2,
+  Loader2,
+  Home,
+  Sparkles,
+} from 'lucide-react';
 
 interface StepCustomerProps {
   formData: OrderFormData;
@@ -17,11 +31,90 @@ interface StepCustomerProps {
 const BRAZIL_STATES = [
   'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA',
   'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN',
-  'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'
+  'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO',
 ];
 
-export function StepCustomer({ formData, updateForm, onNext, onBack, isPhysical }: StepCustomerProps) {
+export function StepCustomer({
+  formData,
+  updateForm,
+  onNext,
+  onBack,
+  isPhysical,
+}: StepCustomerProps) {
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isSearchingCep, setIsSearchingCep] = useState(false);
+  const [cepVerified, setCepVerified] = useState<boolean | null>(null);
+  const [cepFeedbackMessage, setCepFeedbackMessage] = useState<string>('');
+
+  // Handle CEP Lookup
+  const handleLookupCep = useCallback(
+    async (rawCep: string) => {
+      const clean = rawCep.replace(/\D/g, '');
+      if (clean.length !== 8) {
+        setCepVerified(null);
+        setCepFeedbackMessage('');
+        return;
+      }
+
+      setIsSearchingCep(true);
+      setCepFeedbackMessage('Verificando CEP nos Correios...');
+      setCepVerified(null);
+
+      const result = await fetchCepAddress(clean);
+      setIsSearchingCep(false);
+
+      if (result) {
+        setCepVerified(true);
+        const street = result.logradouro || formData.customerStreet || '';
+        const neighborhood = result.bairro || formData.customerNeighborhood || '';
+        const city = result.localidade || formData.customerCity;
+        const state = result.uf || formData.customerState;
+
+        updateForm({
+          customerCity: city,
+          customerState: state,
+          customerStreet: street,
+          customerNeighborhood: neighborhood,
+        });
+
+        setCepFeedbackMessage(
+          `Endereço verificado: ${street ? street + ' - ' : ''}${neighborhood ? neighborhood + ', ' : ''}${city}/${state}`
+        );
+
+        // Clear any previous CEP or city error
+        setErrors((prev) => ({
+          ...prev,
+          customerCep: '',
+          customerCity: '',
+          customerState: '',
+          customerStreet: '',
+        }));
+      } else {
+        setCepVerified(false);
+        setCepFeedbackMessage('CEP não localizado. Verifique os dígitos ou preencha o endereço manualmente.');
+      }
+    },
+    [formData.customerStreet, formData.customerNeighborhood, formData.customerCity, formData.customerState, updateForm]
+  );
+
+  // Auto trigger lookup if CEP is already 8 digits on mount (e.g. from localStorage)
+  useEffect(() => {
+    if (formData.customerCep && formData.customerCep.replace(/\D/g, '').length === 8 && cepVerified === null) {
+      handleLookupCep(formData.customerCep);
+    }
+  }, [formData.customerCep, cepVerified, handleLookupCep]);
+
+  const handleCepChange = (val: string) => {
+    const masked = maskCep(val);
+    updateForm({ customerCep: masked });
+    const clean = masked.replace(/\D/g, '');
+    if (clean.length === 8) {
+      handleLookupCep(clean);
+    } else {
+      setCepVerified(null);
+      setCepFeedbackMessage('');
+    }
+  };
 
   const validateAndNext = () => {
     const errs: Record<string, string> = {};
@@ -53,6 +146,12 @@ export function StepCustomer({ formData, updateForm, onNext, onBack, isPhysical 
       if (cleanCep.length < 8) {
         errs.customerCep = 'Informe o CEP completo (8 dígitos) para entrega.';
       }
+      if (!formData.customerStreet?.trim()) {
+        errs.customerStreet = 'Informe a rua / logradouro para a entrega.';
+      }
+      if (!formData.customerNumber?.trim()) {
+        errs.customerNumber = 'Informe o número do endereço.';
+      }
     }
 
     if (!formData.acceptedTerms) {
@@ -75,71 +174,74 @@ export function StepCustomer({ formData, updateForm, onNext, onBack, isPhysical 
           Seus dados de contato e entrega
         </h2>
         <p className="text-sm sm:text-base text-[#302B2D]/75">
-          Usaremos estes dados para enviar as orientações no WhatsApp e acompanhar seu pedido.
+          Usaremos estes dados para enviar as orientações no WhatsApp e realizar a entrega com total segurança.
         </p>
       </div>
 
-      <div className="bg-white/80 border border-[#713C48]/15 rounded-3xl p-6 sm:p-8 space-y-6 shadow-sm">
-        {/* Name and Phone */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-          <div className="space-y-1.5">
-            <label
-              htmlFor="customerName"
-              className="flex items-center gap-2 text-sm font-semibold text-[#713C48]"
-            >
-              <User className="w-4 h-4 text-[#C96E5A]" />
-              <span>Seu Nome Completo *</span>
-            </label>
-            <input
-              id="customerName"
-              type="text"
-              value={formData.customerName}
-              onChange={(e) => {
-                updateForm({ customerName: e.target.value });
-                if (errors.customerName) setErrors((prev) => ({ ...prev, customerName: '' }));
-              }}
-              placeholder="Ex: Ana Clara Silva"
-              maxLength={80}
-              className={`w-full px-4 py-3 rounded-2xl bg-[#FFF8F0] border ${
-                errors.customerName ? 'border-red-400 ring-2 ring-red-100' : 'border-[#713C48]/20'
-              } text-[#302B2D] placeholder-[#302B2D]/40 text-sm focus:outline-none focus:ring-2 focus:ring-[#713C48] transition-all`}
-            />
-            {errors.customerName && (
-              <p className="text-xs text-red-500 mt-1">{errors.customerName}</p>
-            )}
+      <div className="bg-white/80 border border-[#713C48]/15 rounded-3xl p-6 sm:p-8 space-y-7 shadow-sm">
+        {/* Contact Info Block */}
+        <div className="space-y-4">
+          <span className="text-xs uppercase tracking-wider font-semibold text-[#C96E5A] block">
+            Informações do Comprador
+          </span>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div className="space-y-1.5">
+              <label
+                htmlFor="customerName"
+                className="flex items-center gap-2 text-sm font-semibold text-[#713C48]"
+              >
+                <User className="w-4 h-4 text-[#C96E5A]" />
+                <span>Seu Nome Completo *</span>
+              </label>
+              <input
+                id="customerName"
+                type="text"
+                value={formData.customerName}
+                onChange={(e) => {
+                  updateForm({ customerName: e.target.value });
+                  if (errors.customerName) setErrors((prev) => ({ ...prev, customerName: '' }));
+                }}
+                placeholder="Ex: Ana Clara Silva"
+                maxLength={80}
+                className={`w-full px-4 py-3 rounded-2xl bg-[#FFF8F0] border ${
+                  errors.customerName ? 'border-red-400 ring-2 ring-red-100' : 'border-[#713C48]/20'
+                } text-[#302B2D] placeholder-[#302B2D]/40 text-sm focus:outline-none focus:ring-2 focus:ring-[#713C48] transition-all`}
+              />
+              {errors.customerName && (
+                <p className="text-xs text-red-500 mt-1">{errors.customerName}</p>
+              )}
+            </div>
+
+            <div className="space-y-1.5">
+              <label
+                htmlFor="customerPhone"
+                className="flex items-center gap-2 text-sm font-semibold text-[#713C48]"
+              >
+                <Phone className="w-4 h-4 text-[#C96E5A]" />
+                <span>WhatsApp (com DDD) *</span>
+              </label>
+              <input
+                id="customerPhone"
+                type="tel"
+                value={formData.customerPhone}
+                onChange={(e) => {
+                  updateForm({ customerPhone: maskPhone(e.target.value) });
+                  if (errors.customerPhone) setErrors((prev) => ({ ...prev, customerPhone: '' }));
+                }}
+                placeholder="(11) 98765-4321"
+                maxLength={15}
+                className={`w-full px-4 py-3 rounded-2xl bg-[#FFF8F0] border ${
+                  errors.customerPhone ? 'border-red-400 ring-2 ring-red-100' : 'border-[#713C48]/20'
+                } text-[#302B2D] placeholder-[#302B2D]/40 text-sm focus:outline-none focus:ring-2 focus:ring-[#713C48] transition-all`}
+              />
+              {errors.customerPhone && (
+                <p className="text-xs text-red-500 mt-1">{errors.customerPhone}</p>
+              )}
+            </div>
           </div>
 
           <div className="space-y-1.5">
-            <label
-              htmlFor="customerPhone"
-              className="flex items-center gap-2 text-sm font-semibold text-[#713C48]"
-            >
-              <Phone className="w-4 h-4 text-[#C96E5A]" />
-              <span>WhatsApp (com DDD) *</span>
-            </label>
-            <input
-              id="customerPhone"
-              type="tel"
-              value={formData.customerPhone}
-              onChange={(e) => {
-                updateForm({ customerPhone: maskPhone(e.target.value) });
-                if (errors.customerPhone) setErrors((prev) => ({ ...prev, customerPhone: '' }));
-              }}
-              placeholder="(11) 98765-4321"
-              maxLength={15}
-              className={`w-full px-4 py-3 rounded-2xl bg-[#FFF8F0] border ${
-                errors.customerPhone ? 'border-red-400 ring-2 ring-red-100' : 'border-[#713C48]/20'
-              } text-[#302B2D] placeholder-[#302B2D]/40 text-sm focus:outline-none focus:ring-2 focus:ring-[#713C48] transition-all`}
-            />
-            {errors.customerPhone && (
-              <p className="text-xs text-red-500 mt-1">{errors.customerPhone}</p>
-            )}
-          </div>
-        </div>
-
-        {/* Email and Location */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-          <div className="sm:col-span-1 space-y-1.5">
             <label
               htmlFor="customerEmail"
               className="flex items-center gap-2 text-sm font-semibold text-[#713C48]"
@@ -165,113 +267,234 @@ export function StepCustomer({ formData, updateForm, onNext, onBack, isPhysical 
               <p className="text-xs text-red-500 mt-1">{errors.customerEmail}</p>
             )}
           </div>
-
-          <div className="space-y-1.5">
-            <label
-              htmlFor="customerCity"
-              className="flex items-center gap-2 text-sm font-semibold text-[#713C48]"
-            >
-              <MapPin className="w-4 h-4 text-[#C96E5A]" />
-              <span>Cidade *</span>
-            </label>
-            <input
-              id="customerCity"
-              type="text"
-              value={formData.customerCity}
-              onChange={(e) => {
-                updateForm({ customerCity: e.target.value });
-                if (errors.customerCity) setErrors((prev) => ({ ...prev, customerCity: '' }));
-              }}
-              placeholder="Ex: São Paulo"
-              maxLength={50}
-              className={`w-full px-4 py-3 rounded-2xl bg-[#FFF8F0] border ${
-                errors.customerCity ? 'border-red-400 ring-2 ring-red-100' : 'border-[#713C48]/20'
-              } text-[#302B2D] placeholder-[#302B2D]/40 text-sm focus:outline-none focus:ring-2 focus:ring-[#713C48] transition-all`}
-            />
-            {errors.customerCity && (
-              <p className="text-xs text-red-500 mt-1">{errors.customerCity}</p>
-            )}
-          </div>
-
-          <div className="space-y-1.5">
-            <label
-              htmlFor="customerState"
-              className="flex items-center gap-2 text-sm font-semibold text-[#713C48]"
-            >
-              <span>Estado (UF) *</span>
-            </label>
-            <select
-              id="customerState"
-              value={formData.customerState}
-              onChange={(e) => {
-                updateForm({ customerState: e.target.value });
-                if (errors.customerState) setErrors((prev) => ({ ...prev, customerState: '' }));
-              }}
-              className={`w-full px-4 py-3 rounded-2xl bg-[#FFF8F0] border ${
-                errors.customerState ? 'border-red-400 ring-2 ring-red-100' : 'border-[#713C48]/20'
-              } text-[#302B2D] text-sm focus:outline-none focus:ring-2 focus:ring-[#713C48] transition-all`}
-            >
-              <option value="">Selecione...</option>
-              {BRAZIL_STATES.map((st) => (
-                <option key={st} value={st}>
-                  {st}
-                </option>
-              ))}
-            </select>
-            {errors.customerState && (
-              <p className="text-xs text-red-500 mt-1">{errors.customerState}</p>
-            )}
-          </div>
         </div>
 
-        {/* Physical Shipping Fields (If Cartão or Presente Interativo) */}
-        {isPhysical && (
-          <div className="pt-4 border-t border-[#713C48]/10 space-y-4">
+        {/* Location / Physical Delivery Section with CEP Verification */}
+        <div className="pt-6 border-t border-[#713C48]/10 space-y-5">
+          <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 text-sm font-semibold text-[#713C48]">
-              <Truck className="w-4 h-4 text-[#C96E5A]" />
-              <span>Dados de Entrega Física (Item Físico Selecionado)</span>
+              {isPhysical ? <Truck className="w-4 h-4 text-[#C96E5A]" /> : <MapPin className="w-4 h-4 text-[#C96E5A]" />}
+              <span>{isPhysical ? 'Endereço de Entrega (Verificado por CEP) *' : 'Sua Localidade'}</span>
             </div>
+            {isPhysical && (
+              <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-[#C96E5A]/15 text-[#C96E5A]">
+                Item Físico Selecionado
+              </span>
+            )}
+          </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div className="space-y-1.5">
-                <label htmlFor="customerCep" className="text-xs font-semibold text-[#302B2D]/80">
-                  CEP de Entrega *
-                </label>
+          {/* CEP Input with Search Trigger */}
+          <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 items-end">
+            <div className="sm:col-span-6 space-y-1.5">
+              <label htmlFor="customerCep" className="flex items-center justify-between text-xs font-semibold text-[#713C48]">
+                <span>CEP {isPhysical ? '*' : '(Opcional para autocompletar)'}</span>
+                <span className="text-[10px] text-[#302B2D]/60 font-normal">Digite os 8 números</span>
+              </label>
+              <div className="relative">
                 <input
                   id="customerCep"
                   type="text"
                   value={formData.customerCep || ''}
-                  onChange={(e) => {
-                    updateForm({ customerCep: maskCep(e.target.value) });
-                    if (errors.customerCep) setErrors((prev) => ({ ...prev, customerCep: '' }));
-                  }}
+                  onChange={(e) => handleCepChange(e.target.value)}
                   placeholder="00000-000"
                   maxLength={9}
-                  className={`w-full px-4 py-2.5 rounded-xl bg-[#FFF8F0] border ${
+                  className={`w-full px-4 py-3 rounded-2xl bg-[#FFF8F0] border ${
                     errors.customerCep ? 'border-red-400 ring-2 ring-red-100' : 'border-[#713C48]/20'
-                  } text-[#302B2D] placeholder-[#302B2D]/40 text-sm focus:outline-none focus:ring-2 focus:ring-[#713C48]`}
+                  } text-[#302B2D] placeholder-[#302B2D]/40 text-sm focus:outline-none focus:ring-2 focus:ring-[#713C48] pr-10`}
                 />
-                {errors.customerCep && (
-                  <p className="text-xs text-red-500 mt-1">{errors.customerCep}</p>
+                <div className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#713C48]">
+                  {isSearchingCep ? (
+                    <Loader2 className="w-4 h-4 animate-spin text-[#C96E5A]" />
+                  ) : cepVerified === true ? (
+                    <CheckCircle2 className="w-4 h-4 text-green-600" />
+                  ) : (
+                    <Search className="w-4 h-4 opacity-40" />
+                  )}
+                </div>
+              </div>
+              {errors.customerCep && (
+                <p className="text-xs text-red-500 mt-1">{errors.customerCep}</p>
+              )}
+            </div>
+
+            <div className="sm:col-span-6 flex items-center">
+              <button
+                type="button"
+                onClick={() => handleLookupCep(formData.customerCep || '')}
+                disabled={isSearchingCep || !formData.customerCep || formData.customerCep.replace(/\D/g, '').length < 8}
+                className="w-full py-3 px-4 rounded-2xl bg-[#713C48]/10 hover:bg-[#713C48] text-[#713C48] hover:text-[#FFF8F0] text-xs font-semibold transition-colors disabled:opacity-40 disabled:hover:bg-[#713C48]/10 disabled:hover:text-[#713C48]"
+              >
+                {isSearchingCep ? 'Buscando nos Correios...' : 'Verificar endereço pelo CEP'}
+              </button>
+            </div>
+          </div>
+
+          {/* CEP Feedback Banner */}
+          {cepFeedbackMessage && (
+            <div
+              className={`p-3.5 rounded-2xl text-xs flex items-start gap-2.5 transition-all ${
+                cepVerified === true
+                  ? 'bg-green-50 text-green-800 border border-green-200'
+                  : cepVerified === false
+                  ? 'bg-amber-50 text-amber-800 border border-amber-200'
+                  : 'bg-[#FFF8F0] text-[#713C48] border border-[#713C48]/20'
+              }`}
+            >
+              {cepVerified === true ? (
+                <CheckCircle2 className="w-4 h-4 text-green-600 flex-shrink-0 mt-0.5" />
+              ) : (
+                <AlertCircle className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
+              )}
+              <span className="leading-relaxed font-medium">{cepFeedbackMessage}</span>
+            </div>
+          )}
+
+          {/* Detailed Address Grid (Auto-populated from CEP) */}
+          <div className="space-y-4">
+            {/* Street / Logradouro (Physical Orders) */}
+            {isPhysical && (
+              <div className="grid grid-cols-1 sm:grid-cols-12 gap-4">
+                <div className="sm:col-span-8 space-y-1.5">
+                  <label htmlFor="customerStreet" className="flex items-center gap-1.5 text-xs font-semibold text-[#713C48]">
+                    <Home className="w-3.5 h-3.5 text-[#C96E5A]" />
+                    <span>Rua / Logradouro *</span>
+                  </label>
+                  <input
+                    id="customerStreet"
+                    type="text"
+                    value={formData.customerStreet || ''}
+                    onChange={(e) => {
+                      updateForm({ customerStreet: e.target.value });
+                      if (errors.customerStreet) setErrors((prev) => ({ ...prev, customerStreet: '' }));
+                    }}
+                    placeholder="Ex: Travessa Alfredo Eduardo Noronha"
+                    className={`w-full px-4 py-3 rounded-2xl bg-[#FFF8F0] border ${
+                      errors.customerStreet ? 'border-red-400 ring-2 ring-red-100' : 'border-[#713C48]/20'
+                    } text-[#302B2D] placeholder-[#302B2D]/40 text-sm focus:outline-none focus:ring-2 focus:ring-[#713C48]`}
+                  />
+                  {errors.customerStreet && (
+                    <p className="text-xs text-red-500 mt-1">{errors.customerStreet}</p>
+                  )}
+                </div>
+
+                <div className="sm:col-span-4 space-y-1.5">
+                  <label htmlFor="customerNumber" className="text-xs font-semibold text-[#713C48]">
+                    Número *
+                  </label>
+                  <input
+                    id="customerNumber"
+                    type="text"
+                    value={formData.customerNumber || ''}
+                    onChange={(e) => {
+                      updateForm({ customerNumber: e.target.value });
+                      if (errors.customerNumber) setErrors((prev) => ({ ...prev, customerNumber: '' }));
+                    }}
+                    placeholder="Ex: 120"
+                    className={`w-full px-4 py-3 rounded-2xl bg-[#FFF8F0] border ${
+                      errors.customerNumber ? 'border-red-400 ring-2 ring-red-100' : 'border-[#713C48]/20'
+                    } text-[#302B2D] placeholder-[#302B2D]/40 text-sm focus:outline-none focus:ring-2 focus:ring-[#713C48]`}
+                  />
+                  {errors.customerNumber && (
+                    <p className="text-xs text-red-500 mt-1">{errors.customerNumber}</p>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Neighborhood & Complement (Physical Orders) */}
+            {isPhysical && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label htmlFor="customerNeighborhood" className="text-xs font-semibold text-[#713C48]">
+                    Bairro
+                  </label>
+                  <input
+                    id="customerNeighborhood"
+                    type="text"
+                    value={formData.customerNeighborhood || ''}
+                    onChange={(e) => updateForm({ customerNeighborhood: e.target.value })}
+                    placeholder="Ex: Jardim Wilma Flor"
+                    className="w-full px-4 py-3 rounded-2xl bg-[#FFF8F0] border border-[#713C48]/20 text-[#302B2D] placeholder-[#302B2D]/40 text-sm focus:outline-none focus:ring-2 focus:ring-[#713C48]"
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label htmlFor="customerComplement" className="text-xs font-semibold text-[#713C48]">
+                    Complemento (Opcional)
+                  </label>
+                  <input
+                    id="customerComplement"
+                    type="text"
+                    value={formData.customerComplement || ''}
+                    onChange={(e) => updateForm({ customerComplement: e.target.value })}
+                    placeholder="Ex: Apto 32, Bloco B"
+                    className="w-full px-4 py-3 rounded-2xl bg-[#FFF8F0] border border-[#713C48]/20 text-[#302B2D] placeholder-[#302B2D]/40 text-sm focus:outline-none focus:ring-2 focus:ring-[#713C48]"
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* City & State (For All Orders) */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="sm:col-span-2 space-y-1.5">
+                <label
+                  htmlFor="customerCity"
+                  className="flex items-center gap-2 text-xs font-semibold text-[#713C48]"
+                >
+                  <MapPin className="w-3.5 h-3.5 text-[#C96E5A]" />
+                  <span>Cidade *</span>
+                </label>
+                <input
+                  id="customerCity"
+                  type="text"
+                  value={formData.customerCity}
+                  onChange={(e) => {
+                    updateForm({ customerCity: e.target.value });
+                    if (errors.customerCity) setErrors((prev) => ({ ...prev, customerCity: '' }));
+                  }}
+                  placeholder="Ex: São Paulo"
+                  maxLength={50}
+                  className={`w-full px-4 py-3 rounded-2xl bg-[#FFF8F0] border ${
+                    errors.customerCity ? 'border-red-400 ring-2 ring-red-100' : 'border-[#713C48]/20'
+                  } text-[#302B2D] placeholder-[#302B2D]/40 text-sm focus:outline-none focus:ring-2 focus:ring-[#713C48] transition-all`}
+                />
+                {errors.customerCity && (
+                  <p className="text-xs text-red-500 mt-1">{errors.customerCity}</p>
                 )}
               </div>
 
-              <div className="sm:col-span-2 space-y-1.5">
-                <label htmlFor="customerStreet" className="text-xs font-semibold text-[#302B2D]/80">
-                  Rua / Logradouro (Opcional agora)
+              <div className="space-y-1.5">
+                <label
+                  htmlFor="customerState"
+                  className="flex items-center gap-2 text-xs font-semibold text-[#713C48]"
+                >
+                  <span>Estado (UF) *</span>
                 </label>
-                <input
-                  id="customerStreet"
-                  type="text"
-                  value={formData.customerStreet || ''}
-                  onChange={(e) => updateForm({ customerStreet: e.target.value })}
-                  placeholder="Ex: Rua das Flores, 123"
-                  className="w-full px-4 py-2.5 rounded-xl bg-[#FFF8F0] border border-[#713C48]/20 text-[#302B2D] placeholder-[#302B2D]/40 text-sm focus:outline-none focus:ring-2 focus:ring-[#713C48]"
-                />
+                <select
+                  id="customerState"
+                  value={formData.customerState}
+                  onChange={(e) => {
+                    updateForm({ customerState: e.target.value });
+                    if (errors.customerState) setErrors((prev) => ({ ...prev, customerState: '' }));
+                  }}
+                  className={`w-full px-4 py-3 rounded-2xl bg-[#FFF8F0] border ${
+                    errors.customerState ? 'border-red-400 ring-2 ring-red-100' : 'border-[#713C48]/20'
+                  } text-[#302B2D] text-sm focus:outline-none focus:ring-2 focus:ring-[#713C48] transition-all`}
+                >
+                  <option value="">Selecione...</option>
+                  {BRAZIL_STATES.map((st) => (
+                    <option key={st} value={st}>
+                      {st}
+                    </option>
+                  ))}
+                </select>
+                {errors.customerState && (
+                  <p className="text-xs text-red-500 mt-1">{errors.customerState}</p>
+                )}
               </div>
             </div>
           </div>
-        )}
+        </div>
 
         {/* Additional Notes */}
         <div className="space-y-1.5 pt-2">

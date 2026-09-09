@@ -177,16 +177,24 @@ export function StepReview({ formData, onJumpToStep, onSubmit, onBack, isSubmitt
                 <span className="text-xs text-[#302B2D]/60 block">E-mail:</span>
                 <span>{formData.customerEmail}</span>
               </div>
-              <div>
-                <span className="text-xs text-[#302B2D]/60 block">Localidade:</span>
-                <span>{formData.customerCity} / {formData.customerState}</span>
+              <div className="sm:col-span-3 pt-2 border-t border-[#713C48]/10">
+                <span className="text-xs text-[#302B2D]/60 block font-semibold text-[#713C48]">
+                  {format?.isPhysical ? 'Endereço de Entrega:' : 'Localidade:'}
+                </span>
+                <p className="mt-0.5">
+                  {formData.customerStreet ? (
+                    <>
+                      {formData.customerStreet}
+                      {formData.customerNumber ? `, nº ${formData.customerNumber}` : ''}
+                      {formData.customerComplement ? ` (${formData.customerComplement})` : ''}
+                      {formData.customerNeighborhood ? ` - ${formData.customerNeighborhood}` : ''}
+                      {', '}
+                    </>
+                  ) : null}
+                  {formData.customerCity}/{formData.customerState}
+                  {formData.customerCep ? ` (CEP: ${formData.customerCep})` : ''}
+                </p>
               </div>
-              {formData.customerCep && (
-                <div>
-                  <span className="text-xs text-[#302B2D]/60 block">CEP:</span>
-                  <span className="font-mono">{formData.customerCep}</span>
-                </div>
-              )}
             </div>
           </div>
         </div>
