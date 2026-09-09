@@ -23,7 +23,7 @@ export function MediaPlaceholder({
   caption,
   aspectRatio = "portrait",
   label = "Foto da memória",
-  sublabel = "Substituir pelo arquivo real",
+  sublabel = "Foto será adicionada em breve.",
   className = "",
 }: MediaPlaceholderProps) {
   const [imageLoaded, setImageLoaded] = useState(false);
@@ -32,6 +32,7 @@ export function MediaPlaceholder({
   const imageSrc = src || item?.url;
   const imageAlt = alt || item?.altText || label;
   const activeAspect = item?.aspectRatio || aspectRatio;
+  const isAvailable = item?.isAvailable ?? false;
 
   const aspectClasses = {
     square: "aspect-square",
@@ -40,26 +41,20 @@ export function MediaPlaceholder({
     auto: "h-full w-full min-h-[220px]",
   };
 
-  // Se o caminho da imagem foi passado e não gerou erro, tenta renderizar a foto
-  if (imageSrc && !imageError) {
+  // Se a mídia estiver explicitamente marcada como disponível e houver URL válida
+  if (isAvailable && imageSrc && !imageError) {
     return (
       <figure className={`relative overflow-hidden rounded-2xl bg-brand-cream-dark ${aspectClasses[activeAspect]} ${className}`}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={imageSrc}
           alt={imageAlt}
-          className={`w-full h-full object-cover transition-opacity duration-500 ${
+          className={`w-full h-full object-cover transition-opacity duration-300 ${
             imageLoaded ? "opacity-100" : "opacity-0"
           }`}
           onLoad={() => setImageLoaded(true)}
           onError={() => setImageError(true)}
         />
-        {!imageLoaded && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-b from-brand-rose-subtle to-brand-cream p-4 text-center">
-            <Camera className="w-8 h-8 text-brand-rose animate-pulse mb-2" />
-            <span className="text-xs text-brand-graphite-muted font-medium">Carregando imagem...</span>
-          </div>
-        )}
         {caption && (
           <figcaption className="sr-only">{caption}</figcaption>
         )}
@@ -67,31 +62,33 @@ export function MediaPlaceholder({
     );
   }
 
-  // Placeholder Editorial Afetivo com as cores da marca
+  // Placeholder Definitivo e Elegante (Zero requisições de rede para arquivos inexistentes)
   return (
     <figure
-      className={`relative overflow-hidden rounded-2xl border border-brand-rose/30 bg-gradient-to-br from-brand-rose-subtle via-brand-cream to-brand-terracotta-subtle flex flex-col items-center justify-center p-6 text-center shadow-sm select-none ${aspectClasses[activeAspect]} ${className}`}
-      aria-label={imageAlt}
+      className={`relative overflow-hidden rounded-2xl border border-brand-rose/30 bg-gradient-to-br from-brand-rose/10 via-brand-cream to-brand-terracotta/10 flex flex-col items-center justify-center p-5 text-center shadow-xs select-none ${aspectClasses[activeAspect]} ${className}`}
+      aria-label={`${imageAlt} - Foto será adicionada em breve.`}
     >
-      {/* Detalhe de moldura delicada com cantos arredondados */}
+      {/* Moldura delicada interna */}
       <div className="absolute inset-2 rounded-xl border border-dashed border-brand-rose/40 pointer-events-none" />
 
-      {/* Ícone editorial */}
-      <div className="w-12 h-12 rounded-full bg-white/80 shadow-xs flex items-center justify-center text-brand-terracotta mb-3 border border-brand-rose/20">
-        <Camera className="w-5 h-5 text-brand-wine/70" />
+      {/* Ícone de câmera delicado */}
+      <div className="w-11 h-11 rounded-full bg-white/90 shadow-xs flex items-center justify-center text-brand-wine/70 mb-2.5 border border-brand-rose/25">
+        <Camera className="w-5 h-5" />
       </div>
 
-      <p className="font-serif text-brand-wine text-sm md:text-base font-medium z-10 px-2 line-clamp-2">
+      {/* Legenda / Título da Memória */}
+      <p className="font-serif text-brand-wine text-sm sm:text-base font-medium z-10 px-2 line-clamp-2">
         {caption || label}
       </p>
 
-      <span className="text-[11px] uppercase tracking-wider text-brand-terracotta font-medium mt-1 z-10 opacity-80">
-        {sublabel}
+      {/* Mensagem Obrigatória Padronizada */}
+      <span className="text-[11px] sm:text-xs tracking-wider text-brand-terracotta font-semibold mt-1.5 z-10">
+        Foto será adicionada em breve.
       </span>
 
-      {/* Marca d'água sutil de contexto */}
-      <div className="absolute bottom-2 right-2 opacity-15 pointer-events-none">
-        <ImageIcon className="w-10 h-10 text-brand-wine" />
+      {/* Marca d'água sutil */}
+      <div className="absolute bottom-2 right-2 opacity-10 pointer-events-none">
+        <ImageIcon className="w-8 h-8 text-brand-wine" />
       </div>
     </figure>
   );

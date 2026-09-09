@@ -48,6 +48,9 @@ export async function getGiftBySlug(slug: string): Promise<GiftExperience | null
       .eq("gift_id", giftRecord.id)
       .order("display_order", { ascending: true });
 
+    // Helper para verificar se a mídia é um arquivo real (não placeholder /demo/)
+    const isRealMedia = (url?: string | null) => Boolean(url && !url.startsWith("/demo/"));
+
     // 5. Mapeia para o modelo de domínio GiftExperience
     const giftExperience: GiftExperience = {
       slug: giftRecord.slug,
@@ -66,6 +69,7 @@ export async function getGiftBySlug(slug: string): Promise<GiftExperience | null
           altText: giftRecord.hero_image_alt || "Foto de destaque",
           caption: "Foto principal de capa do primeiro ano",
           aspectRatio: "portrait",
+          isAvailable: isRealMedia(giftRecord.hero_image_url),
         },
         introQuote: giftRecord.intro_quote,
       },
@@ -76,6 +80,7 @@ export async function getGiftBySlug(slug: string): Promise<GiftExperience | null
             audioUrl: giftRecord.primary_audio_url,
             recordedBy: giftRecord.primary_audio_recorded_by || "Papai e Mamãe",
             durationSeconds: giftRecord.primary_audio_duration_seconds || 98,
+            isAvailable: isRealMedia(giftRecord.primary_audio_url),
           }
         : undefined,
       timelineMoments: (timelineData && timelineData.length > 0)
@@ -90,6 +95,7 @@ export async function getGiftBySlug(slug: string): Promise<GiftExperience | null
               altText: m.image_alt || `Registro do ${m.title}`,
               caption: m.caption,
               aspectRatio: "square",
+              isAvailable: isRealMedia(m.image_url),
             },
           }))
         : matheusAkiraGiftData.timelineMoments,
@@ -103,6 +109,7 @@ export async function getGiftBySlug(slug: string): Promise<GiftExperience | null
                   id: `avatar-${c.id}`,
                   url: c.avatar_url,
                   altText: `Foto de ${c.author_name}`,
+                  isAvailable: isRealMedia(c.avatar_url),
                 }
               : undefined,
             writtenMessage: c.written_message,
@@ -112,6 +119,7 @@ export async function getGiftBySlug(slug: string): Promise<GiftExperience | null
                   title: c.audio_title || `Mensagem de ${c.author_name}`,
                   audioUrl: c.audio_url,
                   durationSeconds: c.audio_duration_seconds || 60,
+                  isAvailable: isRealMedia(c.audio_url),
                 }
               : undefined,
           }))
@@ -123,6 +131,7 @@ export async function getGiftBySlug(slug: string): Promise<GiftExperience | null
             altText: g.alt_text || "Memória do 1º ano",
             caption: g.caption || undefined,
             aspectRatio: (g.aspect_ratio as "square" | "portrait" | "landscape") || "square",
+            isAvailable: isRealMedia(g.image_url),
           }))
         : matheusAkiraGiftData.galleryItems,
       closing: {

@@ -18,6 +18,7 @@ export interface MediaItem {
   width?: number;
   height?: number;
   placeholderColor?: string;
+  isAvailable?: boolean; // Define explicitamente se o arquivo de imagem real existe no servidor
 }
 
 export interface AudioMessage {
@@ -27,6 +28,7 @@ export interface AudioMessage {
   durationSeconds?: number;
   recordedBy?: string;
   transcript?: string;
+  isAvailable?: boolean; // Define explicitamente se o arquivo de áudio real existe no servidor
 }
 
 export interface Recipient {

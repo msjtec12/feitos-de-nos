@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { Play, Pause, Mic, Clock } from "lucide-react";
+import { Play, Pause, Mic, Clock, VolumeX } from "lucide-react";
 import { AudioMessage } from "@/types/gift";
 import { formatTime } from "@/lib/utils";
 
@@ -26,6 +26,9 @@ export function AudioPlayer({
   className = "",
   variant = "primary",
 }: AudioPlayerProps) {
+  const isAvailable = audio?.isAvailable ?? false;
+  const audioSrc = isAvailable ? audio?.audioUrl : undefined;
+
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(audio?.durationSeconds || 0);
@@ -37,10 +40,11 @@ export function AudioPlayer({
 
   const displayTitle = title || audio?.title || "Mensagem dos pais";
   const displayAuthor = author || audio?.recordedBy;
-  const audioSrc = audio?.audioUrl;
 
-  // Sincronização do elemento de áudio
+  // Sincronização do elemento de áudio apenas quando disponível
   useEffect(() => {
+    if (!isAvailable || !audioSrc) return;
+
     const audioElement = audioRef.current;
     if (!audioElement) return;
 
@@ -86,10 +90,10 @@ export function AudioPlayer({
       audioElement.removeEventListener("playing", handlePlaying);
       audioElement.removeEventListener("error", handleError);
     };
-  }, []);
+  }, [isAvailable, audioSrc]);
 
   const togglePlayPause = () => {
-    if (!audioRef.current || !audioSrc || hasError) return;
+    if (!isAvailable || !audioRef.current || !audioSrc || hasError) return;
 
     if (isPlaying) {
       audioRef.current.pause();
@@ -111,7 +115,7 @@ export function AudioPlayer({
   };
 
   const handleSeek = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!audioRef.current || !waveformContainerRef.current || !duration || hasError || !audioSrc) return;
+    if (!isAvailable || !audioRef.current || !waveformContainerRef.current || !duration || hasError || !audioSrc) return;
 
     const rect = waveformContainerRef.current.getBoundingClientRect();
     const clickPosition = Math.max(0, Math.min(e.clientX - rect.left, rect.width));
@@ -123,7 +127,7 @@ export function AudioPlayer({
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (!audioRef.current || hasError || !audioSrc) return;
+    if (!isAvailable || !audioRef.current || hasError || !audioSrc) return;
 
     if (e.key === " " || e.key === "Enter") {
       e.preventDefault();
@@ -144,39 +148,65 @@ export function AudioPlayer({
   const progressPercent = duration > 0 ? (currentTime / duration) * 100 : 0;
   const currentBarIndex = Math.floor((progressPercent / 100) * WAVEFORM_BARS.length);
 
-  // Estado elegante quando o áudio ainda não foi carregado
-  if (!audioSrc || hasError) {
+  // 1. ESTADO ELEGANTE QUANDO O ÁUDIO NÃO EXISTE / INDISPONÍVEL
+  if (!isAvailable || hasError) {
     return (
       <div
-        className={`rounded-2xl p-4 bg-white/80 border border-brand-rose/30 shadow-xs flex items-center justify-between gap-4 ${className}`}
+        className={`rounded-3xl p-4 sm:p-5 bg-white/90 border border-brand-rose/30 shadow-xs flex flex-col justify-between gap-3 ${className}`}
         role="region"
-        aria-label={`${displayTitle} - Estado`}
+        aria-label={`Player de áudio: ${displayTitle} (Indisponível)`}
       >
-        <div className="flex items-center gap-3 min-w-0">
-          <div className="w-10 h-10 rounded-full bg-brand-rose/20 flex items-center justify-center text-brand-wine shrink-0">
-            <Mic className="w-4 h-4 opacity-70" />
-          </div>
+        {/* Cabeçalho */}
+        <div className="flex items-center justify-between px-1">
           <div className="min-w-0">
-            <p className="text-sm font-semibold text-brand-wine truncate">{displayTitle}</p>
-            <p className="text-xs text-brand-terracotta font-medium">O áudio será adicionado em breve.</p>
+            <h3 className="text-sm sm:text-base font-semibold text-brand-wine truncate">
+              {displayTitle}
+            </h3>
+            <p className="text-xs text-brand-terracotta font-medium mt-0.5">
+              O áudio será adicionado em breve.
+            </p>
+          </div>
+
+          <div className="text-xs font-mono text-brand-graphite/40 flex items-center gap-1 shrink-0">
+            <Mic className="w-3.5 h-3.5 text-brand-rose" />
+            <span>Gravação em breve</span>
           </div>
         </div>
 
-        {/* Ondas sonoras estáticas demonstrativas */}
-        <div className="flex items-center gap-1 opacity-35" aria-hidden="true">
-          {WAVEFORM_BARS.slice(0, 12).map((h, i) => (
-            <div
-              key={i}
-              className="w-1 rounded-full bg-brand-rose"
-              style={{ height: `${Math.max(6, (h / 100) * 22)}px` }}
-            />
-          ))}
+        {/* Barra de Ondas Sonora Estática e Botão Desabilitado */}
+        <div className="flex items-center gap-3 sm:gap-4">
+          <div
+            className="flex-1 h-11 flex items-center justify-between gap-[2px] sm:gap-[3px] px-2 py-1 bg-brand-cream/60 rounded-2xl opacity-40 select-none cursor-not-allowed"
+            aria-hidden="true"
+          >
+            {WAVEFORM_BARS.map((heightPercent, index) => {
+              const barHeight = Math.max(6, (heightPercent / 100) * 30);
+              return (
+                <div
+                  key={index}
+                  className="w-[3px] sm:w-[4px] rounded-full bg-brand-rose/60"
+                  style={{ height: `${barHeight}px` }}
+                />
+              );
+            })}
+          </div>
+
+          {/* Botão de Reprodução Desabilitado */}
+          <button
+            type="button"
+            disabled
+            className="w-12 h-12 sm:w-13 sm:h-13 rounded-full bg-brand-wine/25 text-white/80 flex items-center justify-center shrink-0 cursor-not-allowed shadow-none"
+            aria-label={`Reprodução indisponível: ${displayTitle} (O áudio será adicionado em breve)`}
+            title="O áudio será adicionado em breve"
+          >
+            <Play className="w-5 h-5 fill-white/80 ml-0.5" />
+          </button>
         </div>
       </div>
     );
   }
 
-  // Player Estilizado Fiel ao Mockup Oficial (com waveform visual + botão vinho)
+  // 2. PLAYER COMPLETO ATIVO QUANDO O ÁUDIO EXISTE
   return (
     <div
       className={`rounded-3xl p-4 sm:p-5 bg-white border border-brand-rose/30 shadow-xs hover:shadow-md transition-all duration-300 ${className}`}

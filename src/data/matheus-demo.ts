@@ -4,9 +4,9 @@ import { GiftExperience } from "@/types/gift";
  * Dados de demonstração do presente "Meu Primeiro Ano — Matheus Akira".
  * 
  * NOTA TÉCNICA:
- * Estes dados foram estruturados de forma agnóstica para permitir a substituição direta
- * por consultas ao Supabase (ex: supabase.from('gifts').select('...')) na próxima fase.
- * Nenhum dado pessoal sensível real está embutido no código.
+ * Mídias com isAvailable: false indicam que o arquivo real ainda não foi adicionado.
+ * A interface exibirá o placeholder definitivo "Foto será adicionada em breve."
+ * sem disparar requisições de rede desnecessárias.
  */
 export const matheusAkiraGiftData: GiftExperience = {
   slug: "matheus-akira",
@@ -25,6 +25,7 @@ export const matheusAkiraGiftData: GiftExperience = {
       altText: "Espaço reservado para a foto principal de destaque do Matheus Akira",
       caption: "Foto principal de capa do primeiro ano",
       aspectRatio: "portrait",
+      isAvailable: false,
     },
     introQuote: "Um ano inteiro de descobertas, sorrisos e momentos que transformaram nossa história.",
   },
@@ -34,6 +35,7 @@ export const matheusAkiraGiftData: GiftExperience = {
     audioUrl: "/demo/audio/mensagem-pais.mp3",
     recordedBy: "Papai e Mamãe",
     transcript: "Uma mensagem especial gravada com carinho pelos pais para o Matheus ouvir quando crescer.",
+    isAvailable: false,
   },
   timelineMoments: [
     {
@@ -46,6 +48,8 @@ export const matheusAkiraGiftData: GiftExperience = {
         url: "/demo/images/month-01.jpg",
         altText: "Registro do primeiro mês do Matheus",
         caption: "Os primeiros dias em casa",
+        aspectRatio: "square",
+        isAvailable: false,
       },
     },
     {
@@ -58,6 +62,8 @@ export const matheusAkiraGiftData: GiftExperience = {
         url: "/demo/images/month-02.jpg",
         altText: "Registro do segundo mês do Matheus",
         caption: "Começando a sorrir para o mundo",
+        aspectRatio: "square",
+        isAvailable: false,
       },
     },
     {
@@ -70,6 +76,8 @@ export const matheusAkiraGiftData: GiftExperience = {
         url: "/demo/images/month-03.jpg",
         altText: "Registro do terceiro mês do Matheus",
         caption: "Olhinhos curiosos atentos a tudo",
+        aspectRatio: "square",
+        isAvailable: false,
       },
     },
     {
@@ -82,6 +90,8 @@ export const matheusAkiraGiftData: GiftExperience = {
         url: "/demo/images/month-04.jpg",
         altText: "Registro do quarto mês do Matheus",
         caption: "Novas risadas e brincadeiras",
+        aspectRatio: "square",
+        isAvailable: false,
       },
     },
     {
@@ -94,6 +104,8 @@ export const matheusAkiraGiftData: GiftExperience = {
         url: "/demo/images/month-05.jpg",
         altText: "Registro do quinto mês do Matheus",
         caption: "Alegria contagiante em família",
+        aspectRatio: "square",
+        isAvailable: false,
       },
     },
     {
@@ -106,6 +118,8 @@ export const matheusAkiraGiftData: GiftExperience = {
         url: "/demo/images/month-06.jpg",
         altText: "Registro do sexto mês do Matheus",
         caption: "Primeiras papinhas e novas aventuras",
+        aspectRatio: "square",
+        isAvailable: false,
       },
     },
     {
@@ -118,6 +132,8 @@ export const matheusAkiraGiftData: GiftExperience = {
         url: "/demo/images/month-07.jpg",
         altText: "Registro do sétimo mês do Matheus",
         caption: "Sentando sozinho e explorando",
+        aspectRatio: "square",
+        isAvailable: false,
       },
     },
     {
@@ -130,6 +146,8 @@ export const matheusAkiraGiftData: GiftExperience = {
         url: "/demo/images/month-08.jpg",
         altText: "Registro do oitavo mês do Matheus",
         caption: "Engatinhando e espalhando brinquedos",
+        aspectRatio: "square",
+        isAvailable: false,
       },
     },
     {
@@ -142,6 +160,8 @@ export const matheusAkiraGiftData: GiftExperience = {
         url: "/demo/images/month-09.jpg",
         altText: "Registro do nono mês do Matheus",
         caption: "Ficando de pé apoiado no sofá",
+        aspectRatio: "square",
+        isAvailable: false,
       },
     },
     {
@@ -154,6 +174,8 @@ export const matheusAkiraGiftData: GiftExperience = {
         url: "/demo/images/month-10.jpg",
         altText: "Registro do décimo mês do Matheus",
         caption: "Abraços gostosos e palavras ensaiadas",
+        aspectRatio: "square",
+        isAvailable: false,
       },
     },
     {
@@ -166,6 +188,8 @@ export const matheusAkiraGiftData: GiftExperience = {
         url: "/demo/images/month-11.jpg",
         altText: "Registro do décimo primeiro mês do Matheus",
         caption: "Contagem regressiva para 1 ano",
+        aspectRatio: "square",
+        isAvailable: false,
       },
     },
     {
@@ -178,6 +202,8 @@ export const matheusAkiraGiftData: GiftExperience = {
         url: "/demo/images/month-12.jpg",
         altText: "Registro do décimo segundo mês do Matheus",
         caption: "Celebrando 365 dias de muito amor",
+        aspectRatio: "square",
+        isAvailable: false,
       },
     },
   ],
@@ -190,6 +216,7 @@ export const matheusAkiraGiftData: GiftExperience = {
         id: "avatar-pais",
         url: "/demo/images/avatar-pais.jpg",
         altText: "Foto demonstrativa dos pais",
+        isAvailable: false,
       },
       writtenMessage: "Filho, este primeiro ano foi a maior aventura e a mais doce bênção das nossas vidas. Ver você crescer dia a dia encheu nossa casa de riso e nosso coração de um amor que nunca imaginávamos existir. Esta história é para você sempre lembrar o quanto foi sonhado e amado.",
       audio: {
@@ -197,6 +224,7 @@ export const matheusAkiraGiftData: GiftExperience = {
         title: "Mensagem dos pais",
         audioUrl: "/demo/audio/mensagem-pais.mp3",
         durationSeconds: 98,
+        isAvailable: false,
       },
     },
     {
@@ -207,6 +235,7 @@ export const matheusAkiraGiftData: GiftExperience = {
         id: "avatar-avos",
         url: "/demo/images/avatar-avos.jpg",
         altText: "Foto demonstrativa dos avós",
+        isAvailable: false,
       },
       writtenMessage: "Nosso querido neto Matheus, cada abraço seu renova nossas forças. Seu olhar curioso e seu jeitinho carinhoso são os maiores presentes que a vida nos deu. Estaremos sempre aqui para segurar sua mão e torcer pelos seus sonhos.",
       audio: {
@@ -214,6 +243,7 @@ export const matheusAkiraGiftData: GiftExperience = {
         title: "Mensagem dos avós",
         audioUrl: "/demo/audio/mensagem-avos.mp3",
         durationSeconds: 74,
+        isAvailable: false,
       },
     },
     {
@@ -224,6 +254,7 @@ export const matheusAkiraGiftData: GiftExperience = {
         id: "avatar-padrinhos",
         url: "/demo/images/avatar-padrinhos.jpg",
         altText: "Foto demonstrativa dos padrinhos",
+        isAvailable: false,
       },
       writtenMessage: "Afilhado amado, ser escolhido para caminhar ao seu lado é uma honra imensa. Prometemos estar por perto em todas as etapas, com conselhos, brincadeiras e muito carinho. Que seu caminho seja sempre iluminado.",
       audio: {
@@ -231,6 +262,7 @@ export const matheusAkiraGiftData: GiftExperience = {
         title: "Mensagem dos padrinhos",
         audioUrl: "/demo/audio/mensagem-padrinhos.mp3",
         durationSeconds: 62,
+        isAvailable: false,
       },
     },
   ],
@@ -241,6 +273,7 @@ export const matheusAkiraGiftData: GiftExperience = {
       altText: "Detalhe das mãozinhas nos primeiros dias",
       caption: "Pequenos detalhes, infinito amor",
       aspectRatio: "portrait",
+      isAvailable: false,
     },
     {
       id: "gal-2",
@@ -248,6 +281,7 @@ export const matheusAkiraGiftData: GiftExperience = {
       altText: "Momento de banho e brincadeira na água",
       caption: "A hora do banho favorita",
       aspectRatio: "square",
+      isAvailable: false,
     },
     {
       id: "gal-3",
@@ -255,6 +289,7 @@ export const matheusAkiraGiftData: GiftExperience = {
       altText: "Soneca da tarde no colo",
       caption: "O melhor lugar do mundo: o colo da mãe",
       aspectRatio: "landscape",
+      isAvailable: false,
     },
     {
       id: "gal-4",
@@ -262,6 +297,7 @@ export const matheusAkiraGiftData: GiftExperience = {
       altText: "Passeio de domingo no parque",
       caption: "Sentindo a grama e o sol da manhã",
       aspectRatio: "portrait",
+      isAvailable: false,
     },
     {
       id: "gal-5",
@@ -269,6 +305,7 @@ export const matheusAkiraGiftData: GiftExperience = {
       altText: "Gargalhada espontânea durante uma brincadeira",
       caption: "A risada que alegra a casa inteira",
       aspectRatio: "square",
+      isAvailable: false,
     },
     {
       id: "gal-6",
@@ -276,6 +313,7 @@ export const matheusAkiraGiftData: GiftExperience = {
       altText: "Primeira experiência com frutinhas",
       caption: "Descobrindo novos sabores",
       aspectRatio: "portrait",
+      isAvailable: false,
     },
     {
       id: "gal-7",
@@ -283,6 +321,7 @@ export const matheusAkiraGiftData: GiftExperience = {
       altText: "Abraço com os avós no almoço de domingo",
       caption: "Gerações unidas pelo mesmo amor",
       aspectRatio: "landscape",
+      isAvailable: false,
     },
     {
       id: "gal-8",
@@ -290,6 +329,7 @@ export const matheusAkiraGiftData: GiftExperience = {
       altText: "Brincando com blocos de madeira coloridos",
       caption: "Construindo torres e derrubando com alegria",
       aspectRatio: "square",
+      isAvailable: false,
     },
     {
       id: "gal-9",
@@ -297,6 +337,7 @@ export const matheusAkiraGiftData: GiftExperience = {
       altText: "Olhar curioso na janela observando os passarinhos",
       caption: "Janelas abertas para novas descobertas",
       aspectRatio: "portrait",
+      isAvailable: false,
     },
     {
       id: "gal-10",
@@ -304,6 +345,7 @@ export const matheusAkiraGiftData: GiftExperience = {
       altText: "Brincadeira no tapete da sala com o papai",
       caption: "Momentos simples que valem uma vida",
       aspectRatio: "landscape",
+      isAvailable: false,
     },
     {
       id: "gal-11",
@@ -311,6 +353,7 @@ export const matheusAkiraGiftData: GiftExperience = {
       altText: "Primeiros passinhos firmes no chão de madeira",
       caption: "Ganhando o mundo passo a passo",
       aspectRatio: "portrait",
+      isAvailable: false,
     },
     {
       id: "gal-12",
@@ -318,6 +361,7 @@ export const matheusAkiraGiftData: GiftExperience = {
       altText: "Ensaio de 1 ano com balões em tons suaves",
       caption: "Um ano de vida, uma eternidade de amor",
       aspectRatio: "square",
+      isAvailable: false,
     },
   ],
   closing: {
