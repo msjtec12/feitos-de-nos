@@ -36,7 +36,19 @@ export async function getAdminSessionAndProfile(): Promise<{
       return { user: null, profile: null };
     }
 
-    // Consulta admin_profile com o cliente administrativo (bypassa RLS)
+    // 1. Tenta consultar o perfil administrativo usando o cliente autenticado via cookies
+    const { data: userProfile } = await supabase
+      .from('admin_profiles')
+      .select('*')
+      .eq('id', user.id)
+      .eq('active', true)
+      .maybeSingle();
+
+    if (userProfile) {
+      return { user, profile: userProfile as AdminProfile };
+    }
+
+    // 2. Fallback para o cliente administrativo (service_role)
     const adminClient = createSupabaseAdminClient();
     const { data: profile, error } = await adminClient
       .from('admin_profiles')
