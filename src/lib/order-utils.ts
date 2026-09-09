@@ -1,4 +1,4 @@
-﻿import { OrderFormData, PreparedOrder, FormatId } from '@/types/order';
+import { OrderFormData, PreparedOrder, FormatId } from '@/types/order';
 import { OCCASIONS, GIFT_FORMATS, STYLE_OPTIONS } from '@/data/home-data';
 
 const ORDER_DRAFT_KEY = 'feito_de_nos_order_draft';
@@ -49,7 +49,7 @@ export function maskDate(value: string): string {
 
 export function getFormatPrice(formatId: FormatId): number {
   const format = GIFT_FORMATS.find((f) => f.id === formatId);
-  return format ? format.price : 47;
+  return format ? format.price : 59.90;
 }
 
 export function buildWhatsAppMessage(order: PreparedOrder): string {

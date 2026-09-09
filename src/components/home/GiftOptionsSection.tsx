@@ -1,8 +1,9 @@
-﻿'use client';
+'use client';
 
 import React from 'react';
 import Link from 'next/link';
 import { GIFT_FORMATS } from '@/data/home-data';
+import { formatCurrency } from '@/lib/order-utils';
 import { Check, Sparkles, Heart } from 'lucide-react';
 
 export function GiftOptionsSection() {
@@ -59,11 +60,10 @@ export function GiftOptionsSection() {
                   {/* Price */}
                   <div className="pt-2 pb-4 border-b border-[#713C48]/10">
                     <div className="flex items-baseline gap-1">
-                      <span className="text-xs font-semibold text-[#302B2D]/60 uppercase">R$</span>
-                      <span className="font-serif text-4xl sm:text-5xl font-bold text-[#713C48]">
-                        {fmt.price}
+                      <span className="font-serif text-3xl sm:text-4xl font-bold text-[#713C48]">
+                        {formatCurrency(fmt.price)}
                       </span>
-                      <span className="text-xs text-[#302B2D]/60">pagamento único</span>
+                      <span className="text-xs text-[#302B2D]/60 ml-1">pagamento único</span>
                     </div>
                   </div>
 

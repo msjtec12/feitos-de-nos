@@ -1,4 +1,4 @@
-﻿import { OccasionOption, FormatOption, StyleOption } from '@/types/order';
+import { OccasionOption, FormatOption, StyleOption } from '@/types/order';
 
 export const OCCASIONS: OccasionOption[] = [
   {
@@ -39,13 +39,15 @@ export const GIFT_FORMATS: FormatOption[] = [
   {
     id: 'digital',
     title: 'História Digital',
-    price: 47,
-    description: 'Experiência digital interativa com link exclusivo e QR Code em alta definição para compartilhar.',
+    price: 59.90,
+    description: 'Página personalizada, até 12 fotos, uma mensagem de voz, música, texto, link e QR Code.',
     features: [
-      'Página web interativa e exclusiva',
-      'Linha do tempo e galeria de fotos',
-      'Mensagens de texto e player de voz',
-      'QR Code digital para impressão livre',
+      'Página web personalizada e exclusiva',
+      'Até 12 fotos em alta definição com linha do tempo',
+      '1 mensagem de voz com player interativo de ondas',
+      'Música tema / trilha sonora',
+      'Mensagens de texto e cartas dedicatórias',
+      'Link exclusivo e QR Code digital em alta resolução',
       'Acesso vitalício e seguro',
     ],
     isPhysical: false,
@@ -53,14 +55,14 @@ export const GIFT_FORMATS: FormatOption[] = [
   {
     id: 'cartao',
     title: 'Cartão que Fala',
-    price: 79,
+    price: 99.90,
     badge: 'Físico + Digital',
-    description: 'Cartão físico com acabamento nobre, QR Code gravado e envelope artesanal para tocar e ouvir.',
+    description: 'Tudo da versão digital, cartão premium personalizado, envelope e QR Code impresso.',
     features: [
       'Tudo da História Digital',
-      'Cartão físico 10x15cm em papel couchê 300g',
+      'Cartão premium personalizado em alta gramatura',
+      'Envelope artesanal para presente',
       'QR Code impresso com arte personalizada',
-      'Envelope artesanal com selo da marca',
       'Envio seguro para todo o Brasil',
     ],
     isPhysical: true,
@@ -68,16 +70,17 @@ export const GIFT_FORMATS: FormatOption[] = [
   {
     id: 'interativo',
     title: 'Presente Interativo',
-    price: 149,
+    price: 199.90,
     popular: true,
     badge: 'Mais Escolhido',
-    description: 'Caixa de presente completa com cartão, peça acrílica exclusiva e curadoria dedicada de memórias.',
+    description: 'Página completa, até 20 fotos, três áudios, placa de acrílico 15×20 cm, base, QR Code, caixa e embalagem.',
     features: [
-      'Tudo do Cartão que Fala',
-      'Caixa presenteável rígida artesanal',
-      'Placa ou chaveiro em acrílico com QR Code',
-      'Foto revelada em papel fotográfico pro',
-      'Curadoria e suporte prioritário no WhatsApp',
+      'Página completa com até 20 fotos',
+      'Até 3 mensagens de áudio gravadas',
+      'Placa de acrílico 15×20 cm com base elegante',
+      'QR Code gravado na placa de acrílico',
+      'Caixa de presente artesanal e embalagem especial',
+      'Curadoria e suporte dedicado prioritário no WhatsApp',
     ],
     isPhysical: true,
   },

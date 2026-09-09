@@ -19,7 +19,7 @@ export function StepReview({ formData, onJumpToStep, onSubmit, onBack, isSubmitt
   const format = GIFT_FORMATS.find((f) => f.id === formData.format);
   const style = STYLE_OPTIONS.find((s) => s.id === formData.style);
 
-  const price = format ? format.price : 47;
+  const price = format ? format.price : 59.90;
   const formattedPrice = formatCurrency(price);
 
   const contents: string[] = [];

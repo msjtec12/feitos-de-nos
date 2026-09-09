@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { BrandLogo } from '@/components/brand/BrandLogo';
@@ -77,8 +77,8 @@ export default function TermosPage() {
               3. Prazos de Produção e Entrega
             </h2>
             <ul className="list-disc pl-5 space-y-1.5">
-              <li><strong>História Digital (R$ 47):</strong> Entrega da prévia e liberação do link/QR Code final em até 48 horas úteis após o recebimento completo dos materiais.</li>
-              <li><strong>Cartão que Fala (R$ 79) e Presente Interativo (R$ 149):</strong> Confecção e postagem em 2 a 4 dias úteis após a aprovação da prévia digital, acrescido do prazo de frete para o CEP informado.</li>
+              <li><strong>História Digital (R$ 59,90):</strong> Entrega da prévia e liberação do link/QR Code final em até 48 horas úteis após o recebimento completo dos materiais.</li>
+              <li><strong>Cartão que Fala (R$ 99,90) e Presente Interativo (R$ 199,90):</strong> Confecção e postagem em 2 a 4 dias úteis após a aprovação da prévia digital, acrescido do prazo de frete para o CEP informado.</li>
             </ul>
           </section>
 

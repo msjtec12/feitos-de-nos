@@ -1,7 +1,8 @@
-﻿'use client';
+'use client';
 
 import React from 'react';
 import { GIFT_FORMATS } from '@/data/home-data';
+import { formatCurrency } from '@/lib/order-utils';
 import { FormatId, OrderFormData } from '@/types/order';
 import { Check, Sparkles } from 'lucide-react';
 
@@ -68,11 +69,10 @@ export function StepFormat({ formData, updateForm, onNext, onBack }: StepFormatP
                 </div>
 
                 <div className="py-2 border-y border-[#713C48]/10">
-                  <span className="text-xs text-[#302B2D]/60 uppercase">R$ </span>
-                  <span className="font-serif text-3xl font-bold text-[#713C48]">
-                    {fmt.price}
+                  <span className="font-serif text-2xl sm:text-3xl font-bold text-[#713C48]">
+                    {formatCurrency(fmt.price)}
                   </span>
-                  <span className="text-xs text-[#302B2D]/60"> taxa única</span>
+                  <span className="text-xs text-[#302B2D]/60 ml-1"> taxa única</span>
                 </div>
 
                 <ul className="space-y-2 text-xs text-[#302B2D]/80">
