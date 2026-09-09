@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { getAdminSessionAndProfile, getDashboardMetrics } from '@/lib/supabase/admin-queries';
@@ -20,6 +20,8 @@ import {
   Heart,
   Calendar,
 } from 'lucide-react';
+
+export const dynamic = 'force-dynamic';
 
 export default async function AdminDashboardPage() {
   const { user, profile } = await getAdminSessionAndProfile();

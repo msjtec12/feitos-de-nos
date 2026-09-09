@@ -2,6 +2,8 @@ import { Metadata } from 'next';
 import { getGiftPagesList } from '@/lib/supabase/admin-queries';
 import GiftPagesClientList from './GiftPagesClientList';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: 'Páginas de Presentes | Feito de Nós Admin',
 };

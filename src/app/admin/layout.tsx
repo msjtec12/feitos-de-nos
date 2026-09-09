@@ -1,8 +1,10 @@
-﻿import React from 'react';
+import React from 'react';
 import type { Metadata } from 'next';
 import { getAdminSessionAndProfile } from '@/lib/supabase/admin-queries';
 import { AdminSidebar } from '@/components/admin/AdminSidebar';
 import { AdminNavbar } from '@/components/admin/AdminNavbar';
+
+export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   title: 'Painel Administrativo | Feito de Nós',

@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAdminSessionAndProfile } from '@/lib/supabase/admin-queries';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: NextRequest) {
   try {
     const { user, profile } = await getAdminSessionAndProfile();

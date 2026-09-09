@@ -19,29 +19,41 @@ export async function getAdminSessionAndProfile(): Promise<{
   user: any | null;
   profile: AdminProfile | null;
 }> {
-  const supabase = createSupabaseServerClient();
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
+  try {
+    const supabase = createSupabaseServerClient();
+    
+    // Tenta obter o usuário autenticado via cookies (método oficial e seguro do @supabase/ssr)
+    let user: any = null;
+    const { data: userData, error: userError } = await supabase.auth.getUser();
+    if (userData?.user) {
+      user = userData.user;
+    } else {
+      const { data: sessionData } = await supabase.auth.getSession();
+      user = sessionData?.session?.user || null;
+    }
 
-  if (!session?.user) {
+    if (!user) {
+      return { user: null, profile: null };
+    }
+
+    // Consulta admin_profile com o cliente administrativo (bypassa RLS)
+    const adminClient = createSupabaseAdminClient();
+    const { data: profile, error } = await adminClient
+      .from('admin_profiles')
+      .select('*')
+      .eq('id', user.id)
+      .eq('active', true)
+      .maybeSingle();
+
+    if (error || !profile) {
+      return { user, profile: null };
+    }
+
+    return { user, profile: profile as AdminProfile };
+  } catch (err) {
+    console.error('Erro ao verificar sessão administrativa:', err);
     return { user: null, profile: null };
   }
-
-  // Consulta admin_profile com o cliente administrativo para evitar bloqueio caso o RLS seja restrito
-  const adminClient = createSupabaseAdminClient();
-  const { data: profile, error } = await adminClient
-    .from('admin_profiles')
-    .select('*')
-    .eq('id', session.user.id)
-    .eq('active', true)
-    .single();
-
-  if (error || !profile) {
-    return { user: session.user, profile: null };
-  }
-
-  return { user: session.user, profile: profile as AdminProfile };
 }
 
 /**

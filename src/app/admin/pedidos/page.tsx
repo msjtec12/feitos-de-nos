@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { getAdminSessionAndProfile, getOrdersList } from '@/lib/supabase/admin-queries';
@@ -27,6 +27,8 @@ interface PedidosPageProps {
     page?: string;
   };
 }
+
+export const dynamic = 'force-dynamic';
 
 export default async function AdminPedidosPage({ searchParams }: PedidosPageProps) {
   const { user, profile } = await getAdminSessionAndProfile();
