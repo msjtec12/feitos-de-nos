@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -30,7 +30,7 @@ export default function AdminLoginPage() {
         return;
       }
 
-      // Valida se o usuário autenticado possui registro ativo em admin_profiles
+      // Valida perfil administrativo
       const { data: profile, error: profileErr } = await supabase
         .from('admin_profiles')
         .select('*')
@@ -38,16 +38,24 @@ export default function AdminLoginPage() {
         .eq('active', true)
         .maybeSingle();
 
-      if (profileErr || !profile) {
-        await supabase.auth.signOut();
-        setErrorMsg('Acesso restrito. Este usuário não possui perfil de administrador ativo.');
-        setIsLoading(false);
+      if (profile) {
+        router.push('/admin');
+        router.refresh();
         return;
       }
 
-      // Login autorizado com sucesso!
-      router.push('/admin');
-      router.refresh();
+      // Fallback: verificação via endpoint do servidor
+      const checkRes = await fetch('/api/admin/check-session');
+      if (checkRes.ok) {
+        router.push('/admin');
+        router.refresh();
+        return;
+      }
+
+      // Se não for admin ativo
+      await supabase.auth.signOut();
+      setErrorMsg('Acesso restrito. Este usuário não possui perfil de administrador ativo.');
+      setIsLoading(false);
     } catch (err) {
       console.error('Erro no login:', err);
       setErrorMsg('Erro de conexão ao tentar autenticar. Tente novamente.');
