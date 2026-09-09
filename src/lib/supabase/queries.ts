@@ -8,16 +8,16 @@ import { createServerClient } from "./server";
  * caso as tabelas ainda não tenham sido criadas no dashboard do Supabase.
  */
 export async function getGiftBySlug(slug: string): Promise<GiftExperience | null> {
-  const supabase = createServerClient();
-
   try {
+    const supabase = createServerClient();
+
     // 1. Busca o registro principal do presente
     const { data: giftRecord, error: giftError } = await supabase
       .from("gifts")
       .select("*")
       .eq("slug", slug)
       .eq("is_active", true)
-      .single();
+      .maybeSingle();
 
     if (giftError || !giftRecord) {
       // Fallback gracioso para dados locais de demonstração
