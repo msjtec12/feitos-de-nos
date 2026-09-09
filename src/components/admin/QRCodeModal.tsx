@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useState, useEffect } from 'react';
 import { generateQRCodeDataUrl, generateQRCodeSvg, getGiftPagePublicUrl } from '@/lib/qr-code';
@@ -12,7 +12,6 @@ import {
   RefreshCw,
   X,
   ExternalLink,
-  Sparkles,
   AlertTriangle,
 } from 'lucide-react';
 
@@ -39,6 +38,15 @@ export function QRCodeModal({
   const [showRegenerateConfirm, setShowRegenerateConfirm] = useState(false);
 
   const publicUrl = getGiftPagePublicUrl(currentToken);
+
+  // Close on Escape key press
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [onClose]);
 
   useEffect(() => {
     async function loadQR() {
@@ -91,13 +99,21 @@ export function QRCodeModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="bg-[#FFF8F0] border-2 border-[#713C48]/20 rounded-3xl max-w-xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8 space-y-6 shadow-2xl relative">
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="qr-modal-title"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+    >
+      <div className="bg-[#FFF8F0] border border-[#713C48]/20 rounded-3xl max-w-lg w-full max-h-[92vh] overflow-y-auto p-6 sm:p-7 space-y-5 shadow-2xl relative">
         {/* Close Button */}
         <button
           type="button"
           onClick={onClose}
-          className="absolute top-5 right-5 p-2 rounded-full text-[#713C48] hover:bg-[#713C48]/10 transition-colors"
+          className="absolute top-4 right-4 p-2 rounded-full text-[#713C48] hover:bg-[#713C48]/10 transition-colors"
           aria-label="Fechar modal"
         >
           <X className="w-5 h-5" />
@@ -107,35 +123,37 @@ export function QRCodeModal({
         <div className="space-y-1">
           <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#713C48]/10 text-[#713C48] text-[11px] font-semibold">
             <QrCode className="w-3.5 h-3.5 text-[#C96E5A]" />
-            <span>QR Code da Experiência</span>
+            <span>QR Code & Publicação</span>
           </div>
-          <h2 className="font-serif text-2xl text-[#713C48]">{recipientName}</h2>
+          <h2 id="qr-modal-title" className="font-serif text-2xl text-[#713C48] font-bold">
+            {recipientName || 'Experiência'}
+          </h2>
           <p className="text-xs text-[#302B2D]/70">{giftTitle}</p>
         </div>
 
         {/* Printable Card Area */}
         <div
           id="printable-card"
-          className="bg-white border border-[#713C48]/20 rounded-3xl p-6 sm:p-8 text-center space-y-4 shadow-sm"
+          className="bg-white border border-[#713C48]/20 rounded-2xl p-5 sm:p-6 text-center space-y-3.5 shadow-sm print:border-none print:shadow-none"
         >
           <div className="flex justify-center">
             <BrandLogo size="md" />
           </div>
 
-          <div className="space-y-1">
-            <h3 className="font-serif text-xl text-[#713C48]">{giftTitle}</h3>
+          <div className="space-y-0.5">
+            <h3 className="font-serif text-lg font-bold text-[#713C48]">{giftTitle}</h3>
             <p className="text-xs text-[#C96E5A] font-semibold uppercase tracking-wider">
               Para {recipientName}
             </p>
           </div>
 
           {/* QR Image Display */}
-          <div className="flex justify-center py-2">
+          <div className="flex justify-center py-1">
             {pngDataUrl ? (
               <img
                 src={pngDataUrl}
                 alt={`QR Code para ${recipientName}`}
-                className="w-48 h-48 sm:w-56 sm:h-56 object-contain rounded-2xl border border-[#713C48]/10 p-2 bg-[#FFF8F0]"
+                className="w-48 h-48 sm:w-52 sm:h-52 object-contain rounded-2xl border border-[#713C48]/15 p-2 bg-[#FFF8F0]"
               />
             ) : (
               <div className="w-48 h-48 rounded-2xl bg-[#FFF8F0] flex items-center justify-center text-xs text-[#713C48]">
@@ -145,14 +163,14 @@ export function QRCodeModal({
           </div>
 
           <div className="space-y-1 text-xs text-[#302B2D]/75">
-            <p className="font-medium">Escaneie com a câmera do celular para abrir seu presente</p>
-            <p className="font-mono text-[10px] text-[#302B2D]/50 break-all">{publicUrl}</p>
+            <p className="font-medium">Aponte a câmera do celular para abrir esta história</p>
+            <p className="font-mono text-[10px] text-[#302B2D]/55 break-all">{publicUrl}</p>
           </div>
         </div>
 
         {/* Action Controls */}
         <div className="space-y-3">
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
             <button
               type="button"
               onClick={handleDownloadPng}
@@ -185,7 +203,7 @@ export function QRCodeModal({
               onClick={handleCopyLink}
               className="flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-[#FFF8F0] text-[#713C48] border border-[#713C48]/30 text-xs font-semibold hover:bg-[#713C48]/5 transition-colors"
             >
-              {copied ? <Check className="w-3.5 h-3.5 text-green-600" /> : <Copy className="w-3.5 h-3.5" />}
+              {copied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
               <span>{copied ? 'Copiado!' : 'Copiar Link'}</span>
             </button>
           </div>
@@ -198,7 +216,7 @@ export function QRCodeModal({
               className="text-[#713C48] hover:underline font-semibold flex items-center gap-1"
             >
               <ExternalLink className="w-3.5 h-3.5" />
-              <span>Testar Link da Experiência</span>
+              <span>Abrir Experiência no Navegador</span>
             </a>
 
             {onRegenerateToken && (
@@ -208,7 +226,7 @@ export function QRCodeModal({
                 className="text-rose-700 hover:text-rose-900 font-medium flex items-center gap-1"
               >
                 <RefreshCw className="w-3.5 h-3.5" />
-                <span>Regenerar / Invalidar Link</span>
+                <span>Regenerar Token</span>
               </button>
             )}
           </div>
