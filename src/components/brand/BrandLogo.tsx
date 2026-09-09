@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import Image from "next/image";
 import { BrandSymbol } from "./BrandSymbol";
 
 interface BrandLogoProps {
@@ -23,10 +22,10 @@ export function BrandLogo({
 
   // Dimensões proporcionais do logo oficial
   const heightClasses = {
-    sm: "h-9 sm:h-10",
-    md: "h-11 sm:h-14",
-    lg: "h-16 sm:h-20",
-    xl: "h-20 sm:h-24",
+    sm: "h-8 sm:h-9",
+    md: "h-10 sm:h-12",
+    lg: "h-14 sm:h-16",
+    xl: "h-18 sm:h-20",
   };
 
   if (!imageError && src) {
@@ -36,7 +35,7 @@ export function BrandLogo({
         <img
           src={src}
           alt="Feito de Nós — Histórias que viram presente"
-          className={`${heightClasses[size]} w-auto object-contain transition-transform duration-300 drop-shadow-xs`}
+          className={`${heightClasses[size]} w-auto object-contain transition-transform duration-300 mix-blend-multiply`}
           onError={() => setImageError(true)}
         />
       </div>

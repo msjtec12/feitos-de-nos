@@ -31,7 +31,6 @@ export function AudioPlayer({
   const [duration, setDuration] = useState(audio?.durationSeconds || 0);
   const [isLoading, setIsLoading] = useState(false);
   const [hasError, setHasError] = useState(false);
-  const [isAudioAvailable, setIsAudioAvailable] = useState<boolean | null>(null);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const waveformContainerRef = useRef<HTMLDivElement | null>(null);
@@ -39,22 +38,6 @@ export function AudioPlayer({
   const displayTitle = title || audio?.title || "Mensagem dos pais";
   const displayAuthor = author || audio?.recordedBy;
   const audioSrc = audio?.audioUrl;
-
-  // Checa disponibilidade do arquivo de áudio sem quebrar a UI
-  useEffect(() => {
-    if (!audioSrc) {
-      setIsAudioAvailable(false);
-      return;
-    }
-
-    fetch(audioSrc, { method: "HEAD" })
-      .then((res) => {
-        setIsAudioAvailable(res.ok);
-      })
-      .catch(() => {
-        setIsAudioAvailable(false);
-      });
-  }, [audioSrc]);
 
   // Sincronização do elemento de áudio
   useEffect(() => {
@@ -78,7 +61,10 @@ export function AudioPlayer({
     };
 
     const handleWaiting = () => setIsLoading(true);
-    const handlePlaying = () => setIsLoading(false);
+    const handlePlaying = () => {
+      setIsLoading(false);
+      setHasError(false);
+    };
     const handleError = () => {
       setHasError(true);
       setIsLoading(false);
@@ -103,24 +89,29 @@ export function AudioPlayer({
   }, []);
 
   const togglePlayPause = () => {
-    if (!audioRef.current || !isAudioAvailable || hasError) return;
+    if (!audioRef.current || !audioSrc || hasError) return;
 
     if (isPlaying) {
       audioRef.current.pause();
       setIsPlaying(false);
     } else {
+      setIsLoading(true);
       audioRef.current
         .play()
-        .then(() => setIsPlaying(true))
+        .then(() => {
+          setIsPlaying(true);
+          setIsLoading(false);
+        })
         .catch(() => {
           setHasError(true);
+          setIsLoading(false);
           setIsPlaying(false);
         });
     }
   };
 
   const handleSeek = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!audioRef.current || !waveformContainerRef.current || !duration || hasError || !isAudioAvailable) return;
+    if (!audioRef.current || !waveformContainerRef.current || !duration || hasError || !audioSrc) return;
 
     const rect = waveformContainerRef.current.getBoundingClientRect();
     const clickPosition = Math.max(0, Math.min(e.clientX - rect.left, rect.width));
@@ -132,7 +123,7 @@ export function AudioPlayer({
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (!audioRef.current || hasError || !isAudioAvailable) return;
+    if (!audioRef.current || hasError || !audioSrc) return;
 
     if (e.key === " " || e.key === "Enter") {
       e.preventDefault();
@@ -153,8 +144,8 @@ export function AudioPlayer({
   const progressPercent = duration > 0 ? (currentTime / duration) * 100 : 0;
   const currentBarIndex = Math.floor((progressPercent / 100) * WAVEFORM_BARS.length);
 
-  // Estado elegante quando o áudio ainda não foi adicionado à pasta
-  if (isAudioAvailable === false || hasError) {
+  // Estado elegante quando o áudio ainda não foi carregado
+  if (!audioSrc || hasError) {
     return (
       <div
         className={`rounded-2xl p-4 bg-white/80 border border-brand-rose/30 shadow-xs flex items-center justify-between gap-4 ${className}`}
@@ -192,15 +183,14 @@ export function AudioPlayer({
       role="region"
       aria-label={`Player de áudio: ${displayTitle}`}
     >
-      {audioSrc && (
-        <audio
-          ref={audioRef}
-          src={audioSrc}
-          preload="metadata"
-          className="hidden"
-          aria-hidden="true"
-        />
-      )}
+      <audio
+        ref={audioRef}
+        src={audioSrc}
+        preload="none"
+        className="hidden"
+        aria-hidden="true"
+        onError={() => setHasError(true)}
+      />
 
       {/* Cabeçalho do Player */}
       <div className="flex items-center justify-between mb-3 px-1">
