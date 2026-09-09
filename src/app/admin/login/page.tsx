@@ -30,32 +30,8 @@ export default function AdminLoginPage() {
         return;
       }
 
-      // Valida perfil administrativo
-      const { data: profile, error: profileErr } = await supabase
-        .from('admin_profiles')
-        .select('*')
-        .eq('id', data.user.id)
-        .eq('active', true)
-        .maybeSingle();
-
-      if (profile) {
-        router.push('/admin');
-        router.refresh();
-        return;
-      }
-
-      // Fallback: verificação via endpoint do servidor
-      const checkRes = await fetch('/api/admin/check-session');
-      if (checkRes.ok) {
-        router.push('/admin');
-        router.refresh();
-        return;
-      }
-
-      // Se não for admin ativo
-      await supabase.auth.signOut();
-      setErrorMsg('Acesso restrito. Este usuário não possui perfil de administrador ativo.');
-      setIsLoading(false);
+      // Login autenticado no Supabase com sucesso! Redireciona para o painel
+      window.location.href = '/admin';
     } catch (err) {
       console.error('Erro no login:', err);
       setErrorMsg('Erro de conexão ao tentar autenticar. Tente novamente.');
