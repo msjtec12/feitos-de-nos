@@ -1,0 +1,334 @@
+import { GiftExperience } from "@/types/gift";
+
+/**
+ * Dados de demonstração do presente "Meu Primeiro Ano — Matheus Akira".
+ * 
+ * NOTA TÉCNICA:
+ * Estes dados foram estruturados de forma agnóstica para permitir a substituição direta
+ * por consultas ao Supabase (ex: supabase.from('gifts').select('...')) na próxima fase.
+ * Nenhum dado pessoal sensível real está embutido no código.
+ */
+export const matheusAkiraGiftData: GiftExperience = {
+  slug: "matheus-akira",
+  openingText: {
+    headline: "Uma história foi feita para você.",
+    description: "Ela reúne momentos, vozes e pessoas que fizeram parte do seu primeiro ano.",
+    buttonLabel: "Abrir meu presente",
+  },
+  recipient: {
+    name: "Matheus Akira",
+    subtitle: "Meu primeiro ano",
+    tagline: "365 dias de amor",
+    featuredImage: {
+      id: "hero-photo",
+      url: "/demo/images/hero-matheus.jpg",
+      altText: "Espaço reservado para a foto principal de destaque do Matheus Akira",
+      caption: "Foto principal de capa do primeiro ano",
+      aspectRatio: "portrait",
+    },
+    introQuote: "Um ano inteiro de descobertas, sorrisos e momentos que transformaram nossa história.",
+  },
+  primaryAudio: {
+    id: "primary-voice",
+    title: "Mensagem dos pais",
+    audioUrl: "/demo/audio/mensagem-pais.mp3",
+    recordedBy: "Papai e Mamãe",
+    transcript: "Uma mensagem especial gravada com carinho pelos pais para o Matheus ouvir quando crescer.",
+  },
+  timelineMoments: [
+    {
+      monthNumber: 1,
+      title: "1º Mês",
+      subtitle: "Mês 1",
+      caption: "Nosso primeiro encontro.",
+      image: {
+        id: "month-1",
+        url: "/demo/images/month-01.jpg",
+        altText: "Registro do primeiro mês do Matheus",
+        caption: "Os primeiros dias em casa",
+      },
+    },
+    {
+      monthNumber: 2,
+      title: "2º Mês",
+      subtitle: "Mês 2",
+      caption: "Os primeiros sorrisos.",
+      image: {
+        id: "month-2",
+        url: "/demo/images/month-02.jpg",
+        altText: "Registro do segundo mês do Matheus",
+        caption: "Começando a sorrir para o mundo",
+      },
+    },
+    {
+      monthNumber: 3,
+      title: "3º Mês",
+      subtitle: "Mês 3",
+      caption: "Descobrindo o mundo.",
+      image: {
+        id: "month-3",
+        url: "/demo/images/month-03.jpg",
+        altText: "Registro do terceiro mês do Matheus",
+        caption: "Olhinhos curiosos atentos a tudo",
+      },
+    },
+    {
+      monthNumber: 4,
+      title: "4º Mês",
+      subtitle: "Mês 4",
+      caption: "Cada dia uma novidade.",
+      image: {
+        id: "month-4",
+        url: "/demo/images/month-04.jpg",
+        altText: "Registro do quarto mês do Matheus",
+        caption: "Novas risadas e brincadeiras",
+      },
+    },
+    {
+      monthNumber: 5,
+      title: "5º Mês",
+      subtitle: "Mês 5",
+      caption: "Um sorriso que ilumina tudo.",
+      image: {
+        id: "month-5",
+        url: "/demo/images/month-05.jpg",
+        altText: "Registro do quinto mês do Matheus",
+        caption: "Alegria contagiante em família",
+      },
+    },
+    {
+      monthNumber: 6,
+      title: "6º Mês",
+      subtitle: "Mês 6",
+      caption: "Metade de um ano de amor.",
+      image: {
+        id: "month-6",
+        url: "/demo/images/month-06.jpg",
+        altText: "Registro do sexto mês do Matheus",
+        caption: "Primeiras papinhas e novas aventuras",
+      },
+    },
+    {
+      monthNumber: 7,
+      title: "7º Mês",
+      subtitle: "Mês 7",
+      caption: "Novas descobertas.",
+      image: {
+        id: "month-7",
+        url: "/demo/images/month-07.jpg",
+        altText: "Registro do sétimo mês do Matheus",
+        caption: "Sentando sozinho e explorando",
+      },
+    },
+    {
+      monthNumber: 8,
+      title: "8º Mês",
+      subtitle: "Mês 8",
+      caption: "A casa ficou ainda mais alegre.",
+      image: {
+        id: "month-8",
+        url: "/demo/images/month-08.jpg",
+        altText: "Registro do oitavo mês do Matheus",
+        caption: "Engatinhando e espalhando brinquedos",
+      },
+    },
+    {
+      monthNumber: 9,
+      title: "9º Mês",
+      subtitle: "Mês 9",
+      caption: "Pequenos passos, grandes emoções.",
+      image: {
+        id: "month-9",
+        url: "/demo/images/month-09.jpg",
+        altText: "Registro do nono mês do Matheus",
+        caption: "Ficando de pé apoiado no sofá",
+      },
+    },
+    {
+      monthNumber: 10,
+      title: "10º Mês",
+      subtitle: "Mês 10",
+      caption: "Uma personalidade cheia de carinho.",
+      image: {
+        id: "month-10",
+        url: "/demo/images/month-10.jpg",
+        altText: "Registro do décimo mês do Matheus",
+        caption: "Abraços gostosos e palavras ensaiadas",
+      },
+    },
+    {
+      monthNumber: 11,
+      title: "11º Mês",
+      subtitle: "Mês 11",
+      caption: "Preparando o primeiro aniversário.",
+      image: {
+        id: "month-11",
+        url: "/demo/images/month-11.jpg",
+        altText: "Registro do décimo primeiro mês do Matheus",
+        caption: "Contagem regressiva para 1 ano",
+      },
+    },
+    {
+      monthNumber: 12,
+      title: "12º Mês",
+      subtitle: "Mês 12",
+      caption: "Um ano da nossa melhor história.",
+      image: {
+        id: "month-12",
+        url: "/demo/images/month-12.jpg",
+        altText: "Registro do décimo segundo mês do Matheus",
+        caption: "Celebrando 365 dias de muito amor",
+      },
+    },
+  ],
+  contributorMessages: [
+    {
+      id: "msg-pais",
+      authorName: "Papai e Mamãe",
+      relation: "Pais",
+      avatarImage: {
+        id: "avatar-pais",
+        url: "/demo/images/avatar-pais.jpg",
+        altText: "Foto demonstrativa dos pais",
+      },
+      writtenMessage: "Filho, este primeiro ano foi a maior aventura e a mais doce bênção das nossas vidas. Ver você crescer dia a dia encheu nossa casa de riso e nosso coração de um amor que nunca imaginávamos existir. Esta história é para você sempre lembrar o quanto foi sonhado e amado.",
+      audio: {
+        id: "audio-pais",
+        title: "Mensagem dos pais",
+        audioUrl: "/demo/audio/mensagem-pais.mp3",
+        durationSeconds: 98,
+      },
+    },
+    {
+      id: "msg-avos",
+      authorName: "Vovô e Vovó",
+      relation: "Avós",
+      avatarImage: {
+        id: "avatar-avos",
+        url: "/demo/images/avatar-avos.jpg",
+        altText: "Foto demonstrativa dos avós",
+      },
+      writtenMessage: "Nosso querido neto Matheus, cada abraço seu renova nossas forças. Seu olhar curioso e seu jeitinho carinhoso são os maiores presentes que a vida nos deu. Estaremos sempre aqui para segurar sua mão e torcer pelos seus sonhos.",
+      audio: {
+        id: "audio-avos",
+        title: "Mensagem dos avós",
+        audioUrl: "/demo/audio/mensagem-avos.mp3",
+        durationSeconds: 74,
+      },
+    },
+    {
+      id: "msg-padrinhos",
+      authorName: "Dindo e Dinda",
+      relation: "Padrinhos",
+      avatarImage: {
+        id: "avatar-padrinhos",
+        url: "/demo/images/avatar-padrinhos.jpg",
+        altText: "Foto demonstrativa dos padrinhos",
+      },
+      writtenMessage: "Afilhado amado, ser escolhido para caminhar ao seu lado é uma honra imensa. Prometemos estar por perto em todas as etapas, com conselhos, brincadeiras e muito carinho. Que seu caminho seja sempre iluminado.",
+      audio: {
+        id: "audio-padrinhos",
+        title: "Mensagem dos padrinhos",
+        audioUrl: "/demo/audio/mensagem-padrinhos.mp3",
+        durationSeconds: 62,
+      },
+    },
+  ],
+  galleryItems: [
+    {
+      id: "gal-1",
+      url: "/demo/images/gallery-01.jpg",
+      altText: "Detalhe das mãozinhas nos primeiros dias",
+      caption: "Pequenos detalhes, infinito amor",
+      aspectRatio: "portrait",
+    },
+    {
+      id: "gal-2",
+      url: "/demo/images/gallery-02.jpg",
+      altText: "Momento de banho e brincadeira na água",
+      caption: "A hora do banho favorita",
+      aspectRatio: "square",
+    },
+    {
+      id: "gal-3",
+      url: "/demo/images/gallery-03.jpg",
+      altText: "Soneca da tarde no colo",
+      caption: "O melhor lugar do mundo: o colo da mãe",
+      aspectRatio: "landscape",
+    },
+    {
+      id: "gal-4",
+      url: "/demo/images/gallery-04.jpg",
+      altText: "Passeio de domingo no parque",
+      caption: "Sentindo a grama e o sol da manhã",
+      aspectRatio: "portrait",
+    },
+    {
+      id: "gal-5",
+      url: "/demo/images/gallery-05.jpg",
+      altText: "Gargalhada espontânea durante uma brincadeira",
+      caption: "A risada que alegra a casa inteira",
+      aspectRatio: "square",
+    },
+    {
+      id: "gal-6",
+      url: "/demo/images/gallery-06.jpg",
+      altText: "Primeira experiência com frutinhas",
+      caption: "Descobrindo novos sabores",
+      aspectRatio: "portrait",
+    },
+    {
+      id: "gal-7",
+      url: "/demo/images/gallery-07.jpg",
+      altText: "Abraço com os avós no almoço de domingo",
+      caption: "Gerações unidas pelo mesmo amor",
+      aspectRatio: "landscape",
+    },
+    {
+      id: "gal-8",
+      url: "/demo/images/gallery-08.jpg",
+      altText: "Brincando com blocos de madeira coloridos",
+      caption: "Construindo torres e derrubando com alegria",
+      aspectRatio: "square",
+    },
+    {
+      id: "gal-9",
+      url: "/demo/images/gallery-09.jpg",
+      altText: "Olhar curioso na janela observando os passarinhos",
+      caption: "Janelas abertas para novas descobertas",
+      aspectRatio: "portrait",
+    },
+    {
+      id: "gal-10",
+      url: "/demo/images/gallery-10.jpg",
+      altText: "Brincadeira no tapete da sala com o papai",
+      caption: "Momentos simples que valem uma vida",
+      aspectRatio: "landscape",
+    },
+    {
+      id: "gal-11",
+      url: "/demo/images/gallery-11.jpg",
+      altText: "Primeiros passinhos firmes no chão de madeira",
+      caption: "Ganhando o mundo passo a passo",
+      aspectRatio: "portrait",
+    },
+    {
+      id: "gal-12",
+      url: "/demo/images/gallery-12.jpg",
+      altText: "Ensaio de 1 ano com balões em tons suaves",
+      caption: "Um ano de vida, uma eternidade de amor",
+      aspectRatio: "square",
+    },
+  ],
+  closing: {
+    headline: "Esta é apenas a primeira parte da sua história.",
+    message: "Que você cresça cercado pelas vozes, lembranças e pessoas que fizeram do seu primeiro ano um tempo inesquecível.",
+    signature: "Com todo o nosso amor.",
+  },
+  brand: {
+    brandName: "Feito de Nós",
+    slogan: "Histórias que viram presente.",
+    logoUrl: "/brand/logo-feito-de-nos.png",
+    symbolUrl: "/brand/simbolo-feito-de-nos.png",
+  },
+};

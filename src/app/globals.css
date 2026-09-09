@@ -1,0 +1,66 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-wine: #713C48;
+  --color-terracotta: #C96E5A;
+  --color-cream: #FFF8F0;
+  --color-rose: #D9A4A0;
+  --color-graphite: #302B2D;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+    background-color: var(--color-cream);
+    color: var(--color-graphite);
+    font-family: var(--font-sans), sans-serif;
+  }
+
+  body {
+    background-color: var(--color-cream);
+    color: var(--color-graphite);
+    min-height: 100dvh;
+    overflow-x: hidden;
+  }
+
+  /* Acessibilidade: foco visível consistente e de alto contraste */
+  :focus-visible {
+    outline: 2px solid #713C48 !important;
+    outline-offset: 2px !important;
+  }
+
+  ::selection {
+    background-color: #D9A4A0;
+    color: #302B2D;
+  }
+}
+
+/* Ocultar barra de rolagem mantendo funcionalidade no mobile */
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+/* Respeito estrito a prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
