@@ -1,6 +1,6 @@
 import { GiftExperience } from "@/types/gift";
 import { matheusAkiraGiftData } from "@/data/matheus-demo";
-import { createServerClient } from "./server";
+import { createSupabaseServerClient } from "./server";
 
 /**
  * Busca uma experiência de presente completa por slug no Supabase.
@@ -9,7 +9,7 @@ import { createServerClient } from "./server";
  */
 export async function getGiftBySlug(slug: string): Promise<GiftExperience | null> {
   try {
-    const supabase = createServerClient();
+    const supabase = createSupabaseServerClient();
 
     // 1. Busca o registro principal do presente
     const { data: giftRecord, error: giftError } = await supabase
@@ -84,7 +84,7 @@ export async function getGiftBySlug(slug: string): Promise<GiftExperience | null
           }
         : undefined,
       timelineMoments: (timelineData && timelineData.length > 0)
-        ? timelineData.map((m) => ({
+        ? timelineData.map((m: any) => ({
             monthNumber: m.month_number,
             title: m.title,
             subtitle: m.subtitle || `Mês ${m.month_number}`,
@@ -100,7 +100,7 @@ export async function getGiftBySlug(slug: string): Promise<GiftExperience | null
           }))
         : matheusAkiraGiftData.timelineMoments,
       contributorMessages: (contributorsData && contributorsData.length > 0)
-        ? contributorsData.map((c) => ({
+        ? contributorsData.map((c: any) => ({
             id: c.id,
             authorName: c.author_name,
             relation: c.relation,
@@ -125,7 +125,7 @@ export async function getGiftBySlug(slug: string): Promise<GiftExperience | null
           }))
         : matheusAkiraGiftData.contributorMessages,
       galleryItems: (galleryData && galleryData.length > 0)
-        ? galleryData.map((g, index) => ({
+        ? galleryData.map((g: any, index: number) => ({
             id: g.id || `gal-${index + 1}`,
             url: g.image_url || `/demo/images/gallery-${String(index + 1).padStart(2, "0")}.jpg`,
             altText: g.alt_text || "Memória do 1º ano",

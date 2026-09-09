@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -112,21 +112,46 @@ export function OrderConfigurator() {
     }
   };
 
-  const handleSubmit = () => {
+  const [submitError, setSubmitError] = useState<string | null>(null);
+
+  const handleSubmit = async () => {
     setIsSubmitting(true);
-    const code = generateOrderCode();
-    const totalPrice = getFormatPrice(formData.format);
+    setSubmitError(null);
 
-    const preparedOrder: PreparedOrder = {
-      code,
-      createdAt: new Date().toISOString(),
-      data: formData,
-      totalPrice,
-      formattedTotal: formatCurrency(totalPrice),
-    };
+    try {
+      const response = await fetch('/api/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
 
-    savePreparedOrder(preparedOrder);
-    router.push('/pedido/preparado');
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        setSubmitError(result.error || 'Erro ao registrar pedido no servidor. Por favor, tente novamente.');
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Pedido registrado com sucesso no banco de dados!
+      const serverOrder = result.order;
+      const totalPrice = (serverOrder.totalCents || 5990) / 100;
+
+      const preparedOrder: PreparedOrder = {
+        code: serverOrder.code,
+        createdAt: new Date().toISOString(),
+        data: formData,
+        totalPrice,
+        formattedTotal: serverOrder.formattedTotal || formatCurrency(totalPrice),
+      };
+
+      savePreparedOrder(preparedOrder);
+      router.push('/pedido/preparado');
+    } catch (err: any) {
+      console.error('Erro ao submeter pedido:', err);
+      setSubmitError('Erro de conexão com o servidor. Verifique sua internet e tente novamente.');
+      setIsSubmitting(false);
+    }
   };
 
   const isPhysical = GIFT_FORMATS.find((f) => f.id === formData.format)?.isPhysical ?? false;
@@ -213,6 +238,7 @@ export function OrderConfigurator() {
             onSubmit={handleSubmit}
             onBack={handleBack}
             isSubmitting={isSubmitting}
+            submitError={submitError}
           />
         )}
       </div>

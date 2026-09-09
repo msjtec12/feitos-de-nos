@@ -4,7 +4,7 @@ import React from 'react';
 import { OrderFormData } from '@/types/order';
 import { OCCASIONS, GIFT_FORMATS, STYLE_OPTIONS } from '@/data/home-data';
 import { formatCurrency } from '@/lib/order-utils';
-import { Heart, Edit3, CheckCircle2, QrCode, Sparkles, MessageSquare } from 'lucide-react';
+import { Heart, Edit3, CheckCircle2, QrCode, Sparkles, MessageSquare, AlertCircle, Loader2 } from 'lucide-react';
 
 interface StepReviewProps {
   formData: OrderFormData;
@@ -12,9 +12,10 @@ interface StepReviewProps {
   onSubmit: () => void;
   onBack: () => void;
   isSubmitting?: boolean;
+  submitError?: string | null;
 }
 
-export function StepReview({ formData, onJumpToStep, onSubmit, onBack, isSubmitting }: StepReviewProps) {
+export function StepReview({ formData, onJumpToStep, onSubmit, onBack, isSubmitting, submitError }: StepReviewProps) {
   const occasion = OCCASIONS.find((o) => o.id === formData.occasion);
   const format = GIFT_FORMATS.find((f) => f.id === formData.format);
   const style = STYLE_OPTIONS.find((s) => s.id === formData.style);
@@ -208,12 +209,24 @@ export function StepReview({ formData, onJumpToStep, onSubmit, onBack, isSubmitt
         </p>
       </div>
 
+      {/* Submit Error Alert */}
+      {submitError && (
+        <div className="bg-red-50 border border-red-200 text-red-800 rounded-2xl p-4 flex items-start gap-3 text-xs sm:text-sm">
+          <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+          <div className="space-y-1">
+            <p className="font-semibold">Não foi possível registrar o pedido no momento</p>
+            <p className="text-red-700">{submitError}</p>
+          </div>
+        </div>
+      )}
+
       {/* Action Buttons */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-[#713C48]/10">
         <button
           type="button"
           onClick={onBack}
-          className="w-full sm:w-auto px-6 py-3 rounded-full text-sm font-semibold text-[#713C48] hover:bg-[#713C48]/10 transition-colors text-center"
+          disabled={isSubmitting}
+          className="w-full sm:w-auto px-6 py-3 rounded-full text-sm font-semibold text-[#713C48] hover:bg-[#713C48]/10 transition-colors text-center disabled:opacity-40"
         >
           ← Voltar e Ajustar
         </button>
@@ -224,8 +237,17 @@ export function StepReview({ formData, onJumpToStep, onSubmit, onBack, isSubmitt
           onClick={onSubmit}
           className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-9 py-4 rounded-full bg-[#713C48] text-[#FFF8F0] font-semibold text-base hover:bg-[#5a2e39] transition-all shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#713C48] disabled:opacity-50"
         >
-          <Heart className="w-5 h-5 text-[#D9A4A0] fill-current" />
-          <span>{isSubmitting ? 'Gerando Pedido...' : 'Preparar pedido no WhatsApp →'}</span>
+          {isSubmitting ? (
+            <>
+              <Loader2 className="w-5 h-5 animate-spin" />
+              <span>Registrando seu pedido com segurança...</span>
+            </>
+          ) : (
+            <>
+              <Heart className="w-5 h-5 text-[#D9A4A0] fill-current" />
+              <span>Preparar pedido no WhatsApp →</span>
+            </>
+          )}
         </button>
       </div>
     </div>
