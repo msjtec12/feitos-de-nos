@@ -76,5 +76,21 @@ export function mapContentToGiftExperience(
       brandName: 'Feito de Nós',
       slogan: 'Histórias que viram presente.',
     },
+    theme: theme
+      ? {
+          styleId: theme.styleId || 'afetuoso',
+          primaryColor: theme.primaryColor || '#713C48',
+          accentColor: theme.accentColor || '#C96E5A',
+          backgroundColor: theme.backgroundColor || '#FFF8F0',
+          textColor: theme.textColor || '#302B2D',
+          fontFamily: theme.fontFamily,
+        }
+      : {
+          styleId: 'afetuoso',
+          primaryColor: '#713C48',
+          accentColor: '#C96E5A',
+          backgroundColor: '#FFF8F0',
+          textColor: '#302B2D',
+        },
   };
 }

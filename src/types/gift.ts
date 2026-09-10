@@ -82,4 +82,12 @@ export interface GiftExperience {
     signature: string;
   };
   brand: BrandSettings;
+  theme?: {
+    styleId?: string;
+    primaryColor?: string;
+    accentColor?: string;
+    backgroundColor?: string;
+    textColor?: string;
+    fontFamily?: string;
+  };
 }

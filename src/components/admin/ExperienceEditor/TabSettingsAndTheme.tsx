@@ -40,6 +40,12 @@ export function TabSettingsAndTheme({
   onOpenQRCode,
 }: TabSettingsAndThemeProps) {
   const publicUrl = getGiftPagePublicUrl(publicToken);
+  const [selectedCategory, setSelectedCategory] = React.useState<string>('all');
+
+  const filteredStyles = React.useMemo(() => {
+    if (selectedCategory === 'all') return STYLE_OPTIONS;
+    return STYLE_OPTIONS.filter((s) => s.category === selectedCategory);
+  }, [selectedCategory]);
 
   const handleStyleChange = (styleId: StyleId) => {
     const selected = STYLE_OPTIONS.find((s) => s.id === styleId);
@@ -49,6 +55,20 @@ export function TabSettingsAndTheme({
       styleId,
       primaryColor: selected.primaryColor,
       accentColor: selected.accentColor,
+      backgroundColor: selected.backgroundColor || '#FFF8F0',
+      textColor: selected.textColor || '#302B2D',
+    });
+  };
+
+  const handleResetToStyleDefaults = () => {
+    const selected = STYLE_OPTIONS.find((s) => s.id === theme.styleId) || STYLE_OPTIONS[0];
+    if (!selected) return;
+
+    updateTheme({
+      primaryColor: selected.primaryColor,
+      accentColor: selected.accentColor,
+      backgroundColor: selected.backgroundColor || '#FFF8F0',
+      textColor: selected.textColor || '#302B2D',
     });
   };
 
@@ -93,49 +113,202 @@ export function TabSettingsAndTheme({
 
       {/* Visual Theme Selection */}
       <div className="bg-white border border-[#713C48]/15 rounded-3xl p-5 sm:p-6 space-y-4 shadow-sm">
-        <h3 className="text-sm font-bold uppercase tracking-wider text-[#713C48] flex items-center gap-2">
-          <Palette className="w-4 h-4 text-[#C96E5A]" />
-          <span>Paleta de Cores e Identidade Visual</span>
-        </h3>
+        <div className="flex items-center justify-between flex-wrap gap-2">
+          <div>
+            <h3 className="text-sm font-bold uppercase tracking-wider text-[#713C48] flex items-center gap-2">
+              <Palette className="w-4 h-4 text-[#C96E5A]" />
+              <span>Paleta de Cores e Identidade Visual</span>
+            </h3>
+            <p className="text-xs text-[#302B2D]/70 mt-0.5">
+              Escolha entre 12 paletas curadas ou personalize cores específicas abaixo.
+            </p>
+          </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-          {STYLE_OPTIONS.map((style) => {
+          {/* Category Filter Pills */}
+          <div className="flex items-center gap-1.5 flex-wrap">
+            {[
+              { id: 'all', label: 'Todas' },
+              { id: 'classicos', label: 'Clássicos' },
+              { id: 'infantil', label: 'Bebês & Infantil' },
+              { id: 'romantico', label: 'Amor & Casamento' },
+              { id: 'natureza', label: 'Natureza & Luz' },
+            ].map((cat) => {
+              const isCatActive = selectedCategory === cat.id;
+              return (
+                <button
+                  key={cat.id}
+                  type="button"
+                  onClick={() => setSelectedCategory(cat.id)}
+                  className={`px-3 py-1 rounded-full text-xs font-semibold transition-all ${
+                    isCatActive
+                      ? 'bg-[#713C48] text-[#FFF8F0] shadow-xs'
+                      : 'bg-[#FFF8F0] text-[#713C48] hover:bg-[#713C48]/10 border border-[#713C48]/15'
+                  }`}
+                >
+                  {cat.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Palettes Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          {filteredStyles.map((style) => {
             const isSelected = (theme.styleId || 'afetuoso') === style.id;
             return (
               <button
                 key={style.id}
                 type="button"
                 onClick={() => handleStyleChange(style.id)}
-                className={`p-4 rounded-2xl text-left border-2 transition-all flex items-center gap-3.5 relative ${
+                className={`p-3.5 rounded-2xl text-left border-2 transition-all flex flex-col justify-between relative group ${
                   isSelected
                     ? 'bg-[#FFF8F0] border-[#713C48] shadow-md ring-2 ring-[#713C48]/20'
-                    : 'bg-[#FFF8F0]/40 border-[#713C48]/15 hover:border-[#713C48]/40 hover:bg-[#FFF8F0]/70'
+                    : 'bg-[#FFF8F0]/30 border-[#713C48]/15 hover:border-[#713C48]/40 hover:bg-[#FFF8F0]/60'
                 }`}
               >
-                <div className="flex items-center gap-1.5 flex-shrink-0">
-                  <div
-                    className="w-7 h-7 rounded-full border border-black/10 shadow-xs"
-                    style={{ backgroundColor: style.primaryColor }}
-                  />
-                  <div
-                    className="w-7 h-7 rounded-full border border-black/10 shadow-xs -ml-2"
-                    style={{ backgroundColor: style.accentColor }}
-                  />
-                </div>
+                <div className="space-y-2.5">
+                  {/* Swatch Previews */}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-1.5">
+                      <div
+                        className="w-6 h-6 rounded-full border border-black/15 shadow-xs"
+                        style={{ backgroundColor: style.primaryColor }}
+                        title={`Cor Primária: ${style.primaryColor}`}
+                      />
+                      <div
+                        className="w-6 h-6 rounded-full border border-black/15 shadow-xs -ml-1.5"
+                        style={{ backgroundColor: style.accentColor }}
+                        title={`Cor de Acento: ${style.accentColor}`}
+                      />
+                      <div
+                        className="w-6 h-6 rounded-full border border-black/15 shadow-xs -ml-1.5"
+                        style={{ backgroundColor: style.backgroundColor || '#FFF8F0' }}
+                        title={`Fundo: ${style.backgroundColor || '#FFF8F0'}`}
+                      />
+                    </div>
 
-                <div className="flex-1 min-w-0 pr-6">
-                  <h4 className="font-bold text-xs text-[#713C48]">{style.name}</h4>
-                  <p className="text-[11px] text-[#302B2D]/70 leading-tight mt-0.5">{style.description}</p>
-                </div>
-
-                {isSelected && (
-                  <div className="absolute top-3 right-3 text-[#713C48]">
-                    <CheckCircle2 className="w-4 h-4 text-[#713C48]" />
+                    {isSelected && (
+                      <span className="flex items-center gap-1 text-[10px] font-bold text-[#713C48] bg-white px-2 py-0.5 rounded-full border border-[#713C48]/20 shadow-xs">
+                        <CheckCircle2 className="w-3 h-3 text-[#713C48]" />
+                        Ativa
+                      </span>
+                    )}
                   </div>
-                )}
+
+                  <div>
+                    <h4 className="font-bold text-xs text-[#713C48] leading-tight">{style.name}</h4>
+                    <p className="text-[11px] text-[#302B2D]/70 leading-snug mt-1">{style.description}</p>
+                  </div>
+                </div>
               </button>
             );
           })}
+        </div>
+
+        {/* Advanced Custom Color Customizer */}
+        <div className="pt-4 border-t border-[#713C48]/15">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-[#C96E5A]" />
+              <h4 className="text-xs font-bold uppercase tracking-wider text-[#713C48]">
+                Personalização Avançada de Cores
+              </h4>
+            </div>
+            <button
+              type="button"
+              onClick={handleResetToStyleDefaults}
+              className="text-[11px] text-[#713C48] hover:underline font-semibold"
+            >
+              Restaurar cores padrão da paleta
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            {/* Cor Primária */}
+            <div className="p-3 bg-[#FFF8F0]/40 rounded-xl border border-[#713C48]/15 space-y-1.5">
+              <label className="text-[11px] font-bold text-[#713C48] block">
+                Cor Primária (Títulos e Destaque)
+              </label>
+              <div className="flex items-center gap-2">
+                <input
+                  type="color"
+                  value={theme.primaryColor || '#713C48'}
+                  onChange={(e) => updateTheme({ primaryColor: e.target.value })}
+                  className="w-8 h-8 rounded-lg cursor-pointer border border-black/15 p-0 bg-transparent"
+                />
+                <input
+                  type="text"
+                  value={theme.primaryColor || '#713C48'}
+                  onChange={(e) => updateTheme({ primaryColor: e.target.value })}
+                  className="flex-1 px-2.5 py-1 text-xs rounded-lg border border-[#713C48]/20 font-mono text-[#302B2D] uppercase bg-white focus:outline-none focus:ring-1 focus:ring-[#713C48]"
+                />
+              </div>
+            </div>
+
+            {/* Cor de Acento / Secundária */}
+            <div className="p-3 bg-[#FFF8F0]/40 rounded-xl border border-[#713C48]/15 space-y-1.5">
+              <label className="text-[11px] font-bold text-[#713C48] block">
+                Cor Secundária (Acentos e Ícones)
+              </label>
+              <div className="flex items-center gap-2">
+                <input
+                  type="color"
+                  value={theme.accentColor || '#C96E5A'}
+                  onChange={(e) => updateTheme({ accentColor: e.target.value })}
+                  className="w-8 h-8 rounded-lg cursor-pointer border border-black/15 p-0 bg-transparent"
+                />
+                <input
+                  type="text"
+                  value={theme.accentColor || '#C96E5A'}
+                  onChange={(e) => updateTheme({ accentColor: e.target.value })}
+                  className="flex-1 px-2.5 py-1 text-xs rounded-lg border border-[#713C48]/20 font-mono text-[#302B2D] uppercase bg-white focus:outline-none focus:ring-1 focus:ring-[#713C48]"
+                />
+              </div>
+            </div>
+
+            {/* Cor de Fundo */}
+            <div className="p-3 bg-[#FFF8F0]/40 rounded-xl border border-[#713C48]/15 space-y-1.5">
+              <label className="text-[11px] font-bold text-[#713C48] block">
+                Fundo da Página
+              </label>
+              <div className="flex items-center gap-2">
+                <input
+                  type="color"
+                  value={theme.backgroundColor || '#FFF8F0'}
+                  onChange={(e) => updateTheme({ backgroundColor: e.target.value })}
+                  className="w-8 h-8 rounded-lg cursor-pointer border border-black/15 p-0 bg-transparent"
+                />
+                <input
+                  type="text"
+                  value={theme.backgroundColor || '#FFF8F0'}
+                  onChange={(e) => updateTheme({ backgroundColor: e.target.value })}
+                  className="flex-1 px-2.5 py-1 text-xs rounded-lg border border-[#713C48]/20 font-mono text-[#302B2D] uppercase bg-white focus:outline-none focus:ring-1 focus:ring-[#713C48]"
+                />
+              </div>
+            </div>
+
+            {/* Cor do Texto */}
+            <div className="p-3 bg-[#FFF8F0]/40 rounded-xl border border-[#713C48]/15 space-y-1.5">
+              <label className="text-[11px] font-bold text-[#713C48] block">
+                Cor dos Textos
+              </label>
+              <div className="flex items-center gap-2">
+                <input
+                  type="color"
+                  value={theme.textColor || '#302B2D'}
+                  onChange={(e) => updateTheme({ textColor: e.target.value })}
+                  className="w-8 h-8 rounded-lg cursor-pointer border border-black/15 p-0 bg-transparent"
+                />
+                <input
+                  type="text"
+                  value={theme.textColor || '#302B2D'}
+                  onChange={(e) => updateTheme({ textColor: e.target.value })}
+                  className="flex-1 px-2.5 py-1 text-xs rounded-lg border border-[#713C48]/20 font-mono text-[#302B2D] uppercase bg-white focus:outline-none focus:ring-1 focus:ring-[#713C48]"
+                />
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 

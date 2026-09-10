@@ -31,8 +31,27 @@ export function PresenteClientView({
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  const theme = gift.theme || {
+    primaryColor: '#713C48',
+    accentColor: '#C96E5A',
+    backgroundColor: '#FFF8F0',
+    textColor: '#302B2D',
+  };
+
+  const dynamicStyles = {
+    '--theme-primary': theme.primaryColor || '#713C48',
+    '--theme-accent': theme.accentColor || '#C96E5A',
+    '--theme-bg': theme.backgroundColor || '#FFF8F0',
+    '--theme-text': theme.textColor || '#302B2D',
+    backgroundColor: theme.backgroundColor || '#FFF8F0',
+    color: theme.textColor || '#302B2D',
+  } as React.CSSProperties;
+
   return (
-    <div className="relative min-h-screen bg-brand-cream text-brand-graphite selection:bg-brand-rose selection:text-brand-graphite overflow-x-hidden">
+    <div
+      style={dynamicStyles}
+      className="relative min-h-screen selection:bg-brand-rose selection:text-brand-graphite overflow-x-hidden transition-colors duration-500"
+    >
       {/* Arte de Linha Contínua/Fio Afetivo no Fundo (como no mockup da marca) */}
       <BackgroundKnotArt className="top-40 -left-20" />
       <BackgroundKnotArt className="top-[900px] -right-24 rotate-180" />

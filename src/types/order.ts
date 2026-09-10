@@ -1,8 +1,22 @@
-﻿export type OccasionId = 'primeiro-ano' | 'nossa-historia' | 'vozes' | 'especial';
+export type OccasionId = 'primeiro-ano' | 'nossa-historia' | 'vozes' | 'especial';
 
 export type FormatId = 'digital' | 'cartao' | 'interativo';
 
-export type StyleId = 'afetuoso' | 'delicado' | 'elegante' | 'infantil-suave';
+export type StyleId =
+  | 'afetuoso'
+  | 'delicado'
+  | 'elegante'
+  | 'infantil-suave'
+  | 'azul-sereno'
+  | 'lavanda-bebe'
+  | 'terracota-boho'
+  | 'cerejeira-marsala'
+  | 'noite-estrelada'
+  | 'verde-botanico'
+  | 'eucalipto-alecrim'
+  | 'sol-girassol'
+  | 'personalizado'
+  | (string & {});
 
 export interface OccasionOption {
   id: OccasionId;
@@ -27,9 +41,12 @@ export interface FormatOption {
 export interface StyleOption {
   id: StyleId;
   name: string;
+  category?: 'classicos' | 'infantil' | 'romantico' | 'natureza';
   description: string;
   primaryColor: string;
   accentColor: string;
+  backgroundColor?: string;
+  textColor?: string;
   bgPreview: string;
 }
 

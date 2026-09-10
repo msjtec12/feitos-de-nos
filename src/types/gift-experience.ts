@@ -1,4 +1,4 @@
-﻿import { MediaItem, AudioMessage, Recipient, TimelineMoment, ContributorMessage, BrandSettings } from './gift';
+import { MediaItem, AudioMessage, Recipient, TimelineMoment, ContributorMessage, BrandSettings } from './gift';
 import { StyleId } from './order';
 
 export interface GiftContentData {
@@ -25,6 +25,9 @@ export interface GiftThemeData {
   styleId: StyleId;
   primaryColor: string;
   accentColor: string;
+  backgroundColor?: string;
+  textColor?: string;
+  fontFamily?: string;
   bgGradient?: string;
 }
 
