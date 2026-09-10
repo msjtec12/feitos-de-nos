@@ -67,37 +67,44 @@ export async function POST(req: NextRequest) {
     let finalUrl = '';
     let isStorageUploaded = false;
 
-    // 3. Processamento de URL: Imagens usam Data URL de alta fidelidade para entrega instantânea e zero falhas de rede
-    if (mediaType === 'image') {
-      finalUrl = `data:${mimeType};base64,${fileBuffer.toString('base64')}`;
-    } else {
-      // Para áudio/vídeo, tenta Supabase Storage e faz fallback para Data URL
-      try {
-        const adminClient = createSupabaseAdminClient();
-        const { error: uploadError } = await adminClient.storage
+    // 3. Upload para Supabase Storage e retorno de URL de rota interna /api/media/...
+    const adminClient = createSupabaseAdminClient();
+    let storageSucceeded = false;
+
+    try {
+      const { error: uploadError } = await adminClient.storage
+        .from('gift-media')
+        .upload(storagePath, fileBuffer, {
+          contentType: mimeType,
+          upsert: true,
+        });
+
+      if (!uploadError) {
+        storageSucceeded = true;
+      } else if (
+        uploadError.message?.toLowerCase().includes('bucket') ||
+        uploadError.message?.toLowerCase().includes('not found')
+      ) {
+        // Cria bucket caso ainda não exista no Supabase
+        await adminClient.storage.createBucket('gift-media', { public: true });
+        const { error: retryError } = await adminClient.storage
           .from('gift-media')
           .upload(storagePath, fileBuffer, {
             contentType: mimeType,
             upsert: true,
           });
-
-        if (!uploadError) {
-          const { data: pubData } = adminClient.storage
-            .from('gift-media')
-            .getPublicUrl(storagePath);
-
-          if (pubData?.publicUrl) {
-            finalUrl = pubData.publicUrl;
-            isStorageUploaded = true;
-          }
-        }
-      } catch (storageErr) {
-        console.warn('Supabase storage fallback para audio/video:', storageErr);
+        if (!retryError) storageSucceeded = true;
       }
+    } catch (storageErr) {
+      console.warn('Supabase storage upload aviso:', storageErr);
+    }
 
-      if (!finalUrl) {
-        finalUrl = `data:${mimeType};base64,${fileBuffer.toString('base64')}`;
-      }
+    if (storageSucceeded) {
+      finalUrl = `/api/media/${storagePath}`;
+      isStorageUploaded = true;
+    } else {
+      // Fallback resiliente apenas se o Storage estiver completamente indisponível
+      finalUrl = `data:${mimeType};base64,${fileBuffer.toString('base64')}`;
     }
 
     // 5. Registra na tabela media_assets com tolerância a falhas
