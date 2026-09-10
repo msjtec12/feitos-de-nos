@@ -72,21 +72,52 @@ export async function getAdminSessionAndProfile(): Promise<{
  * Coleta métricas reais do dashboard administrativo
  */
 export async function getDashboardMetrics(): Promise<DashboardMetrics> {
-  const adminClient = createSupabaseAdminClient();
+  let orders: OrderRow[] = [];
+  let giftPagesCount = 0;
 
-  const { data: ordersData, error } = await adminClient
-    .from('orders')
-    .select('*')
-    .is('archived_at', null)
-    .order('created_at', { ascending: false });
+  try {
+    const supabase = createSupabaseServerClient();
+    const { data: ordersData } = await supabase
+      .from('orders')
+      .select('*')
+      .is('archived_at', null)
+      .order('created_at', { ascending: false });
 
-  const orders: OrderRow[] = ordersData || [];
+    if (ordersData) orders = ordersData;
 
-  const { count: giftPagesCount } = await adminClient
-    .from('gift_pages')
-    .select('*', { count: 'exact', head: true })
-    .eq('status', 'published')
-    .is('archived_at', null);
+    const { count } = await supabase
+      .from('gift_pages')
+      .select('*', { count: 'exact', head: true })
+      .eq('status', 'published')
+      .is('archived_at', null);
+
+    if (count !== null) giftPagesCount = count;
+  } catch {
+    // fallback
+  }
+
+  if (orders.length === 0) {
+    try {
+      const adminClient = createSupabaseAdminClient();
+      const { data: ordersData } = await adminClient
+        .from('orders')
+        .select('*')
+        .is('archived_at', null)
+        .order('created_at', { ascending: false });
+
+      if (ordersData) orders = ordersData;
+
+      const { count } = await adminClient
+        .from('gift_pages')
+        .select('*', { count: 'exact', head: true })
+        .eq('status', 'published')
+        .is('archived_at', null);
+
+      if (count !== null) giftPagesCount = count;
+    } catch {
+      //
+    }
+  }
 
   let totalRevenueCents = 0;
   let newOrders = 0;
@@ -158,12 +189,55 @@ export async function getOrdersList(params: {
   pageSize: number;
   totalPages: number;
 }> {
-  const adminClient = createSupabaseAdminClient();
   const page = params.page || 1;
   const pageSize = params.pageSize || 15;
   const from = (page - 1) * pageSize;
   const to = from + pageSize - 1;
 
+  try {
+    const supabase = createSupabaseServerClient();
+    let query = supabase
+      .from('orders')
+      .select('*', { count: 'exact' })
+      .is('archived_at', null)
+      .order('created_at', { ascending: false })
+      .range(from, to);
+
+    if (params.status && params.status !== 'all') {
+      query = query.eq('status', params.status);
+    }
+
+    if (params.paymentStatus && params.paymentStatus !== 'all') {
+      query = query.eq('payment_status', params.paymentStatus);
+    }
+
+    if (params.productType && params.productType !== 'all') {
+      query = query.eq('product_type', params.productType);
+    }
+
+    if (params.search && params.search.trim()) {
+      const term = params.search.trim();
+      query = query.or(
+        `code.ilike.%${term}%,customer_name.ilike.%${term}%,customer_whatsapp.ilike.%${term}%,recipient_name.ilike.%${term}%`
+      );
+    }
+
+    const { data, count, error } = await query;
+    if (!error && data) {
+      const totalCount = count || 0;
+      return {
+        orders: (data as OrderRow[]) || [],
+        totalCount,
+        page,
+        pageSize,
+        totalPages: Math.ceil(totalCount / pageSize) || 1,
+      };
+    }
+  } catch {
+    // fallback
+  }
+
+  const adminClient = createSupabaseAdminClient();
   let query = adminClient
     .from('orders')
     .select('*', { count: 'exact' })
@@ -190,7 +264,7 @@ export async function getOrdersList(params: {
     );
   }
 
-  const { data, count, error } = await query;
+  const { data, count } = await query;
   const totalCount = count || 0;
 
   return {
@@ -210,38 +284,75 @@ export async function getOrderById(id: string): Promise<{
   history: OrderStatusHistoryRow[];
   giftPage: GiftPageRow | null;
 }> {
-  const adminClient = createSupabaseAdminClient();
+  try {
+    const supabase = createSupabaseServerClient();
+    const { data: order } = await supabase
+      .from('orders')
+      .select('*')
+      .eq('id', id)
+      .maybeSingle();
 
-  const { data: order, error: orderError } = await adminClient
-    .from('orders')
-    .select('*')
-    .eq('id', id)
-    .single();
+    if (order) {
+      const { data: history } = await supabase
+        .from('order_status_history')
+        .select('*')
+        .eq('order_id', id)
+        .order('created_at', { ascending: false });
 
-  if (orderError || !order) {
-    return { order: null, history: [], giftPage: null };
+      const { data: giftPage } = await supabase
+        .from('gift_pages')
+        .select('*')
+        .eq('order_id', id)
+        .is('archived_at', null)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      return {
+        order: order as OrderRow,
+        history: (history as OrderStatusHistoryRow[]) || [],
+        giftPage: giftPage as GiftPageRow | null,
+      };
+    }
+  } catch {
+    // fallback
   }
 
-  const { data: history } = await adminClient
-    .from('order_status_history')
-    .select('*')
-    .eq('order_id', id)
-    .order('created_at', { ascending: false });
+  try {
+    const adminClient = createSupabaseAdminClient();
+    const { data: order, error: orderError } = await adminClient
+      .from('orders')
+      .select('*')
+      .eq('id', id)
+      .single();
 
-  const { data: giftPage } = await adminClient
-    .from('gift_pages')
-    .select('*')
-    .eq('order_id', id)
-    .is('archived_at', null)
-    .order('created_at', { ascending: false })
-    .limit(1)
-    .maybeSingle();
+    if (orderError || !order) {
+      return { order: null, history: [], giftPage: null };
+    }
 
-  return {
-    order: order as OrderRow,
-    history: (history as OrderStatusHistoryRow[]) || [],
-    giftPage: giftPage as GiftPageRow | null,
-  };
+    const { data: history } = await adminClient
+      .from('order_status_history')
+      .select('*')
+      .eq('order_id', id)
+      .order('created_at', { ascending: false });
+
+    const { data: giftPage } = await adminClient
+      .from('gift_pages')
+      .select('*')
+      .eq('order_id', id)
+      .is('archived_at', null)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    return {
+      order: order as OrderRow,
+      history: (history as OrderStatusHistoryRow[]) || [],
+      giftPage: giftPage as GiftPageRow | null,
+    };
+  } catch {
+    return { order: null, history: [], giftPage: null };
+  }
 }
 
 /**
@@ -622,12 +733,45 @@ export async function getGiftPagesList(params: {
   pageSize: number;
   totalPages: number;
 }> {
-  const adminClient = createSupabaseAdminClient();
   const page = params.page || 1;
   const pageSize = params.pageSize || 15;
   const from = (page - 1) * pageSize;
   const to = from + pageSize - 1;
 
+  try {
+    const supabase = createSupabaseServerClient();
+    let query = supabase
+      .from('gift_pages')
+      .select('*, orders(code, customer_name, customer_whatsapp)', { count: 'exact' })
+      .is('archived_at', null)
+      .order('created_at', { ascending: false })
+      .range(from, to);
+
+    if (params.status && params.status !== 'all') {
+      query = query.eq('status', params.status);
+    }
+
+    if (params.search && params.search.trim()) {
+      const term = params.search.trim();
+      query = query.or(`title.ilike.%${term}%,recipient_name.ilike.%${term}%`);
+    }
+
+    const { data, count, error } = await query;
+    if (!error && data) {
+      const totalCount = count || 0;
+      return {
+        pages: (data as GiftPageRow[]) || [],
+        totalCount,
+        page,
+        pageSize,
+        totalPages: Math.ceil(totalCount / pageSize) || 1,
+      };
+    }
+  } catch {
+    // fallback
+  }
+
+  const adminClient = createSupabaseAdminClient();
   let query = adminClient
     .from('gift_pages')
     .select('*, orders(code, customer_name, customer_whatsapp)', { count: 'exact' })
@@ -644,7 +788,7 @@ export async function getGiftPagesList(params: {
     query = query.or(`title.ilike.%${term}%,recipient_name.ilike.%${term}%`);
   }
 
-  const { data, count, error } = await query;
+  const { data, count } = await query;
   const totalCount = count || 0;
 
   return {
@@ -663,32 +807,58 @@ export async function getGiftPageById(id: string): Promise<{
   giftPage: GiftPageRow | null;
   order: OrderRow | null;
 }> {
-  const adminClient = createSupabaseAdminClient();
+  let giftPage: any = null;
+  let order: any = null;
 
-  const { data: giftPage, error } = await adminClient
-    .from('gift_pages')
-    .select('*')
-    .eq('id', id)
-    .single();
-
-  if (error || !giftPage) {
-    return { giftPage: null, order: null };
-  }
-
-  let order: OrderRow | null = null;
-  if (giftPage.order_id) {
-    const { data: orderData } = await adminClient
-      .from('orders')
+  try {
+    const supabase = createSupabaseServerClient();
+    const { data: pageData } = await supabase
+      .from('gift_pages')
       .select('*')
-      .eq('id', giftPage.order_id)
-      .single();
-    order = orderData as OrderRow | null;
+      .eq('id', id)
+      .maybeSingle();
+
+    if (pageData) {
+      giftPage = pageData;
+      if (giftPage.order_id) {
+        const { data: orderData } = await supabase
+          .from('orders')
+          .select('*')
+          .eq('id', giftPage.order_id)
+          .maybeSingle();
+        order = orderData;
+      }
+      return { giftPage, order };
+    }
+  } catch {
+    // fallback
   }
 
-  return {
-    giftPage: giftPage as GiftPageRow,
-    order,
-  };
+  try {
+    const adminClient = createSupabaseAdminClient();
+    const { data: pageData } = await adminClient
+      .from('gift_pages')
+      .select('*')
+      .eq('id', id)
+      .maybeSingle();
+
+    if (pageData) {
+      giftPage = pageData;
+      if (giftPage.order_id) {
+        const { data: orderData } = await adminClient
+          .from('orders')
+          .select('*')
+          .eq('id', giftPage.order_id)
+          .maybeSingle();
+        order = orderData;
+      }
+      return { giftPage, order };
+    }
+  } catch {
+    //
+  }
+
+  return { giftPage: null, order: null };
 }
 
 /**
