@@ -15,24 +15,73 @@ export async function GET(
     const storagePath = params.path.map(decodeURIComponent).join('/');
     const adminClient = createSupabaseAdminClient();
 
+    // 1. Tenta download direto pelo SDK do Storage
     const { data, error } = await adminClient.storage
       .from('gift-media')
       .download(storagePath);
 
-    if (error || !data) {
-      return new NextResponse('Media not found', { status: 404 });
+    if (data && !error) {
+      const mimeType = data.type || 'image/jpeg';
+      const arrayBuffer = await data.arrayBuffer();
+
+      return new NextResponse(Buffer.from(arrayBuffer), {
+        status: 200,
+        headers: {
+          'Content-Type': mimeType,
+          'Cache-Control': 'public, max-age=31536000, immutable',
+        },
+      });
     }
 
-    const mimeType = data.type || 'image/jpeg';
-    const arrayBuffer = await data.arrayBuffer();
+    // 2. Fallback: URL assinada
+    try {
+      const { data: signedData } = await adminClient.storage
+        .from('gift-media')
+        .createSignedUrl(storagePath, 3600);
 
-    return new NextResponse(Buffer.from(arrayBuffer), {
-      status: 200,
-      headers: {
-        'Content-Type': mimeType,
-        'Cache-Control': 'public, max-age=31536000, immutable',
-      },
-    });
+      if (signedData?.signedUrl) {
+        const res = await fetch(signedData.signedUrl);
+        if (res.ok) {
+          const buffer = await res.arrayBuffer();
+          const mimeType = res.headers.get('content-type') || 'image/jpeg';
+          return new NextResponse(Buffer.from(buffer), {
+            status: 200,
+            headers: {
+              'Content-Type': mimeType,
+              'Cache-Control': 'public, max-age=31536000, immutable',
+            },
+          });
+        }
+      }
+    } catch {
+      //
+    }
+
+    // 3. Fallback: URL pública
+    try {
+      const { data: pubData } = adminClient.storage
+        .from('gift-media')
+        .getPublicUrl(storagePath);
+
+      if (pubData?.publicUrl) {
+        const res = await fetch(pubData.publicUrl);
+        if (res.ok) {
+          const buffer = await res.arrayBuffer();
+          const mimeType = res.headers.get('content-type') || 'image/jpeg';
+          return new NextResponse(Buffer.from(buffer), {
+            status: 200,
+            headers: {
+              'Content-Type': mimeType,
+              'Cache-Control': 'public, max-age=31536000, immutable',
+            },
+          });
+        }
+      }
+    } catch {
+      //
+    }
+
+    return new NextResponse('Media not found', { status: 404 });
   } catch (err: any) {
     console.error('Erro ao servir media:', err);
     return new NextResponse('Internal Server Error', { status: 500 });
