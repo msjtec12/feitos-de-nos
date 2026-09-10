@@ -86,23 +86,38 @@ export function StepStyle({ formData, updateForm, onNext, onBack }: StepStylePro
               )}
 
               <div className="space-y-3.5">
-                {/* Visual Color Preview Bars */}
-                <div className="flex items-center gap-2">
+                {/* Visual Color Preview Bar with high contrast */}
+                <div className="flex items-center gap-2 p-2 rounded-xl bg-stone-50 border border-stone-200/90 w-full">
+                  <div className="flex items-center gap-1.5 flex-1 min-w-0" title={`Cor Primária: ${style.primaryColor}`}>
+                    <div
+                      className="w-5 h-5 rounded-full ring-2 ring-black/20 shadow-xs flex-shrink-0"
+                      style={{ backgroundColor: style.primaryColor }}
+                    />
+                    <span className="text-[10px] font-mono text-stone-700 font-bold truncate">
+                      {style.primaryColor}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-1.5 flex-1 min-w-0" title={`Cor de Acento: ${style.accentColor}`}>
+                    <div
+                      className="w-5 h-5 rounded-full ring-2 ring-black/20 shadow-xs flex-shrink-0"
+                      style={{ backgroundColor: style.accentColor }}
+                    />
+                    <span className="text-[10px] font-mono text-stone-700 font-bold truncate">
+                      {style.accentColor}
+                    </span>
+                  </div>
+
                   <div
-                    className="w-7 h-7 rounded-full shadow-inner border border-black/10"
-                    style={{ backgroundColor: style.primaryColor }}
-                    title={`Cor Principal: ${style.primaryColor}`}
-                  />
-                  <div
-                    className="w-7 h-7 rounded-full shadow-inner border border-black/10 -ml-1"
-                    style={{ backgroundColor: style.accentColor }}
-                    title={`Cor de Destaque: ${style.accentColor}`}
-                  />
-                  <div
-                    className="w-7 h-7 rounded-full shadow-inner border border-black/10 -ml-1"
-                    style={{ backgroundColor: style.backgroundColor || '#FFF8F0' }}
-                    title={`Fundo: ${style.backgroundColor || '#FFF8F0'}`}
-                  />
+                    className="px-2 py-0.5 rounded-md ring-1 ring-black/25 text-[10px] font-mono font-bold shadow-xs flex-shrink-0 flex items-center justify-center"
+                    style={{
+                      backgroundColor: style.backgroundColor || '#FFF8F0',
+                      color: style.textColor || '#302B2D',
+                    }}
+                    title={`Fundo: ${style.backgroundColor || '#FFF8F0'} | Texto: ${style.textColor || '#302B2D'}`}
+                  >
+                    Fundo
+                  </div>
                 </div>
 
                 <div>
