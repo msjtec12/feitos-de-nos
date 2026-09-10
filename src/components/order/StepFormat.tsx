@@ -29,6 +29,34 @@ export function StepFormat({ formData, updateForm, onNext, onBack }: StepFormatP
         </p>
       </div>
 
+      {/* Visual Reference Banner */}
+      <div className="bg-white/90 border border-[#713C48]/15 rounded-3xl p-4 sm:p-5 shadow-sm">
+        <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
+          <div className="w-full sm:w-48 max-w-[200px] flex-shrink-0 rounded-2xl overflow-hidden border border-[#713C48]/15 shadow-xs bg-[#FFF8F0]">
+            <img
+              src="/brand/formatos-presentes-referencia.jpg"
+              alt="Referência visual dos formatos de presentes Feito de Nós"
+              className="w-full h-auto object-cover"
+            />
+          </div>
+          <div className="space-y-1.5 text-center sm:text-left flex-1">
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#713C48]/10 text-[#713C48] text-[11px] font-semibold uppercase tracking-wider">
+              <Sparkles className="w-3 h-3 text-[#C96E5A]" />
+              <span>Vitrine de Referência</span>
+            </div>
+            <h3 className="font-serif text-base sm:text-lg text-[#713C48]">
+              Qual formato se adapta melhor à sua celebração?
+            </h3>
+            <p className="text-xs text-[#302B2D]/75 leading-relaxed">
+              Você pode optar pelo envio 100% digital imediato via link e QR Code, pelo Cartão impresso de alta gramatura ou pelo Presente Interativo com placa de acrílico em base de madeira nobre e embalagem especial.
+            </p>
+            <p className="text-[10px] text-[#302B2D]/55 italic pt-0.5">
+              * Foto de referência dos formatos. Os acabamentos e fotos físicas são ilustrativos e personalizados exclusivamente com a sua história.
+            </p>
+          </div>
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
         {GIFT_FORMATS.map((fmt) => {
           const isSelected = formData.format === fmt.id;

@@ -22,6 +22,56 @@ export function GiftOptionsSection() {
           </p>
         </div>
 
+        {/* Visual Reference Showcase Banner */}
+        <div className="mb-14 bg-white/80 border border-[#713C48]/15 rounded-3xl p-5 sm:p-8 shadow-md">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
+            <div className="lg:col-span-6 relative group overflow-hidden rounded-2xl border border-[#713C48]/15 shadow-sm bg-[#FFF8F0]">
+              <img
+                src="/brand/formatos-presentes-referencia.jpg"
+                alt="Vitrine de presentes Feito de Nós: História Digital, Cartão que Fala e Presente Interativo"
+                className="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+              />
+              <div className="absolute bottom-3 left-3 right-3 bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-xl text-[11px] text-white/95 text-center font-medium">
+                ✨ Foto de referência dos formatos (Imagens ilustrativas)
+              </div>
+            </div>
+
+            <div className="lg:col-span-6 space-y-4 text-left">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#713C48]/10 text-[#713C48] text-xs font-semibold uppercase tracking-wider">
+                <Sparkles className="w-3.5 h-3.5 text-[#C96E5A]" />
+                <span>Referência Visual dos Presentes</span>
+              </div>
+
+              <h3 className="font-serif text-2xl sm:text-3xl text-[#713C48] leading-snug">
+                Do digital à entrega em mãos: veja como cada detalhe ganha vida
+              </h3>
+
+              <p className="text-xs sm:text-sm text-[#302B2D]/80 leading-relaxed">
+                Cada presente é montado sob medida com curadoria cuidadosa, combinando tecnologia imersiva e acabamento artesanal de altíssima qualidade.
+              </p>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+                <div className="p-3 rounded-2xl bg-[#FFF8F0] border border-[#713C48]/10">
+                  <span className="text-xs font-bold text-[#713C48] block">📱 História Digital</span>
+                  <span className="text-[11px] text-[#302B2D]/70 block mt-0.5">Página web interativa com áudios e linha do tempo</span>
+                </div>
+                <div className="p-3 rounded-2xl bg-[#FFF8F0] border border-[#713C48]/10">
+                  <span className="text-xs font-bold text-[#713C48] block">💌 Cartão que Fala</span>
+                  <span className="text-[11px] text-[#302B2D]/70 block mt-0.5">Cartão premium com envelope e lacre de cera</span>
+                </div>
+                <div className="p-3 rounded-2xl bg-[#FFF8F0] border border-[#713C48]/10">
+                  <span className="text-xs font-bold text-[#713C48] block">🎁 Presente Interativo</span>
+                  <span className="text-[11px] text-[#302B2D]/70 block mt-0.5">Placa de acrílico com base em madeira e caixa</span>
+                </div>
+              </div>
+
+              <p className="text-[11px] text-[#302B2D]/60 italic">
+                * Nota: Imagens ilustrativas. Os itens físicos são personalizados exclusivamente com as fotos, nomes e QR Code de cada homenageado.
+              </p>
+            </div>
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
           {GIFT_FORMATS.map((fmt) => {
             const isPopular = fmt.popular;
