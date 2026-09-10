@@ -364,6 +364,17 @@ export function TabSettingsAndTheme({
             </p>
           </div>
         </div>
+
+        {/* 6-Month Hosting Policy Notice */}
+        <div className="p-3.5 bg-[#FFF8F0] border border-[#713C48]/15 rounded-2xl flex items-start gap-2.5 text-xs text-[#302B2D]/80">
+          <Info className="w-4 h-4 text-[#C96E5A] flex-shrink-0 mt-0.5" />
+          <div>
+            <strong className="text-[#713C48] font-semibold">Política de Hospedagem: 6 Meses Online</strong>
+            <p className="text-[11px] text-[#302B2D]/70 mt-0.5">
+              A página fica disponível publicamente no ar por 6 meses a partir da criação. O cliente e o presenteado contam com a funcionalidade de download completo das fotos e áudios gravados (.ZIP) diretamente na página para mantê-los salvos para sempre.
+            </p>
+          </div>
+        </div>
       </div>
 
       {/* Public Link & QR Code Box */}

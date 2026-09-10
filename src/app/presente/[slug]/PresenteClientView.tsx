@@ -9,6 +9,7 @@ import { Timeline } from "@/components/timeline/Timeline";
 import { ContributorMessages } from "@/components/contributors/ContributorMessages";
 import { MemoryGallery } from "@/components/gallery/MemoryGallery";
 import { ClosingMessage } from "@/components/closing/ClosingMessage";
+import { DownloadMemoriesSection } from "@/components/download/DownloadMemoriesSection";
 import { BrandFooter } from "@/components/brand/BrandFooter";
 import { BackgroundKnotArt } from "@/components/brand/BrandSymbol";
 import { PWAInstallPrompt } from "@/components/pwa/PWAInstallPrompt";
@@ -111,12 +112,15 @@ export function PresenteClientView({
           signature={gift.closing.signature}
         />
 
+        {/* 7. Download de Memórias & Aviso de Validade de 6 Meses */}
+        <DownloadMemoriesSection gift={gift} />
+
         {/* Atalhos de PWA e Cartão Físico com QR Code */}
         <div className="max-w-md mx-auto px-4">
           <PWAInstallPrompt slug={gift.slug} />
         </div>
 
-        {/* 7. Rodapé Discreto da Marca */}
+        {/* 8. Rodapé Discreto da Marca */}
         <BrandFooter />
       </main>
     </div>

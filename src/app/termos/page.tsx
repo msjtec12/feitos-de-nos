@@ -102,10 +102,10 @@ export default function TermosPage() {
 
           <section className="space-y-3">
             <h2 className="font-serif text-xl sm:text-2xl text-[#713C48]">
-              6. Durabilidade e Hospedagem
+              6. Durabilidade, Hospedagem e Download de Arquivos
             </h2>
             <p>
-              A página digital interativa é mantida em servidores de alta disponibilidade e tem acesso vitalício garantido para que a família e os presenteados possam revisitar a memória a qualquer momento no futuro.
+              A página digital interativa permanece online e acessível publicamente via link e QR Code pelo período de <strong>6 (seis) meses</strong> a contar da data de sua criação. Durante todo esse período, o cliente e o homenageado contam com a funcionalidade integrada de <strong>download completo do pacote de memórias</strong> (fotos em alta resolução, áudios de voz gravados e dedicatórias escritas) para salvar e manter todos os arquivos em seus computadores ou celulares permanentemente.
             </p>
           </section>
         </div>

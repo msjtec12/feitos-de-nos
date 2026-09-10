@@ -50,7 +50,7 @@ export function HomeHero() {
             {/* Trust Badges */}
             <div className="pt-6 border-t border-[#713C48]/10 grid grid-cols-3 gap-3 text-center sm:text-left">
               <div>
-                <p className="text-xs font-semibold text-[#713C48] uppercase tracking-wider">Acesso</p>
+                <p className="text-xs font-semibold text-[#713C48] uppercase tracking-wider">Acesso Fácil</p>
                 <p className="text-xs text-[#302B2D]/70 mt-0.5">Sem baixar app</p>
               </div>
               <div>
@@ -58,8 +58,8 @@ export function HomeHero() {
                 <p className="text-xs text-[#302B2D]/70 mt-0.5">Vozes que emocionam</p>
               </div>
               <div>
-                <p className="text-xs font-semibold text-[#713C48] uppercase tracking-wider">Segurança</p>
-                <p className="text-xs text-[#302B2D]/70 mt-0.5">Acesso permanente</p>
+                <p className="text-xs font-semibold text-[#713C48] uppercase tracking-wider">Hospedagem</p>
+                <p className="text-xs text-[#302B2D]/70 mt-0.5">6 meses + Download</p>
               </div>
             </div>
           </div>

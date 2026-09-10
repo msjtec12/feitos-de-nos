@@ -18,7 +18,7 @@ export function GiftOptionsSection() {
             Escolha como emocionar
           </h2>
           <p className="text-base sm:text-lg text-[#302B2D]/80 leading-relaxed font-normal">
-            Todos os formatos incluem a experiência interativa exclusiva com fotos, mensagens, áudios e acesso vitalício.
+            Todos os formatos incluem página interativa online por 6 meses e opção de download para guardar tudo para sempre.
           </p>
         </div>
 

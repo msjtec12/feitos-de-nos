@@ -48,7 +48,7 @@ export const GIFT_FORMATS: FormatOption[] = [
       'Música tema / trilha sonora',
       'Mensagens de texto e cartas dedicatórias',
       'Link exclusivo e QR Code digital em alta resolução',
-      'Acesso vitalício e seguro',
+      'Disponível online por 6 meses + download para guardar para sempre',
     ],
     isPhysical: false,
   },
@@ -270,7 +270,7 @@ export const DIFFERENTIATORS = [
   },
   {
     title: 'Segurança e durabilidade',
-    description: 'Seu presente fica hospedado de forma permanente e segura, pronto para ser acessado por toda a vida.',
+    description: 'Sua homenagem fica ativa online por 6 meses, com opção para baixar e salvar todas as fotos e áudios para sempre.',
   },
 ];
 
@@ -292,8 +292,8 @@ export const FAQ_ITEMS = [
     answer: 'Sim, sempre! Você recebe uma prévia privada completa para navegar, ouvir os áudios e solicitar ajustes antes do envio final ou da impressão dos materiais físicos.',
   },
   {
-    question: 'Por quanto tempo o presente continuará disponível?',
-    answer: 'O presente digital possui acesso vitalício e permanente em nossos servidores seguros. Você pode revisitar as memórias sempre que bater a saudade, em qualquer dispositivo.',
+    question: 'Por quanto tempo a página fica no ar?',
+    answer: 'A página interativa fica disponível online por 6 meses a partir da data de criação. Durante esse período, você e o presenteado podem fazer o download do pacote completo de memórias (fotos em alta resolução, áudios de voz gravados e mensagens) para manter tudo guardado para sempre em seus dispositivos.',
   },
   {
     question: 'Posso convidar outras pessoas para enviar áudios e mensagens?',
