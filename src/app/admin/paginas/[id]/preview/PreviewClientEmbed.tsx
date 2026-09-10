@@ -39,7 +39,10 @@ export function PreviewClientEmbed({
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#FFF8F0] relative">
+    <div
+      style={{ backgroundColor: gift.theme?.backgroundColor || '#FFF8F0' }}
+      className="min-h-screen relative"
+    >
       {!isEmbed && (
         <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-[#713C48] text-white px-5 py-2.5 rounded-full shadow-xl flex items-center gap-4 text-xs font-medium border border-white/20 backdrop-blur-md">
           <span className="flex items-center gap-1.5">

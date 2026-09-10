@@ -576,7 +576,8 @@ export default function ExperienceEditorClientView({
                 {/* Inner Screen rendered natively with PresenteClientView */}
                 <div
                   key={simulatorKey}
-                  className="w-full h-full bg-[#FFF8F0] rounded-[38px] overflow-y-auto relative scrollbar-none"
+                  style={{ backgroundColor: theme.backgroundColor || '#FFF8F0' }}
+                  className="w-full h-full rounded-[38px] overflow-y-auto relative scrollbar-none transition-colors duration-300"
                 >
                   <PresenteClientView
                     gift={liveGiftExperience}

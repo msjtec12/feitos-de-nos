@@ -14,6 +14,8 @@ import { BrandFooter } from "@/components/brand/BrandFooter";
 import { BackgroundKnotArt } from "@/components/brand/BrandSymbol";
 import { PWAInstallPrompt } from "@/components/pwa/PWAInstallPrompt";
 
+import { getThemeCssVariables } from "@/lib/theme-utils";
+
 interface PresenteClientViewProps {
   gift: GiftExperience;
   initialOpen?: boolean;
@@ -32,21 +34,7 @@ export function PresenteClientView({
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const theme = gift.theme || {
-    primaryColor: '#713C48',
-    accentColor: '#C96E5A',
-    backgroundColor: '#FFF8F0',
-    textColor: '#302B2D',
-  };
-
-  const dynamicStyles = {
-    '--theme-primary': theme.primaryColor || '#713C48',
-    '--theme-accent': theme.accentColor || '#C96E5A',
-    '--theme-bg': theme.backgroundColor || '#FFF8F0',
-    '--theme-text': theme.textColor || '#302B2D',
-    backgroundColor: theme.backgroundColor || '#FFF8F0',
-    color: theme.textColor || '#302B2D',
-  } as React.CSSProperties;
+  const dynamicStyles = getThemeCssVariables(gift.theme);
 
   return (
     <div

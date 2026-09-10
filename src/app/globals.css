@@ -8,6 +8,31 @@
   --color-cream: #FFF8F0;
   --color-rose: #D9A4A0;
   --color-graphite: #302B2D;
+
+  --theme-primary: #713C48;
+  --theme-primary-rgb: 113 60 72;
+  --theme-primary-dark: #542C35;
+  --theme-primary-light: #8C4D5C;
+  --theme-primary-subtle: #F6EFF1;
+
+  --theme-accent: #C96E5A;
+  --theme-accent-rgb: 201 110 90;
+  --theme-accent-dark: #A85340;
+  --theme-accent-light: #D88B7B;
+  --theme-accent-subtle: #FAF0ED;
+
+  --theme-bg: #FFF8F0;
+  --theme-bg-rgb: 255 248 240;
+  --theme-bg-dark: #F4EADC;
+
+  --theme-rose: #D9A4A0;
+  --theme-rose-rgb: 217 164 160;
+  --theme-rose-subtle: #FBF5F4;
+
+  --theme-text: #302B2D;
+  --theme-text-rgb: 48 43 45;
+  --theme-text-muted: #665E62;
+  --theme-text-light: #8E8488;
 }
 
 @layer base {

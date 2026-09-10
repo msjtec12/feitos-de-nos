@@ -209,34 +209,34 @@ export function DownloadMemoriesSection({ gift }: DownloadMemoriesSectionProps) 
 
   return (
     <section className="py-12 px-4 sm:px-6 max-w-2xl mx-auto w-full" aria-label="Baixar e guardar memórias">
-      <div className="bg-white/95 backdrop-blur-md rounded-3xl p-6 sm:p-8 border-2 border-[#713C48]/20 shadow-xl space-y-6 text-[#302B2D]">
+      <div className="bg-white/95 backdrop-blur-md rounded-3xl p-6 sm:p-8 border-2 border-brand-wine/20 shadow-xl space-y-6 text-brand-graphite">
         {/* Header with Icon */}
         <div className="flex items-start gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-[#713C48] text-[#FFF8F0] flex items-center justify-center flex-shrink-0 shadow-sm">
-            <Download className="w-6 h-6 text-[#D9A4A0]" />
+          <div className="w-12 h-12 rounded-2xl bg-brand-wine text-white flex items-center justify-center flex-shrink-0 shadow-sm">
+            <Download className="w-6 h-6 text-brand-rose" />
           </div>
 
           <div className="space-y-1">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-[#C96E5A]">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-brand-terracotta">
               Guardar para Sempre
             </span>
-            <h3 className="font-serif text-2xl text-[#713C48] leading-tight">
+            <h3 className="font-serif text-2xl text-brand-wine leading-tight">
               Baixe todas as fotos, mensagens e áudios
             </h3>
-            <p className="text-xs text-[#302B2D]/80 leading-relaxed">
+            <p className="text-xs text-brand-graphite/80 leading-relaxed">
               Salve este presente em alta qualidade no seu computador ou celular para ter todas as lembranças sempre com você.
             </p>
           </div>
         </div>
 
         {/* 6-Month Validity Notice Card */}
-        <div className="p-4 rounded-2xl bg-[#FFF8F0] border border-[#C96E5A]/30 flex items-start gap-3">
-          <Clock className="w-5 h-5 text-[#C96E5A] flex-shrink-0 mt-0.5" />
-          <div className="text-xs text-[#302B2D]/85 leading-relaxed space-y-1">
-            <strong className="text-[#713C48] block font-semibold">
+        <div className="p-4 rounded-2xl bg-brand-cream border border-brand-terracotta/30 flex items-start gap-3">
+          <Clock className="w-5 h-5 text-brand-terracotta flex-shrink-0 mt-0.5" />
+          <div className="text-xs text-brand-graphite/85 leading-relaxed space-y-1">
+            <strong className="text-brand-wine block font-semibold">
               📅 Aviso Importante: Esta página online fica no ar por 6 meses.
             </strong>
-            <p className="text-[11px] text-[#302B2D]/75">
+            <p className="text-[11px] text-brand-graphite/75">
               Aproveite para realizar o download completo das fotos em alta resolução, arquivos de áudio de voz e cartas escritas para mantê-los salvos permanentemente em seus dispositivos.
             </p>
           </div>
@@ -248,16 +248,16 @@ export function DownloadMemoriesSection({ gift }: DownloadMemoriesSectionProps) 
             type="button"
             onClick={handleDownloadCompleteZip}
             disabled={isDownloading}
-            className="w-full py-4 px-6 rounded-2xl bg-[#713C48] text-[#FFF8F0] hover:bg-[#592F39] transition-all font-semibold text-sm shadow-md hover:shadow-lg flex items-center justify-center gap-3 disabled:opacity-60 cursor-pointer"
+            className="w-full py-4 px-6 rounded-2xl bg-brand-wine text-white hover:bg-brand-wine-dark transition-all font-semibold text-sm shadow-md hover:shadow-lg flex items-center justify-center gap-3 disabled:opacity-60 cursor-pointer"
           >
             {isDownloading ? (
               <>
-                <Loader2 className="w-5 h-5 animate-spin text-[#D9A4A0]" />
+                <Loader2 className="w-5 h-5 animate-spin text-brand-rose" />
                 <span>{downloadProgress || 'Gerando pacote...'}</span>
               </>
             ) : (
               <>
-                <FileArchive className="w-5 h-5 text-[#D9A4A0]" />
+                <FileArchive className="w-5 h-5 text-brand-rose" />
                 <span>Baixar Pacote Completo de Memórias (.ZIP)</span>
               </>
             )}
@@ -272,27 +272,27 @@ export function DownloadMemoriesSection({ gift }: DownloadMemoriesSectionProps) 
 
           {/* Individual items summary & download shortcuts */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-2">
-            <div className="p-3 bg-[#FFF8F0]/60 rounded-xl border border-[#713C48]/10 text-center">
-              <ImageIcon className="w-4 h-4 text-[#C96E5A] mx-auto mb-1" />
-              <span className="text-xs font-bold text-[#713C48] block">{totalPhotosCount} fotos</span>
-              <span className="text-[10px] text-[#302B2D]/60">Alta resolução</span>
+            <div className="p-3 bg-brand-cream/60 rounded-xl border border-brand-wine/10 text-center">
+              <ImageIcon className="w-4 h-4 text-brand-terracotta mx-auto mb-1" />
+              <span className="text-xs font-bold text-brand-wine block">{totalPhotosCount} fotos</span>
+              <span className="text-[10px] text-brand-graphite/60">Alta resolução</span>
             </div>
 
-            <div className="p-3 bg-[#FFF8F0]/60 rounded-xl border border-[#713C48]/10 text-center">
-              <Volume2 className="w-4 h-4 text-[#C96E5A] mx-auto mb-1" />
-              <span className="text-xs font-bold text-[#713C48] block">{totalAudiosCount} áudio(s)</span>
-              <span className="text-[10px] text-[#302B2D]/60">Vozes reais</span>
+            <div className="p-3 bg-brand-cream/60 rounded-xl border border-brand-wine/10 text-center">
+              <Volume2 className="w-4 h-4 text-brand-terracotta mx-auto mb-1" />
+              <span className="text-xs font-bold text-brand-wine block">{totalAudiosCount} áudio(s)</span>
+              <span className="text-[10px] text-brand-graphite/60">Vozes reais</span>
             </div>
 
             <button
               type="button"
               onClick={handleDownloadTextKeepsake}
-              className="p-3 bg-[#FFF8F0]/60 hover:bg-[#FFF8F0] rounded-xl border border-[#713C48]/10 text-center transition-colors group cursor-pointer"
+              className="p-3 bg-brand-cream/60 hover:bg-brand-cream rounded-xl border border-brand-wine/10 text-center transition-colors group cursor-pointer"
               title="Baixar somente o arquivo de texto com as cartas"
             >
-              <FileText className="w-4 h-4 text-[#C96E5A] mx-auto mb-1 group-hover:scale-110 transition-transform" />
-              <span className="text-xs font-bold text-[#713C48] block">Baixar Cartas</span>
-              <span className="text-[10px] text-[#302B2D]/60">Arquivo .TXT</span>
+              <FileText className="w-4 h-4 text-brand-terracotta mx-auto mb-1 group-hover:scale-110 transition-transform" />
+              <span className="text-xs font-bold text-brand-wine block">Baixar Cartas</span>
+              <span className="text-[10px] text-brand-graphite/60">Arquivo .TXT</span>
             </button>
           </div>
         </div>
