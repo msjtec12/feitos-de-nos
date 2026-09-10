@@ -15,10 +15,11 @@ import { PWAInstallPrompt } from "@/components/pwa/PWAInstallPrompt";
 
 interface PresenteClientViewProps {
   gift: GiftExperience;
+  initialOpen?: boolean;
 }
 
-export function PresenteClientView({ gift }: PresenteClientViewProps) {
-  const [isGiftOpened, setIsGiftOpened] = useState(false);
+export function PresenteClientView({ gift, initialOpen = false }: PresenteClientViewProps) {
+  const [isGiftOpened, setIsGiftOpened] = useState(initialOpen);
 
   const handleOpenGift = () => {
     setIsGiftOpened(true);

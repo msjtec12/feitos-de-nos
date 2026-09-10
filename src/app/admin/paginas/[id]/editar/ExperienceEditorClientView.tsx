@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { GiftPageRow, OrderRow, GiftPageStatus } from '@/types/database';
@@ -11,7 +11,6 @@ import { TabMessages } from '@/components/admin/ExperienceEditor/TabMessages';
 import { TabGallery } from '@/components/admin/ExperienceEditor/TabGallery';
 import { TabSettingsAndTheme } from '@/components/admin/ExperienceEditor/TabSettingsAndTheme';
 import { QRCodeModal } from '@/components/admin/QRCodeModal';
-import { PresenteClientView } from '@/app/presente/[slug]/PresenteClientView';
 import { mapContentToGiftExperience } from '@/lib/gift-mapper';
 import {
   FileText,
@@ -30,6 +29,8 @@ import {
   Loader2,
   Check,
   Sparkles,
+  Columns,
+  RotateCcw,
 } from 'lucide-react';
 
 interface ExperienceEditorClientViewProps {
@@ -38,6 +39,7 @@ interface ExperienceEditorClientViewProps {
 }
 
 type TabType = 'content' | 'timeline' | 'messages' | 'gallery' | 'settings';
+type ViewMode = 'split' | 'editor' | 'simulator';
 
 export default function ExperienceEditorClientView({
   giftPage: initialGiftPage,
@@ -46,7 +48,8 @@ export default function ExperienceEditorClientView({
   const router = useRouter();
   const [giftPage, setGiftPage] = useState<GiftPageRow>(initialGiftPage);
   const [activeTab, setActiveTab] = useState<TabType>('content');
-  const [showLivePreview, setShowLivePreview] = useState(true);
+  const [viewMode, setViewMode] = useState<ViewMode>('split');
+  const iframeRef = useRef<HTMLIFrameElement>(null);
 
   // Content and Theme State
   const [content, setContent] = useState<GiftContentData>(
@@ -195,16 +198,46 @@ export default function ExperienceEditorClientView({
   }, [recipientName, content, theme]);
 
   // Live experience preview data
-  const liveGiftExperience = mapContentToGiftExperience(
-    {
-      ...content,
-      recipient: {
-        ...content.recipient,
-        name: recipientName || content.recipient?.name || 'Presenteado',
+  const liveGiftExperience = useMemo(() => {
+    return mapContentToGiftExperience(
+      {
+        ...content,
+        recipient: {
+          ...content.recipient,
+          name: recipientName || content.recipient?.name || 'Presenteado',
+        },
       },
-    },
-    theme
-  );
+      theme
+    );
+  }, [content, recipientName, theme]);
+
+  // Sync live draft data to iframe preview in real time
+  useEffect(() => {
+    const iframe = iframeRef.current;
+    if (iframe && iframe.contentWindow) {
+      iframe.contentWindow.postMessage(
+        { type: 'UPDATE_EXPERIENCE', gift: liveGiftExperience },
+        '*'
+      );
+    }
+  }, [liveGiftExperience]);
+
+  // Listen for iframe ready signal
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data?.type === 'PREVIEW_READY') {
+        const iframe = iframeRef.current;
+        if (iframe && iframe.contentWindow) {
+          iframe.contentWindow.postMessage(
+            { type: 'UPDATE_EXPERIENCE', gift: liveGiftExperience },
+            '*'
+          );
+        }
+      }
+    };
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, [liveGiftExperience]);
 
   const tabs: { id: TabType; stepNumber: number; title: string; subtitle: string; icon: React.ReactNode }[] = [
     {
@@ -293,25 +326,55 @@ export default function ExperienceEditorClientView({
           </div>
         </div>
 
-        {/* Action Header Buttons */}
+        {/* Action Header Buttons & View Switcher */}
         <div className="flex flex-wrap items-center gap-2 flex-shrink-0">
-          <button
-            type="button"
-            onClick={() => setShowLivePreview(!showLivePreview)}
-            className={`px-3.5 py-2.5 rounded-xl text-xs font-bold border transition-all flex items-center gap-2 ${
-              showLivePreview
-                ? 'bg-[#713C48] text-white border-[#713C48] shadow-xs'
-                : 'bg-stone-50 hover:bg-stone-100 text-stone-700 border-stone-200'
-            }`}
-          >
-            <Smartphone className="w-4 h-4" />
-            <span className="hidden sm:inline">{showLivePreview ? 'Ocultar Simulador' : 'Simulador Mobile'}</span>
-          </button>
+          {/* View Mode Switcher */}
+          <div className="flex items-center bg-stone-100 p-1 rounded-2xl border border-stone-200 text-xs">
+            <button
+              type="button"
+              onClick={() => setViewMode('editor')}
+              title="Exibir apenas o formulário do editor em largura total"
+              className={`px-3 py-1.5 rounded-xl font-bold transition-all flex items-center gap-1.5 ${
+                viewMode === 'editor'
+                  ? 'bg-white text-[#713C48] shadow-xs'
+                  : 'text-stone-600 hover:text-stone-900'
+              }`}
+            >
+              <FileText className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Editor</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setViewMode('split')}
+              title="Exibir editor e simulador lado a lado"
+              className={`px-3 py-1.5 rounded-xl font-bold transition-all flex items-center gap-1.5 ${
+                viewMode === 'split'
+                  ? 'bg-white text-[#713C48] shadow-xs'
+                  : 'text-stone-600 hover:text-stone-900'
+              }`}
+            >
+              <Columns className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Lado a Lado</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setViewMode('simulator')}
+              title="Exibir apenas o simulador de smartphone"
+              className={`px-3 py-1.5 rounded-xl font-bold transition-all flex items-center gap-1.5 ${
+                viewMode === 'simulator'
+                  ? 'bg-white text-[#713C48] shadow-xs'
+                  : 'text-stone-600 hover:text-stone-900'
+              }`}
+            >
+              <Smartphone className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Simulador</span>
+            </button>
+          </div>
 
           <button
             type="button"
             onClick={() => setIsQrModalOpen(true)}
-            className="px-3.5 py-2.5 bg-stone-50 hover:bg-stone-100 text-[#713C48] border border-stone-200 rounded-xl text-xs font-bold transition-all flex items-center gap-2"
+            className="px-3.5 py-2 bg-stone-50 hover:bg-stone-100 text-[#713C48] border border-stone-200 rounded-xl text-xs font-bold transition-all flex items-center gap-2"
           >
             <QrCode className="w-4 h-4 text-[#C96E5A]" />
             <span>QR Code</span>
@@ -320,7 +383,7 @@ export default function ExperienceEditorClientView({
           <Link
             href={`/admin/paginas/${giftPage.id}/preview`}
             target="_blank"
-            className="px-3.5 py-2.5 bg-stone-50 hover:bg-stone-100 text-stone-700 border border-stone-200 rounded-xl text-xs font-bold transition-all flex items-center gap-2"
+            className="px-3.5 py-2 bg-stone-50 hover:bg-stone-100 text-stone-700 border border-stone-200 rounded-xl text-xs font-bold transition-all flex items-center gap-2"
           >
             <ExternalLink className="w-4 h-4" />
             <span className="hidden sm:inline">Prévia Completa</span>
@@ -330,7 +393,7 @@ export default function ExperienceEditorClientView({
             type="button"
             onClick={() => handleSave(false)}
             disabled={isSaving}
-            className="px-5 py-2.5 bg-[#713C48] hover:bg-[#592F39] disabled:opacity-50 text-white rounded-xl text-xs font-bold shadow-sm transition-all flex items-center gap-2"
+            className="px-4 py-2 bg-[#713C48] hover:bg-[#592F39] disabled:opacity-50 text-white rounded-xl text-xs font-bold shadow-sm transition-all flex items-center gap-2"
           >
             {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
             <span>{isSaving ? 'Salvando...' : 'Salvar'}</span>
@@ -393,138 +456,161 @@ export default function ExperienceEditorClientView({
         </div>
       </nav>
 
-      {/* Main Layout: Split Screen (Editor on Left, Sticky Simulator on Right) */}
-      <div className={`grid grid-cols-1 ${showLivePreview ? 'lg:grid-cols-12 gap-8' : 'gap-6'}`}>
+      {/* Main Layout */}
+      <div className={`grid grid-cols-1 ${viewMode === 'split' ? 'xl:grid-cols-12 gap-8' : 'gap-6'}`}>
         {/* Editor Form Column */}
-        <div className={showLivePreview ? 'lg:col-span-7 space-y-6' : 'space-y-6 max-w-4xl mx-auto w-full'}>
-          {/* Active Tab Card Body */}
-          <div className="bg-transparent space-y-6 min-h-[500px]">
-            {activeTab === 'content' && (
-              <TabContent
-                giftPageId={giftPage.id}
-                content={content}
-                updateContent={updateContent}
-              />
-            )}
+        {viewMode !== 'simulator' && (
+          <div className={viewMode === 'split' ? 'xl:col-span-7 space-y-6' : 'space-y-6 max-w-4xl mx-auto w-full'}>
+            {/* Active Tab Card Body */}
+            <div className="bg-transparent space-y-6 min-h-[500px]">
+              {activeTab === 'content' && (
+                <TabContent
+                  giftPageId={giftPage.id}
+                  content={content}
+                  updateContent={updateContent}
+                />
+              )}
 
-            {activeTab === 'timeline' && (
-              <TabTimeline
-                giftPageId={giftPage.id}
-                content={content}
-                updateContent={updateContent}
-              />
-            )}
+              {activeTab === 'timeline' && (
+                <TabTimeline
+                  giftPageId={giftPage.id}
+                  content={content}
+                  updateContent={updateContent}
+                />
+              )}
 
-            {activeTab === 'messages' && (
-              <TabMessages
-                giftPageId={giftPage.id}
-                content={content}
-                updateContent={updateContent}
-              />
-            )}
+              {activeTab === 'messages' && (
+                <TabMessages
+                  giftPageId={giftPage.id}
+                  content={content}
+                  updateContent={updateContent}
+                />
+              )}
 
-            {activeTab === 'gallery' && (
-              <TabGallery
-                giftPageId={giftPage.id}
-                content={content}
-                updateContent={updateContent}
-              />
-            )}
+              {activeTab === 'gallery' && (
+                <TabGallery
+                  giftPageId={giftPage.id}
+                  content={content}
+                  updateContent={updateContent}
+                />
+              )}
 
-            {activeTab === 'settings' && (
-              <TabSettingsAndTheme
-                giftPageId={giftPage.id}
-                publicToken={giftPage.public_token}
-                status={status}
-                revealAt={revealAt}
-                theme={theme}
-                updateTheme={updateTheme}
-                updatePageMeta={updatePageMeta}
-                onOpenQRCode={() => setIsQrModalOpen(true)}
-              />
-            )}
-          </div>
-
-          {/* Bottom Step Navigation Card */}
-          <div className="bg-white rounded-3xl p-4 sm:p-5 border border-[#713C48]/15 shadow-sm flex items-center justify-between gap-3">
-            <div>
-              {currentTabIndex > 0 ? (
-                <button
-                  type="button"
-                  onClick={() => setActiveTab(tabs[currentTabIndex - 1].id)}
-                  className="px-4 py-2.5 rounded-xl border border-stone-200 text-stone-700 hover:bg-stone-50 text-xs font-bold transition-all flex items-center gap-1.5"
-                >
-                  <ArrowLeft className="w-3.5 h-3.5" />
-                  <span>Voltar: {tabs[currentTabIndex - 1].title}</span>
-                </button>
-              ) : (
-                <span className="text-xs text-stone-400 font-medium pl-2">Primeira etapa</span>
+              {activeTab === 'settings' && (
+                <TabSettingsAndTheme
+                  giftPageId={giftPage.id}
+                  publicToken={giftPage.public_token}
+                  status={status}
+                  revealAt={revealAt}
+                  theme={theme}
+                  updateTheme={updateTheme}
+                  updatePageMeta={updatePageMeta}
+                  onOpenQRCode={() => setIsQrModalOpen(true)}
+                />
               )}
             </div>
 
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => handleSave(false)}
-                disabled={isSaving}
-                className="px-4 py-2.5 rounded-xl border border-[#713C48]/30 text-[#713C48] hover:bg-[#713C48]/5 text-xs font-bold transition-all disabled:opacity-50"
-              >
-                {isSaving ? 'Salvando...' : 'Salvar Rascunho'}
-              </button>
+            {/* Bottom Step Navigation Card */}
+            <div className="bg-white rounded-3xl p-4 sm:p-5 border border-[#713C48]/15 shadow-sm flex items-center justify-between gap-3">
+              <div>
+                {currentTabIndex > 0 ? (
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab(tabs[currentTabIndex - 1].id)}
+                    className="px-4 py-2.5 rounded-xl border border-stone-200 text-stone-700 hover:bg-stone-50 text-xs font-bold transition-all flex items-center gap-1.5"
+                  >
+                    <ArrowLeft className="w-3.5 h-3.5" />
+                    <span>Voltar: {tabs[currentTabIndex - 1].title}</span>
+                  </button>
+                ) : (
+                  <span className="text-xs text-stone-400 font-medium pl-2">Primeira etapa</span>
+                )}
+              </div>
 
-              {currentTabIndex < tabs.length - 1 ? (
+              <div className="flex items-center gap-2">
                 <button
                   type="button"
-                  onClick={() => handleSave(true)}
+                  onClick={() => handleSave(false)}
                   disabled={isSaving}
-                  className="px-5 py-2.5 bg-[#713C48] hover:bg-[#592F39] text-white rounded-xl text-xs font-bold shadow-sm transition-all flex items-center gap-1.5 disabled:opacity-50"
+                  className="px-4 py-2.5 rounded-xl border border-[#713C48]/30 text-[#713C48] hover:bg-[#713C48]/5 text-xs font-bold transition-all disabled:opacity-50"
                 >
-                  <span>Salvar e Avançar</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
+                  {isSaving ? 'Salvando...' : 'Salvar Rascunho'}
                 </button>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => {
-                    updatePageMeta({ status: 'published' });
-                    handleSave(false);
-                  }}
-                  disabled={isSaving}
-                  className="px-5 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl text-xs font-bold shadow-sm transition-all flex items-center gap-1.5 disabled:opacity-50"
-                >
-                  <Sparkles className="w-3.5 h-3.5" />
-                  <span>Publicar Experiência</span>
-                </button>
-              )}
+
+                {currentTabIndex < tabs.length - 1 ? (
+                  <button
+                    type="button"
+                    onClick={() => handleSave(true)}
+                    disabled={isSaving}
+                    className="px-5 py-2.5 bg-[#713C48] hover:bg-[#592F39] text-white rounded-xl text-xs font-bold shadow-sm transition-all flex items-center gap-1.5 disabled:opacity-50"
+                  >
+                    <span>Salvar e Avançar</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      updatePageMeta({ status: 'published' });
+                      handleSave(false);
+                    }}
+                    disabled={isSaving}
+                    className="px-5 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl text-xs font-bold shadow-sm transition-all flex items-center gap-1.5 disabled:opacity-50"
+                  >
+                    <Sparkles className="w-3.5 h-3.5" />
+                    <span>Publicar Experiência</span>
+                  </button>
+                )}
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
-        {/* Live Simulator Phone Column (Desktop Sticky) */}
-        {showLivePreview && (
-          <aside aria-label="Simulador ao vivo em smartphone" className="lg:col-span-5 flex flex-col items-center">
-            <div className="sticky top-6 w-full max-w-[380px] space-y-3">
+        {/* Live Simulator Phone Column (Isolated iframe with true mobile viewport) */}
+        {viewMode !== 'editor' && (
+          <aside
+            aria-label="Simulador ao vivo em smartphone"
+            className={viewMode === 'split' ? 'xl:col-span-5 flex flex-col items-center' : 'max-w-md mx-auto w-full flex flex-col items-center'}
+          >
+            <div className="sticky top-6 w-full max-w-[390px] space-y-3">
               <div className="flex items-center justify-between text-xs px-2">
                 <span className="font-bold text-[#713C48] flex items-center gap-1.5">
                   <Smartphone className="w-3.5 h-3.5 text-[#C96E5A]" />
                   Simulador de Smartphone
                 </span>
-                <span className="text-[10px] bg-emerald-50 text-emerald-800 font-semibold px-2 py-0.5 rounded-full border border-emerald-200">
-                  ● Atualização ao vivo
-                </span>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (iframeRef.current) {
+                        iframeRef.current.src = `/admin/paginas/${giftPage.id}/preview?embed=1`;
+                      }
+                    }}
+                    title="Recarregar tela do simulador"
+                    className="p-1 hover:bg-stone-200/60 rounded-md text-stone-500 hover:text-stone-800 transition-colors"
+                  >
+                    <RotateCcw className="w-3 h-3" />
+                  </button>
+                  <span className="text-[10px] bg-emerald-50 text-emerald-800 font-semibold px-2 py-0.5 rounded-full border border-emerald-200 flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                    Ao vivo
+                  </span>
+                </div>
               </div>
 
               {/* Realistic iPhone mockup frame */}
-              <div className="w-full h-[660px] bg-stone-900 rounded-[48px] p-3 shadow-2xl border-4 border-stone-800 relative overflow-hidden flex flex-col ring-1 ring-black/20">
+              <div className="w-full h-[680px] bg-stone-900 rounded-[48px] p-2.5 shadow-2xl border-4 border-stone-800 relative overflow-hidden flex flex-col ring-1 ring-black/20">
                 {/* iPhone Dynamic Island / Notch */}
-                <div className="absolute top-4 left-1/2 -translate-x-1/2 w-28 h-4 bg-stone-900 rounded-full z-30 flex items-center justify-center">
-                  <div className="w-3 h-3 rounded-full bg-stone-800 ml-auto mr-2" />
+                <div className="absolute top-3.5 left-1/2 -translate-x-1/2 w-24 h-4 bg-stone-900 rounded-full z-30 flex items-center justify-center pointer-events-none">
+                  <div className="w-2.5 h-2.5 rounded-full bg-stone-800 ml-auto mr-2" />
                 </div>
 
-                {/* Inner Screen */}
-                <div className="w-full h-full bg-[#FFF8F0] rounded-[36px] overflow-y-auto relative scrollbar-none">
-                  <PresenteClientView gift={liveGiftExperience} />
-                </div>
+                {/* Inner Screen iframe */}
+                <iframe
+                  ref={iframeRef}
+                  src={`/admin/paginas/${giftPage.id}/preview?embed=1`}
+                  className="w-full h-full bg-[#FFF8F0] rounded-[38px] border-0"
+                  title="Simulador de Smartphone ao Vivo"
+                />
               </div>
             </div>
           </aside>
