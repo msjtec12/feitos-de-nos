@@ -14,6 +14,7 @@ import {
   Play,
   Pause,
 } from 'lucide-react';
+import { compressImageFile } from '@/lib/image-compression';
 
 interface MediaUploaderProps {
   giftPageId?: string;
@@ -54,7 +55,7 @@ export function MediaUploader({
     };
   }, [localPreviewUrl]);
 
-  // Reset states if currentUrl changes from parent
+  // Reset error if currentUrl changes from parent
   useEffect(() => {
     setImageLoadError(false);
     if (!currentUrl && !isUploading) {
@@ -70,23 +71,26 @@ export function MediaUploader({
   };
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const rawFile = e.target.files?.[0];
+    if (!rawFile) return;
 
     // Create immediate local preview for instant visual feedback
-    const blobUrl = URL.createObjectURL(file);
+    const blobUrl = URL.createObjectURL(rawFile);
     setLocalPreviewUrl(blobUrl);
     setImageLoadError(false);
-    setImageLoaded(false);
+    setImageLoaded(true);
     setIsUploading(true);
     setError(null);
 
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('giftPageId', giftPageId);
-    formData.append('sectionKey', sectionKey);
-
     try {
+      // Automatic client-side compression for faster upload and zero payload limits
+      const file = mediaType === 'image' ? await compressImageFile(rawFile) : rawFile;
+
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('giftPageId', giftPageId);
+      formData.append('sectionKey', sectionKey);
+
       const response = await fetch('/api/admin/upload', {
         method: 'POST',
         body: formData,
@@ -116,7 +120,7 @@ export function MediaUploader({
     }
   };
 
-  const activeUrl = currentUrl || localPreviewUrl;
+  const activeUrl = localPreviewUrl || currentUrl;
 
   const togglePlayAudio = () => {
     if (!audioRef.current) return;
@@ -272,7 +276,10 @@ export function MediaUploader({
             </button>
             <button
               type="button"
-              onClick={() => fileInputRef.current?.click()}
+              onClick={() => {
+                setImageLoadError(false);
+                fileInputRef.current?.click();
+              }}
               className="px-2.5 py-1.5 rounded-lg bg-[#713C48] text-white text-[11px] font-semibold hover:bg-[#5a2e39] transition-colors"
             >
               Trocar

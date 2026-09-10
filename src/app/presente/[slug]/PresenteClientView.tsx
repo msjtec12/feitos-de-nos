@@ -16,9 +16,14 @@ import { PWAInstallPrompt } from "@/components/pwa/PWAInstallPrompt";
 interface PresenteClientViewProps {
   gift: GiftExperience;
   initialOpen?: boolean;
+  isMobileSimulator?: boolean;
 }
 
-export function PresenteClientView({ gift, initialOpen = false }: PresenteClientViewProps) {
+export function PresenteClientView({
+  gift,
+  initialOpen = false,
+  isMobileSimulator = false,
+}: PresenteClientViewProps) {
   const [isGiftOpened, setIsGiftOpened] = useState(initialOpen);
 
   const handleOpenGift = () => {
@@ -66,10 +71,16 @@ export function PresenteClientView({ gift, initialOpen = false }: PresenteClient
         )}
 
         {/* 3. Linha do Tempo dos 12 Meses */}
-        <Timeline moments={gift.timelineMoments} />
+        <Timeline
+          moments={gift.timelineMoments}
+          forceMobileCarousel={isMobileSimulator}
+        />
 
         {/* 4. Vozes de Quem Ama (Pais, Avós, Padrinhos) */}
-        <ContributorMessages messages={gift.contributorMessages} />
+        <ContributorMessages
+          messages={gift.contributorMessages}
+          forceSingleColumn={isMobileSimulator}
+        />
 
         {/* 5. Galeria de Memórias */}
         <MemoryGallery items={gift.galleryItems} />

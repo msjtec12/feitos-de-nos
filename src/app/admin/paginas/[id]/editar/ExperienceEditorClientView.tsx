@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { GiftPageRow, OrderRow, GiftPageStatus } from '@/types/database';
@@ -11,6 +11,7 @@ import { TabMessages } from '@/components/admin/ExperienceEditor/TabMessages';
 import { TabGallery } from '@/components/admin/ExperienceEditor/TabGallery';
 import { TabSettingsAndTheme } from '@/components/admin/ExperienceEditor/TabSettingsAndTheme';
 import { QRCodeModal } from '@/components/admin/QRCodeModal';
+import { PresenteClientView } from '@/app/presente/[slug]/PresenteClientView';
 import { mapContentToGiftExperience } from '@/lib/gift-mapper';
 import {
   FileText,
@@ -49,7 +50,7 @@ export default function ExperienceEditorClientView({
   const [giftPage, setGiftPage] = useState<GiftPageRow>(initialGiftPage);
   const [activeTab, setActiveTab] = useState<TabType>('content');
   const [viewMode, setViewMode] = useState<ViewMode>('split');
-  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const [simulatorKey, setSimulatorKey] = useState(0);
 
   // Content and Theme State
   const [content, setContent] = useState<GiftContentData>(
@@ -210,34 +211,6 @@ export default function ExperienceEditorClientView({
       theme
     );
   }, [content, recipientName, theme]);
-
-  // Sync live draft data to iframe preview in real time
-  useEffect(() => {
-    const iframe = iframeRef.current;
-    if (iframe && iframe.contentWindow) {
-      iframe.contentWindow.postMessage(
-        { type: 'UPDATE_EXPERIENCE', gift: liveGiftExperience },
-        '*'
-      );
-    }
-  }, [liveGiftExperience]);
-
-  // Listen for iframe ready signal
-  useEffect(() => {
-    const handleMessage = (event: MessageEvent) => {
-      if (event.data?.type === 'PREVIEW_READY') {
-        const iframe = iframeRef.current;
-        if (iframe && iframe.contentWindow) {
-          iframe.contentWindow.postMessage(
-            { type: 'UPDATE_EXPERIENCE', gift: liveGiftExperience },
-            '*'
-          );
-        }
-      }
-    };
-    window.addEventListener('message', handleMessage);
-    return () => window.removeEventListener('message', handleMessage);
-  }, [liveGiftExperience]);
 
   const tabs: { id: TabType; stepNumber: number; title: string; subtitle: string; icon: React.ReactNode }[] = [
     {
@@ -565,7 +538,7 @@ export default function ExperienceEditorClientView({
           </div>
         )}
 
-        {/* Live Simulator Phone Column (Isolated iframe with true mobile viewport) */}
+        {/* Live Simulator Phone Column (Native React preview with mobile layout) */}
         {viewMode !== 'editor' && (
           <aside
             aria-label="Simulador ao vivo em smartphone"
@@ -580,11 +553,7 @@ export default function ExperienceEditorClientView({
                 <div className="flex items-center gap-2">
                   <button
                     type="button"
-                    onClick={() => {
-                      if (iframeRef.current) {
-                        iframeRef.current.src = `/admin/paginas/${giftPage.id}/preview?embed=1`;
-                      }
-                    }}
+                    onClick={() => setSimulatorKey((k) => k + 1)}
                     title="Recarregar tela do simulador"
                     className="p-1 hover:bg-stone-200/60 rounded-md text-stone-500 hover:text-stone-800 transition-colors"
                   >
@@ -604,13 +573,17 @@ export default function ExperienceEditorClientView({
                   <div className="w-2.5 h-2.5 rounded-full bg-stone-800 ml-auto mr-2" />
                 </div>
 
-                {/* Inner Screen iframe */}
-                <iframe
-                  ref={iframeRef}
-                  src={`/admin/paginas/${giftPage.id}/preview?embed=1`}
-                  className="w-full h-full bg-[#FFF8F0] rounded-[38px] border-0"
-                  title="Simulador de Smartphone ao Vivo"
-                />
+                {/* Inner Screen rendered natively with PresenteClientView */}
+                <div
+                  key={simulatorKey}
+                  className="w-full h-full bg-[#FFF8F0] rounded-[38px] overflow-y-auto relative scrollbar-none"
+                >
+                  <PresenteClientView
+                    gift={liveGiftExperience}
+                    initialOpen={true}
+                    isMobileSimulator={true}
+                  />
+                </div>
               </div>
             </div>
           </aside>

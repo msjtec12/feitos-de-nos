@@ -7,9 +7,10 @@ import { TimelineCard } from "./TimelineCard";
 
 interface TimelineProps {
   moments: TimelineMoment[];
+  forceMobileCarousel?: boolean;
 }
 
-export function Timeline({ moments }: TimelineProps) {
+export function Timeline({ moments, forceMobileCarousel = false }: TimelineProps) {
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
 
   const scroll = (direction: "left" | "right") => {
@@ -40,7 +41,7 @@ export function Timeline({ moments }: TimelineProps) {
         </div>
 
         {/* Botões de navegação para mobile/tablet */}
-        <div className="flex items-center gap-2 self-end md:self-auto shrink-0 md:hidden">
+        <div className={`items-center gap-2 self-end md:self-auto shrink-0 ${forceMobileCarousel ? 'flex' : 'flex md:hidden'}`}>
           <button
             type="button"
             onClick={() => scroll("left")}
@@ -61,7 +62,7 @@ export function Timeline({ moments }: TimelineProps) {
       </div>
 
       {/* Visualização Mobile: Carrossel Snap com visualização parcial */}
-      <div className="md:hidden -mx-4 px-4">
+      <div className={forceMobileCarousel ? 'block -mx-4 px-4' : 'md:hidden -mx-4 px-4'}>
         <div
           ref={scrollContainerRef}
           className="flex gap-4 overflow-x-auto snap-x snap-mandatory no-scrollbar pb-6 pt-2 px-1 scroll-smooth"
@@ -72,7 +73,7 @@ export function Timeline({ moments }: TimelineProps) {
           {moments.map((moment, index) => (
             <div
               key={moment.monthNumber}
-              className="w-[82vw] max-w-[300px] shrink-0 snap-start"
+              className="w-[280px] shrink-0 snap-start"
             >
               <TimelineCard moment={moment} index={index} />
             </div>
@@ -82,16 +83,18 @@ export function Timeline({ moments }: TimelineProps) {
         </div>
 
         <p className="text-[11px] text-center text-brand-graphite/50 mt-1">
-          Deslize para ver todos os 12 meses
+          Deslize para ver todos os momentos
         </p>
       </div>
 
       {/* Visualização Desktop: Grade Equilibrada */}
-      <div className="hidden md:grid md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {moments.map((moment, index) => (
-          <TimelineCard key={moment.monthNumber} moment={moment} index={index} />
-        ))}
-      </div>
+      {!forceMobileCarousel && (
+        <div className="hidden md:grid md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {moments.map((moment, index) => (
+            <TimelineCard key={moment.monthNumber} moment={moment} index={index} />
+          ))}
+        </div>
+      )}
     </section>
   );
 }

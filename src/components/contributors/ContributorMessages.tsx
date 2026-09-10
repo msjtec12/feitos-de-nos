@@ -7,9 +7,10 @@ import { ContributorCard } from "./ContributorCard";
 
 interface ContributorMessagesProps {
   messages: ContributorMessage[];
+  forceSingleColumn?: boolean;
 }
 
-export function ContributorMessages({ messages }: ContributorMessagesProps) {
+export function ContributorMessages({ messages, forceSingleColumn = false }: ContributorMessagesProps) {
   return (
     <section className="py-12 px-4 sm:px-6 max-w-5xl mx-auto w-full" aria-labelledby="contributors-heading">
       {/* Cabeçalho da Seção */}
@@ -30,7 +31,7 @@ export function ContributorMessages({ messages }: ContributorMessagesProps) {
       </div>
 
       {/* Grade de Mensagens de Voz & Escritas */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className={`grid gap-6 ${forceSingleColumn ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-3'}`}>
         {messages.map((message, index) => (
           <ContributorCard key={message.id} message={message} index={index} />
         ))}
