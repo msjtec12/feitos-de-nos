@@ -356,16 +356,27 @@ export async function createGiftPageFromOrder(
   orderId: string,
   adminId?: string
 ): Promise<{ success: boolean; giftPage?: GiftPageRow; error?: string }> {
-  const adminClient = createSupabaseAdminClient();
+  let order: any = null;
+  try {
+    const supabase = createSupabaseServerClient();
+    const { data } = await supabase.from('orders').select('*').eq('id', orderId).single();
+    order = data;
+  } catch {
+    // fallback
+  }
 
-  const { data: order, error: orderErr } = await adminClient
-    .from('orders')
-    .select('*')
-    .eq('id', orderId)
-    .single();
+  if (!order) {
+    const adminClient = createSupabaseAdminClient();
+    const { data: orderData, error: orderErr } = await adminClient
+      .from('orders')
+      .select('*')
+      .eq('id', orderId)
+      .single();
 
-  if (orderErr || !order) {
-    return { success: false, error: 'Pedido não encontrado' };
+    if (orderErr || !orderData) {
+      return { success: false, error: 'Pedido não encontrado' };
+    }
+    order = orderData;
   }
 
   const initialContent = {
@@ -389,32 +400,62 @@ export async function createGiftPageFromOrder(
     styleId: order.visual_style || 'afetuoso',
   };
 
-  const { data: newPage, error: createErr } = await adminClient
-    .from('gift_pages')
-    .insert({
-      order_id: orderId,
-      title: order.requested_title,
-      recipient_name: order.recipient_name,
-      template_type: order.collection_type || 'primeiro-ano',
-      status: 'draft',
-      content: initialContent,
-      theme: initialTheme,
-      created_by: adminId || null,
-      updated_by: adminId || null,
-    })
-    .select('*')
-    .single();
-
-  if (createErr) {
-    return { success: false, error: createErr.message };
-  }
-
-  await logActivity(adminId || null, 'gift_page_created', 'gift_page', newPage.id, {
+  const insertPayload = {
     order_id: orderId,
     title: order.requested_title,
-  });
+    recipient_name: order.recipient_name,
+    template_type: order.collection_type || 'primeiro-ano',
+    status: 'draft' as any,
+    content: initialContent,
+    theme: initialTheme,
+    created_by: adminId || null,
+    updated_by: adminId || null,
+  };
 
-  return { success: true, giftPage: newPage as GiftPageRow };
+  // 1. Tenta com cliente de servidor (respeita RLS is_admin)
+  let lastErr: any = null;
+  try {
+    const supabase = createSupabaseServerClient();
+    const { data: newPage, error } = await supabase
+      .from('gift_pages')
+      .insert(insertPayload)
+      .select('*')
+      .single();
+
+    if (!error && newPage) {
+      await logActivity(adminId || null, 'gift_page_created', 'gift_page', newPage.id, {
+        order_id: orderId,
+        title: order.requested_title,
+      });
+      return { success: true, giftPage: newPage as GiftPageRow };
+    }
+    lastErr = error;
+  } catch (err) {
+    lastErr = err;
+  }
+
+  // 2. Fallback para adminClient
+  try {
+    const adminClient = createSupabaseAdminClient();
+    const { data: newPage, error: createErr } = await adminClient
+      .from('gift_pages')
+      .insert(insertPayload)
+      .select('*')
+      .single();
+
+    if (createErr) {
+      return { success: false, error: createErr.message || lastErr?.message };
+    }
+
+    await logActivity(adminId || null, 'gift_page_created', 'gift_page', newPage.id, {
+      order_id: orderId,
+      title: order.requested_title,
+    });
+
+    return { success: true, giftPage: newPage as GiftPageRow };
+  } catch (finalErr: any) {
+    return { success: false, error: finalErr.message || 'Erro ao criar página de presente' };
+  }
 }
 
 /**
@@ -494,28 +535,52 @@ export async function regenerateGiftPageToken(
   giftPageId: string,
   adminId?: string
 ): Promise<{ success: boolean; newToken?: string; error?: string }> {
-  const adminClient = createSupabaseAdminClient();
+  const updates = {
+    public_token: crypto.randomUUID(),
+    updated_by: adminId || null,
+    updated_at: new Date().toISOString(),
+  };
 
-  const { data: updated, error } = await adminClient
-    .from('gift_pages')
-    .update({
-      public_token: crypto.randomUUID(),
-      updated_by: adminId || null,
-      updated_at: new Date().toISOString(),
-    })
-    .eq('id', giftPageId)
-    .select('public_token')
-    .single();
+  try {
+    const supabase = createSupabaseServerClient();
+    const { data: updated, error } = await supabase
+      .from('gift_pages')
+      .update(updates)
+      .eq('id', giftPageId)
+      .select('public_token')
+      .single();
 
-  if (error || !updated) {
-    return { success: false, error: error?.message || 'Erro ao regenerar link' };
+    if (!error && updated) {
+      await logActivity(adminId || null, 'gift_page_token_regenerated', 'gift_page', giftPageId, {
+        new_token: updated.public_token,
+      });
+      return { success: true, newToken: updated.public_token };
+    }
+  } catch {
+    // fallback
   }
 
-  await logActivity(adminId || null, 'gift_page_token_regenerated', 'gift_page', giftPageId, {
-    new_token: updated.public_token,
-  });
+  try {
+    const adminClient = createSupabaseAdminClient();
+    const { data: updated, error } = await adminClient
+      .from('gift_pages')
+      .update(updates)
+      .eq('id', giftPageId)
+      .select('public_token')
+      .single();
 
-  return { success: true, newToken: updated.public_token };
+    if (error || !updated) {
+      return { success: false, error: error?.message || 'Erro ao regenerar link' };
+    }
+
+    await logActivity(adminId || null, 'gift_page_token_regenerated', 'gift_page', giftPageId, {
+      new_token: updated.public_token,
+    });
+
+    return { success: true, newToken: updated.public_token };
+  } catch (err: any) {
+    return { success: false, error: err.message || 'Erro ao regenerar link' };
+  }
 }
 
 /**
@@ -638,8 +703,6 @@ export async function createManualGiftPage(
   },
   adminId?: string
 ): Promise<{ success: boolean; giftPage?: GiftPageRow; error?: string }> {
-  const adminClient = createSupabaseAdminClient();
-
   const initialContent = {
     ...DEFAULT_GIFT_CONTENT,
     slug: data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
@@ -661,31 +724,60 @@ export async function createManualGiftPage(
     styleId: 'afetuoso',
   };
 
-  const { data: newPage, error: createErr } = await adminClient
-    .from('gift_pages')
-    .insert({
-      order_id: data.order_id || null,
-      title: data.title,
-      recipient_name: data.recipient_name,
-      template_type: data.template_type || 'primeiro-ano',
-      status: 'draft',
-      content: initialContent,
-      theme: initialTheme,
-      created_by: adminId || null,
-      updated_by: adminId || null,
-    })
-    .select('*')
-    .single();
+  const insertPayload = {
+    order_id: data.order_id || null,
+    title: data.title,
+    recipient_name: data.recipient_name,
+    template_type: data.template_type || 'primeiro-ano',
+    status: 'draft' as any,
+    content: initialContent,
+    theme: initialTheme,
+    created_by: adminId || null,
+    updated_by: adminId || null,
+  };
 
-  if (createErr) {
-    return { success: false, error: createErr.message };
+  // 1. Tenta primeiro com cliente de servidor autenticado via cookies (satisfaz RLS is_admin())
+  let lastErr: any = null;
+  try {
+    const supabase = createSupabaseServerClient();
+    const { data: newPage, error } = await supabase
+      .from('gift_pages')
+      .insert(insertPayload)
+      .select('*')
+      .single();
+
+    if (!error && newPage) {
+      await logActivity(adminId || null, 'gift_page_created_manually', 'gift_page', newPage.id, {
+        title: data.title,
+      });
+      return { success: true, giftPage: newPage as GiftPageRow };
+    }
+    lastErr = error;
+  } catch (err) {
+    lastErr = err;
   }
 
-  await logActivity(adminId || null, 'gift_page_created_manually', 'gift_page', newPage.id, {
-    title: data.title,
-  });
+  // 2. Fallback para adminClient
+  try {
+    const adminClient = createSupabaseAdminClient();
+    const { data: newPage, error: createErr } = await adminClient
+      .from('gift_pages')
+      .insert(insertPayload)
+      .select('*')
+      .single();
 
-  return { success: true, giftPage: newPage as GiftPageRow };
+    if (createErr) {
+      return { success: false, error: createErr.message || lastErr?.message };
+    }
+
+    await logActivity(adminId || null, 'gift_page_created_manually', 'gift_page', newPage.id, {
+      title: data.title,
+    });
+
+    return { success: true, giftPage: newPage as GiftPageRow };
+  } catch (finalErr: any) {
+    return { success: false, error: finalErr.message || 'Erro ao criar página de presente' };
+  }
 }
 
 /**
@@ -695,22 +787,42 @@ export async function archiveGiftPage(
   id: string,
   adminId?: string
 ): Promise<{ success: boolean; error?: string }> {
-  const adminClient = createSupabaseAdminClient();
+  const updates = {
+    archived_at: new Date().toISOString(),
+    updated_by: adminId || null,
+    updated_at: new Date().toISOString(),
+  };
 
-  const { error } = await adminClient
-    .from('gift_pages')
-    .update({
-      archived_at: new Date().toISOString(),
-      updated_by: adminId || null,
-      updated_at: new Date().toISOString(),
-    })
-    .eq('id', id);
+  try {
+    const supabase = createSupabaseServerClient();
+    const { error } = await supabase
+      .from('gift_pages')
+      .update(updates)
+      .eq('id', id);
 
-  if (error) {
-    return { success: false, error: error.message };
+    if (!error) {
+      await logActivity(adminId || null, 'gift_page_archived', 'gift_page', id);
+      return { success: true };
+    }
+  } catch {
+    // fallback
   }
 
-  await logActivity(adminId || null, 'gift_page_archived', 'gift_page', id);
-  return { success: true };
+  try {
+    const adminClient = createSupabaseAdminClient();
+    const { error } = await adminClient
+      .from('gift_pages')
+      .update(updates)
+      .eq('id', id);
+
+    if (error) {
+      return { success: false, error: error.message };
+    }
+
+    await logActivity(adminId || null, 'gift_page_archived', 'gift_page', id);
+    return { success: true };
+  } catch (err: any) {
+    return { success: false, error: err.message || 'Erro ao arquivar página' };
+  }
 }
 
