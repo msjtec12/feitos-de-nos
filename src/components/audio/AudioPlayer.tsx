@@ -26,7 +26,8 @@ export function AudioPlayer({
   className = "",
   variant = "primary",
 }: AudioPlayerProps) {
-  const isAvailable = audio?.isAvailable ?? false;
+  const hasAudioUrl = Boolean(audio?.audioUrl && audio.audioUrl.trim() !== "");
+  const isAvailable = (audio?.isAvailable ?? hasAudioUrl) && hasAudioUrl;
   const audioSrc = isAvailable ? audio?.audioUrl : undefined;
 
   const [isPlaying, setIsPlaying] = useState(false);

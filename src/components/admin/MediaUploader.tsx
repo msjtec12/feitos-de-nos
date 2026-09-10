@@ -100,7 +100,13 @@ export function MediaUploader({
         return;
       }
 
-      onUploaded(result.signedUrl, result.storagePath);
+      const finalUrl = result.url || result.signedUrl;
+      if (finalUrl) {
+        onUploaded(finalUrl, result.storagePath || '');
+        setLocalPreviewUrl(finalUrl);
+        setImageLoaded(true);
+        setImageLoadError(false);
+      }
     } catch (err: any) {
       console.error('Erro no upload:', err);
       setError('Erro de conexão durante o upload');
@@ -110,7 +116,7 @@ export function MediaUploader({
     }
   };
 
-  const activeUrl = localPreviewUrl || currentUrl;
+  const activeUrl = currentUrl || localPreviewUrl;
 
   const togglePlayAudio = () => {
     if (!audioRef.current) return;

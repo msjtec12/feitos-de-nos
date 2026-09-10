@@ -433,8 +433,6 @@ export async function saveGiftPage(
   },
   adminId?: string
 ): Promise<{ success: boolean; error?: string }> {
-  const adminClient = createSupabaseAdminClient();
-
   const updates: any = {
     ...fields,
     updated_by: adminId || null,
@@ -445,21 +443,48 @@ export async function saveGiftPage(
     updates.published_at = new Date().toISOString();
   }
 
-  const { error } = await adminClient
-    .from('gift_pages')
-    .update(updates)
-    .eq('id', id);
+  // Tenta primeiro com o cliente de servidor com cookies
+  let updateErr: any = null;
+  try {
+    const supabase = createSupabaseServerClient();
+    const { error } = await supabase
+      .from('gift_pages')
+      .update(updates)
+      .eq('id', id);
 
-  if (error) {
-    return { success: false, error: error.message };
+    if (!error) {
+      await logActivity(adminId || null, 'gift_page_updated', 'gift_page', id, {
+        status: fields.status,
+        title: fields.title,
+      });
+      return { success: true };
+    }
+    updateErr = error;
+  } catch (err) {
+    updateErr = err;
   }
 
-  await logActivity(adminId || null, 'gift_page_updated', 'gift_page', id, {
-    status: fields.status,
-    title: fields.title,
-  });
+  // Fallback para adminClient
+  try {
+    const adminClient = createSupabaseAdminClient();
+    const { error: adminErr } = await adminClient
+      .from('gift_pages')
+      .update(updates)
+      .eq('id', id);
 
-  return { success: true };
+    if (adminErr) {
+      return { success: false, error: adminErr.message || updateErr?.message };
+    }
+
+    await logActivity(adminId || null, 'gift_page_updated', 'gift_page', id, {
+      status: fields.status,
+      title: fields.title,
+    });
+
+    return { success: true };
+  } catch (finalErr: any) {
+    return { success: false, error: finalErr.message || 'Erro ao salvar página no banco' };
+  }
 }
 
 /**

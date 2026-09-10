@@ -32,7 +32,8 @@ export function MediaPlaceholder({
   const imageSrc = src || item?.url;
   const imageAlt = alt || item?.altText || label;
   const activeAspect = item?.aspectRatio || aspectRatio;
-  const isAvailable = item?.isAvailable ?? false;
+  const hasUrl = Boolean(imageSrc && imageSrc.trim() !== '');
+  const isAvailable = (item?.isAvailable ?? hasUrl) && hasUrl;
 
   const aspectClasses = {
     square: "aspect-square",
@@ -41,7 +42,7 @@ export function MediaPlaceholder({
     auto: "h-full w-full min-h-[220px]",
   };
 
-  // Se a mídia estiver explicitamente marcada como disponível e houver URL válida
+  // Se a mídia possuir URL e não estiver com erro
   if (isAvailable && imageSrc && !imageError) {
     return (
       <figure className={`relative overflow-hidden rounded-2xl bg-brand-cream-dark ${aspectClasses[activeAspect]} ${className}`}>

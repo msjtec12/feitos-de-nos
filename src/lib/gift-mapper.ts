@@ -16,23 +16,57 @@ export function mapContentToGiftExperience(
       description: 'Criado com fotos, mensagens e vozes de quem mais te ama.',
       buttonLabel: 'Abrir Presente',
     },
-    recipient: content.recipient || {
-      name: 'Presenteado',
-      subtitle: 'Memórias Inesquecíveis',
-      tagline: 'Feito de Nós',
-      introQuote: 'Histórias que viram presente.',
-      featuredImage: {
-        id: 'cover',
-        url: '/demo/images/hero-matheus.jpg',
-        altText: 'Foto de capa',
-        aspectRatio: 'square',
-        isAvailable: false,
-      },
+    recipient: {
+      name: content.recipient?.name || 'Presenteado',
+      subtitle: content.recipient?.subtitle || 'Memórias Inesquecíveis',
+      tagline: content.recipient?.tagline || 'Feito de Nós',
+      introQuote: content.recipient?.introQuote || 'Histórias que viram presente.',
+      featuredImage: content.recipient?.featuredImage
+        ? {
+            ...content.recipient.featuredImage,
+            isAvailable: Boolean(content.recipient.featuredImage.url && content.recipient.featuredImage.url.trim() !== ''),
+          }
+        : {
+            id: 'cover',
+            url: '',
+            altText: 'Foto de capa',
+            aspectRatio: 'square',
+            isAvailable: false,
+          },
     },
-    primaryAudio: content.primaryAudio,
-    timelineMoments: content.timelineMoments || [],
-    contributorMessages: content.contributorMessages || [],
-    galleryItems: content.galleryItems || [],
+    primaryAudio: content.primaryAudio
+      ? {
+          ...content.primaryAudio,
+          isAvailable: Boolean(content.primaryAudio.audioUrl && content.primaryAudio.audioUrl.trim() !== ''),
+        }
+      : undefined,
+    timelineMoments: (content.timelineMoments || []).map((m, idx) => ({
+      ...m,
+      image: m.image
+        ? {
+            ...m.image,
+            isAvailable: Boolean(m.image.url && m.image.url.trim() !== ''),
+          }
+        : {
+            id: `timeline-img-${idx}`,
+            url: '',
+            altText: m.title || `Foto do momento ${idx + 1}`,
+            isAvailable: false,
+          },
+    })),
+    contributorMessages: (content.contributorMessages || []).map((c) => ({
+      ...c,
+      audio: c.audio
+        ? {
+            ...c.audio,
+            isAvailable: Boolean(c.audio.audioUrl && c.audio.audioUrl.trim() !== ''),
+          }
+        : undefined,
+    })),
+    galleryItems: (content.galleryItems || []).map((g) => ({
+      ...g,
+      isAvailable: Boolean(g.url && g.url.trim() !== ''),
+    })),
     closing: content.closing || {
       headline: 'Para Sempre Guardado',
       message: 'Que essas lembranças continuem vivas por toda a vida.',
