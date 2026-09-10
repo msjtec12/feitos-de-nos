@@ -67,43 +67,37 @@ export async function POST(req: NextRequest) {
     let finalUrl = '';
     let isStorageUploaded = false;
 
-    // 3. Tenta upload no Supabase Storage
-    try {
-      const adminClient = createSupabaseAdminClient();
-      const { error: uploadError } = await adminClient.storage
-        .from('gift-media')
-        .upload(storagePath, fileBuffer, {
-          contentType: mimeType,
-          upsert: true,
-        });
-
-      if (!uploadError) {
-        const { data: pubData } = adminClient.storage
+    // 3. Processamento de URL: Imagens usam Data URL de alta fidelidade para entrega instantânea e zero falhas de rede
+    if (mediaType === 'image') {
+      finalUrl = `data:${mimeType};base64,${fileBuffer.toString('base64')}`;
+    } else {
+      // Para áudio/vídeo, tenta Supabase Storage e faz fallback para Data URL
+      try {
+        const adminClient = createSupabaseAdminClient();
+        const { error: uploadError } = await adminClient.storage
           .from('gift-media')
-          .getPublicUrl(storagePath);
+          .upload(storagePath, fileBuffer, {
+            contentType: mimeType,
+            upsert: true,
+          });
 
-        if (pubData?.publicUrl) {
-          finalUrl = pubData.publicUrl;
-          isStorageUploaded = true;
-        } else {
-          const { data: signedData } = await adminClient.storage
+        if (!uploadError) {
+          const { data: pubData } = adminClient.storage
             .from('gift-media')
-            .createSignedUrl(storagePath, 31536000); // 1 ano
-          if (signedData?.signedUrl) {
-            finalUrl = signedData.signedUrl;
+            .getPublicUrl(storagePath);
+
+          if (pubData?.publicUrl) {
+            finalUrl = pubData.publicUrl;
             isStorageUploaded = true;
           }
         }
-      } else {
-        console.warn('Supabase storage upload aviso (usando fallback data URL):', uploadError.message);
+      } catch (storageErr) {
+        console.warn('Supabase storage fallback para audio/video:', storageErr);
       }
-    } catch (storageErr) {
-      console.warn('Erro ao acessar Supabase Storage (usando fallback data URL):', storageErr);
-    }
 
-    // 4. Fallback resiliente: Data URL (Base64) direta caso o bucket Storage não esteja criado
-    if (!finalUrl) {
-      finalUrl = `data:${mimeType};base64,${fileBuffer.toString('base64')}`;
+      if (!finalUrl) {
+        finalUrl = `data:${mimeType};base64,${fileBuffer.toString('base64')}`;
+      }
     }
 
     // 5. Registra na tabela media_assets com tolerância a falhas

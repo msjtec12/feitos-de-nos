@@ -276,19 +276,17 @@ export function MediaUploader({
             </button>
             <button
               type="button"
-              onClick={() => {
-                setImageLoadError(false);
-                fileInputRef.current?.click();
-              }}
-              className="px-2.5 py-1.5 rounded-lg bg-[#713C48] text-white text-[11px] font-semibold hover:bg-[#5a2e39] transition-colors"
+              onClick={() => fileInputRef.current?.click()}
+              className="px-3 py-1.5 rounded-lg bg-[#713C48] text-white text-[11px] font-semibold hover:bg-[#5a2e39] transition-colors shadow-xs"
             >
-              Trocar
+              Trocar {mediaType === 'image' ? 'Foto' : 'Arquivo'}
             </button>
             {onRemove && (
               <button
                 type="button"
                 onClick={() => {
                   setLocalPreviewUrl(null);
+                  setImageLoaded(false);
                   setImageLoadError(false);
                   onRemove();
                 }}
