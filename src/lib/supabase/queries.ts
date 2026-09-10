@@ -1,48 +1,132 @@
 import { GiftExperience } from "@/types/gift";
 import { matheusAkiraGiftData } from "@/data/matheus-demo";
-import { createSupabaseServerClient } from "./server";
+import { createSupabaseAdminClient, createSupabaseServerClient } from "./server";
+import { mapContentToGiftExperience } from "@/lib/gift-mapper";
+import { GiftContentData, GiftThemeData } from "@/types/gift-experience";
 
 /**
- * Busca uma experiência de presente completa por slug no Supabase.
- * Inclui tratamento de fallback automático para os dados locais de demonstração
- * caso as tabelas ainda não tenham sido criadas no dashboard do Supabase.
+ * Busca uma experiência de presente completa por slug, id ou token no Supabase.
  */
 export async function getGiftBySlug(slug: string): Promise<GiftExperience | null> {
   try {
-    const supabase = createSupabaseServerClient();
+    const cleanSlug = decodeURIComponent(slug).trim().toLowerCase();
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(cleanSlug);
 
-    // 1. Busca o registro principal do presente
-    const { data: giftRecord, error: giftError } = await supabase
+    // 1. Busca na tabela principal gift_pages (por token, id, content->>'slug' ou título)
+    let page: any = null;
+
+    try {
+      const supabase = createSupabaseServerClient();
+      if (isUuid) {
+        const { data } = await supabase
+          .from('gift_pages')
+          .select('*')
+          .or(`id.eq.${cleanSlug},public_token.eq.${cleanSlug}`)
+          .is('archived_at', null)
+          .maybeSingle();
+        page = data;
+      }
+
+      if (!page) {
+        const { data } = await supabase
+          .from('gift_pages')
+          .select('*')
+          .is('archived_at', null)
+          .contains('content', { slug: cleanSlug })
+          .maybeSingle();
+        page = data;
+      }
+
+      if (!page) {
+        const { data } = await supabase
+          .from('gift_pages')
+          .select('*')
+          .is('archived_at', null)
+          .ilike('title', cleanSlug)
+          .maybeSingle();
+        page = data;
+      }
+    } catch {
+      // fallback
+    }
+
+    if (!page) {
+      try {
+        const adminClient = createSupabaseAdminClient();
+        if (isUuid) {
+          const { data } = await adminClient
+            .from('gift_pages')
+            .select('*')
+            .or(`id.eq.${cleanSlug},public_token.eq.${cleanSlug}`)
+            .is('archived_at', null)
+            .maybeSingle();
+          page = data;
+        }
+
+        if (!page) {
+          const { data } = await adminClient
+            .from('gift_pages')
+            .select('*')
+            .is('archived_at', null)
+            .contains('content', { slug: cleanSlug })
+            .maybeSingle();
+          page = data;
+        }
+
+        if (!page) {
+          const { data } = await adminClient
+            .from('gift_pages')
+            .select('*')
+            .is('archived_at', null)
+            .ilike('title', cleanSlug)
+            .maybeSingle();
+          page = data;
+        }
+      } catch {
+        //
+      }
+    }
+
+    if (page && page.content) {
+      return mapContentToGiftExperience(
+        page.content as GiftContentData,
+        page.theme as GiftThemeData
+      );
+    }
+
+    // 2. Busca na tabela legada gifts
+    const adminClient = createSupabaseAdminClient();
+    const { data: giftRecord, error: giftError } = await adminClient
       .from("gifts")
       .select("*")
-      .eq("slug", slug)
+      .eq("slug", cleanSlug)
       .eq("is_active", true)
       .maybeSingle();
 
     if (giftError || !giftRecord) {
       // Fallback gracioso para dados locais de demonstração
-      if (slug === "matheus-akira") {
+      if (cleanSlug === "matheus-akira" || cleanSlug === "demo") {
         return matheusAkiraGiftData;
       }
       return null;
     }
 
     // 2. Busca os momentos da linha do tempo
-    const { data: timelineData } = await supabase
+    const { data: timelineData } = await adminClient
       .from("timeline_moments")
       .select("*")
       .eq("gift_id", giftRecord.id)
       .order("month_number", { ascending: true });
 
     // 3. Busca as mensagens de contribuidores
-    const { data: contributorsData } = await supabase
+    const { data: contributorsData } = await adminClient
       .from("contributor_messages")
       .select("*")
       .eq("gift_id", giftRecord.id)
       .order("display_order", { ascending: true });
 
     // 4. Busca os itens da galeria de fotos
-    const { data: galleryData } = await supabase
+    const { data: galleryData } = await adminClient
       .from("gallery_items")
       .select("*")
       .eq("gift_id", giftRecord.id)
