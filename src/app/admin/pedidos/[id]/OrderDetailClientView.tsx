@@ -8,6 +8,17 @@ import { OrderStatusBadge } from '@/components/admin/OrderStatusBadge';
 import { PaymentStatusBadge } from '@/components/admin/PaymentStatusBadge';
 import { ProductionChecklist } from '@/components/admin/ProductionChecklist';
 import { QRCodeModal } from '@/components/admin/QRCodeModal';
+import { EditOrderModal } from '@/components/admin/EditOrderModal';
+import { DeleteOrderModal } from '@/components/admin/DeleteOrderModal';
+import { RejectOrderModal } from '@/components/admin/RejectOrderModal';
+import { AcceptOrderModal } from '@/components/admin/AcceptOrderModal';
+import {
+  CheckCircle2,
+  XCircle,
+  Edit3,
+  Trash2,
+  MessageCircle,
+} from 'lucide-react';
 
 interface OrderDetailClientViewProps {
   order: OrderRow;
@@ -59,6 +70,10 @@ export default function OrderDetailClientView({
 
   const [isCreatingPage, setIsCreatingPage] = useState(false);
   const [isQrModalOpen, setIsQrModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isAcceptModalOpen, setIsAcceptModalOpen] = useState(false);
+  const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
   const [feedbackMsg, setFeedbackMsg] = useState<{ text: string; type: 'success' | 'error' } | null>(null);
 
   // Formatação de valores
@@ -200,17 +215,62 @@ export default function OrderDetailClientView({
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2.5">
           <OrderStatusBadge status={order.status} size="md" />
           <PaymentStatusBadge status={order.payment_status} size="md" />
+          
           <a
             href={generateWhatsAppUrl(`Olá ${order.customer_name}! Aqui é da equipe Feito de Nós referente ao seu pedido ${order.code}.`)}
             target="_blank"
             rel="noopener noreferrer"
-            className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-medium shadow-sm transition-all flex items-center gap-2"
+            className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center gap-1.5"
           >
-            <span>💬</span> Abrir WhatsApp
+            <span>💬</span> WhatsApp
           </a>
+
+          {/* Botão Aceitar Pedido */}
+          {order.status !== 'approved' && order.status !== 'in_production' && order.status !== 'completed' && (
+            <button
+              type="button"
+              onClick={() => setIsAcceptModalOpen(true)}
+              className="px-3.5 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shadow-2xs"
+            >
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+              <span>Aceitar Pedido</span>
+            </button>
+          )}
+
+          {/* Botão Recusar Pedido */}
+          {order.status !== 'cancelled' && (
+            <button
+              type="button"
+              onClick={() => setIsRejectModalOpen(true)}
+              className="px-3.5 py-2 bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shadow-2xs"
+            >
+              <XCircle className="w-3.5 h-3.5 text-amber-700" />
+              <span>Recusar</span>
+            </button>
+          )}
+
+          {/* Botão Editar Pedido */}
+          <button
+            type="button"
+            onClick={() => setIsEditModalOpen(true)}
+            className="px-3.5 py-2 bg-white hover:bg-stone-50 text-[#713C48] border border-[#713C48]/30 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shadow-2xs"
+          >
+            <Edit3 className="w-3.5 h-3.5" />
+            <span>Editar</span>
+          </button>
+
+          {/* Botão Excluir Pedido */}
+          <button
+            type="button"
+            onClick={() => setIsDeleteModalOpen(true)}
+            className="p-2 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-xl text-xs font-bold transition-all shadow-2xs"
+            title="Excluir Pedido"
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+          </button>
         </div>
       </div>
 
@@ -608,6 +668,62 @@ export default function OrderDetailClientView({
           recipientName={order.recipient_name}
           giftTitle={giftPage.title}
           onClose={() => setIsQrModalOpen(false)}
+        />
+      )}
+
+      {/* Modal de Edição Completa */}
+      {isEditModalOpen && (
+        <EditOrderModal
+          order={order}
+          onClose={() => setIsEditModalOpen(false)}
+          onSuccess={(updated) => {
+            setOrder(updated);
+            setSelectedStatus(updated.status);
+            setSelectedPayment(updated.payment_status);
+            setFreightReais((updated.freight_cents / 100).toFixed(2).replace('.', ','));
+            setInternalNotes(updated.internal_notes || '');
+            setFeedbackMsg({ text: 'Pedido atualizado com sucesso!', type: 'success' });
+            router.refresh();
+          }}
+        />
+      )}
+
+      {/* Modal de Exclusão */}
+      {isDeleteModalOpen && (
+        <DeleteOrderModal
+          order={order}
+          onClose={() => setIsDeleteModalOpen(false)}
+          onSuccess={() => {
+            router.push('/admin/pedidos');
+          }}
+        />
+      )}
+
+      {/* Modal de Aceite / Aprovação */}
+      {isAcceptModalOpen && (
+        <AcceptOrderModal
+          order={order}
+          onClose={() => setIsAcceptModalOpen(false)}
+          onSuccess={(updated) => {
+            setOrder(updated);
+            setSelectedStatus(updated.status);
+            setFeedbackMsg({ text: 'Pedido aceito e em andamento!', type: 'success' });
+            router.refresh();
+          }}
+        />
+      )}
+
+      {/* Modal de Recusa / Cancelamento */}
+      {isRejectModalOpen && (
+        <RejectOrderModal
+          order={order}
+          onClose={() => setIsRejectModalOpen(false)}
+          onSuccess={() => {
+            setOrder((prev) => ({ ...prev, status: 'cancelled' }));
+            setSelectedStatus('cancelled');
+            setFeedbackMsg({ text: 'Pedido recusado e marcado como cancelado.', type: 'success' });
+            router.refresh();
+          }}
         />
       )}
     </div>

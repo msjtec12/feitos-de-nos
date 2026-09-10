@@ -996,3 +996,143 @@ export async function archiveGiftPage(
   }
 }
 
+/**
+ * Atualiza os campos de um pedido
+ */
+export async function updateOrder(
+  orderId: string,
+  fields: Partial<OrderRow> & { status_note?: string },
+  adminId?: string
+): Promise<{ success: boolean; order?: OrderRow; error?: string }> {
+  const adminClient = createSupabaseAdminClient();
+
+  // 1. Obter pedido atual
+  const { data: currentOrder, error: fetchErr } = await adminClient
+    .from('orders')
+    .select('*')
+    .eq('id', orderId)
+    .single();
+
+  if (fetchErr || !currentOrder) {
+    return { success: false, error: 'Pedido não encontrado' };
+  }
+
+  const prevStatus = currentOrder.status;
+
+  // Calcular novo total se preço ou frete foram passados
+  const priceCents = fields.price_cents !== undefined ? fields.price_cents : currentOrder.price_cents;
+  const freightCents = fields.freight_cents !== undefined ? fields.freight_cents : currentOrder.freight_cents;
+  const totalCents = priceCents + freightCents;
+
+  const updates: any = {
+    ...fields,
+    price_cents: priceCents,
+    freight_cents: freightCents,
+    total_cents: totalCents,
+    updated_at: new Date().toISOString(),
+  };
+
+  // Remove campos que não devem ser sobrescritos
+  delete updates.id;
+  delete updates.code;
+  delete updates.created_at;
+  delete updates.status_note;
+
+  const { data: updatedOrder, error: updateErr } = await adminClient
+    .from('orders')
+    .update(updates)
+    .eq('id', orderId)
+    .select('*')
+    .single();
+
+  if (updateErr || !updatedOrder) {
+    return { success: false, error: updateErr?.message || 'Erro ao atualizar pedido' };
+  }
+
+  // Se o status foi alterado, registra no histórico
+  if (fields.status && fields.status !== prevStatus) {
+    await adminClient.from('order_status_history').insert({
+      order_id: orderId,
+      previous_status: prevStatus,
+      new_status: fields.status,
+      admin_id: adminId || null,
+      note: fields.status_note || `Status alterado de "${prevStatus}" para "${fields.status}" via edição`,
+    });
+  }
+
+  await logActivity(adminId || null, 'order_updated', 'order', orderId, {
+    updates: fields,
+  });
+
+  return { success: true, order: updatedOrder as OrderRow };
+}
+
+/**
+ * Exclui ou arquiva um pedido
+ */
+export async function deleteOrder(
+  orderId: string,
+  adminId?: string
+): Promise<{ success: boolean; error?: string }> {
+  const adminClient = createSupabaseAdminClient();
+
+  const { data: currentOrder, error: fetchErr } = await adminClient
+    .from('orders')
+    .select('id, code, customer_name')
+    .eq('id', orderId)
+    .single();
+
+  if (fetchErr || !currentOrder) {
+    return { success: false, error: 'Pedido não encontrado' };
+  }
+
+  // 1. Tenta desvincular ou arquivar páginas de presente associadas
+  try {
+    await adminClient
+      .from('gift_pages')
+      .update({
+        archived_at: new Date().toISOString(),
+        updated_by: adminId || null,
+      })
+      .eq('order_id', orderId);
+  } catch {
+    // continua
+  }
+
+  // 2. Tenta exclusão direta no banco
+  let deleteSucceeded = false;
+  try {
+    await adminClient.from('order_status_history').delete().eq('order_id', orderId);
+    const { error: hardDeleteErr } = await adminClient.from('orders').delete().eq('id', orderId);
+    if (!hardDeleteErr) {
+      deleteSucceeded = true;
+    }
+  } catch {
+    // fallback para soft-delete
+  }
+
+  // 3. Fallback: Se não conseguir hard delete por FK, aplica soft-delete (archived_at)
+  if (!deleteSucceeded) {
+    const { error: archiveErr } = await adminClient
+      .from('orders')
+      .update({
+        archived_at: new Date().toISOString(),
+        status: 'cancelled',
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', orderId);
+
+    if (archiveErr) {
+      return { success: false, error: archiveErr.message };
+    }
+  }
+
+  await logActivity(adminId || null, 'order_deleted', 'order', orderId, {
+    code: currentOrder.code,
+    customer_name: currentOrder.customer_name,
+  });
+
+  return { success: true };
+}
+
+
