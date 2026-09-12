@@ -13,9 +13,41 @@ export async function GET(
     }
 
     const storagePath = params.path.map(decodeURIComponent).join('/');
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://jrltijehfgehqjzopgkc.supabase.co';
+    const supabaseKey =
+      process.env.SUPABASE_SERVICE_ROLE_KEY ||
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+      process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
+      '';
+
+    // 1. Tenta download de alta performance via REST do Supabase Storage
+    try {
+      const restRes = await fetch(`${supabaseUrl}/storage/v1/object/gift-media/${storagePath}`, {
+        headers: {
+          apikey: supabaseKey,
+          Authorization: `Bearer ${supabaseKey}`,
+        },
+      });
+
+      if (restRes.ok) {
+        const mimeType = restRes.headers.get('content-type') || 'image/jpeg';
+        const buffer = await restRes.arrayBuffer();
+
+        return new NextResponse(Buffer.from(buffer), {
+          status: 200,
+          headers: {
+            'Content-Type': mimeType,
+            'Cache-Control': 'public, max-age=31536000, immutable',
+          },
+        });
+      }
+    } catch {
+      // Fallback para SDK
+    }
+
     const adminClient = createSupabaseAdminClient();
 
-    // 1. Tenta download direto pelo SDK do Storage
+    // 2. Fallback: download via SDK do Storage
     const { data, error } = await adminClient.storage
       .from('gift-media')
       .download(storagePath);

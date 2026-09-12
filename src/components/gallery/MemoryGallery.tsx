@@ -9,10 +9,15 @@ import { GalleryModal } from "./GalleryModal";
 
 interface MemoryGalleryProps {
   items: MediaItem[];
+  isInsideSimulator?: boolean;
 }
 
-export function MemoryGallery({ items }: MemoryGalleryProps) {
+export function MemoryGallery({ items, isInsideSimulator = false }: MemoryGalleryProps) {
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState<number | null>(null);
+
+  if (!items || items.length === 0) {
+    return null;
+  }
 
   const openPhoto = (index: number) => {
     setSelectedPhotoIndex(index);
@@ -54,7 +59,7 @@ export function MemoryGallery({ items }: MemoryGalleryProps) {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-30px" }}
               transition={{ duration: 0.5, delay: (index % 4) * 0.1 }}
-              className={`group relative rounded-2xl overflow-hidden bg-white p-2 border border-brand-rose/30 shadow-xs hover:shadow-md transition-all duration-300 cursor-pointer ${
+              className={`group relative rounded-2xl overflow-hidden bg-white p-2 border border-brand-rose/30 shadow-xs hover:shadow-md transition-all duration-300 cursor-pointer active:scale-[0.98] ${
                 isSpanRow ? "sm:col-span-2" : ""
               }`}
               onClick={() => openPhoto(index)}
@@ -78,7 +83,7 @@ export function MemoryGallery({ items }: MemoryGalleryProps) {
                 />
 
                 {/* Efeito Hover com ícone de Zoom */}
-                <div className="absolute inset-0 bg-brand-wine/40 opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-opacity duration-200 flex items-center justify-center">
+                <div className="absolute inset-0 bg-brand-wine/40 opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-opacity duration-200 flex items-center justify-center pointer-events-none">
                   <div className="w-10 h-10 rounded-full bg-white/90 text-brand-wine flex items-center justify-center shadow-md transform scale-90 group-hover:scale-100 transition-transform">
                     <ZoomIn className="w-5 h-5" />
                   </div>
@@ -102,6 +107,7 @@ export function MemoryGallery({ items }: MemoryGalleryProps) {
         items={items}
         currentIndex={selectedPhotoIndex ?? 0}
         onNavigate={(newIndex) => setSelectedPhotoIndex(newIndex)}
+        isInsideSimulator={isInsideSimulator}
       />
     </section>
   );

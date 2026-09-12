@@ -4,14 +4,17 @@ import React from "react";
 import { motion } from "framer-motion";
 import { TimelineMoment } from "@/types/gift";
 import { MediaPlaceholder } from "../ui/MediaPlaceholder";
-import { Calendar } from "lucide-react";
+import { Calendar, ZoomIn } from "lucide-react";
 
 interface TimelineCardProps {
   moment: TimelineMoment;
   index: number;
+  onOpenPhoto?: () => void;
 }
 
-export function TimelineCard({ moment, index }: TimelineCardProps) {
+export function TimelineCard({ moment, index, onOpenPhoto }: TimelineCardProps) {
+  const hasPhoto = Boolean(moment.image?.url && moment.image.url.trim() !== "");
+
   return (
     <motion.article
       initial={{ opacity: 0, y: 20 }}
@@ -34,8 +37,24 @@ export function TimelineCard({ moment, index }: TimelineCardProps) {
         </span>
       </div>
 
-      {/* Espaço para a Foto do Mês */}
-      <div className="relative rounded-2xl overflow-hidden mb-3 aspect-square bg-brand-cream">
+      {/* Espaço para a Foto do Mês (Clicável para Ampliar) */}
+      <div
+        className={`relative rounded-2xl overflow-hidden mb-3 aspect-square bg-brand-cream ${
+          hasPhoto ? "cursor-pointer group/photo active:scale-[0.98] transition-transform" : ""
+        }`}
+        onClick={() => {
+          if (hasPhoto && onOpenPhoto) onOpenPhoto();
+        }}
+        onKeyDown={(e) => {
+          if ((e.key === "Enter" || e.key === " ") && hasPhoto && onOpenPhoto) {
+            e.preventDefault();
+            onOpenPhoto();
+          }
+        }}
+        tabIndex={hasPhoto ? 0 : undefined}
+        role={hasPhoto ? "button" : undefined}
+        aria-label={hasPhoto ? `Abrir foto ampliada do ${moment.title}` : undefined}
+      >
         <MediaPlaceholder
           item={moment.image}
           label={`${moment.title} — Foto`}
@@ -43,6 +62,13 @@ export function TimelineCard({ moment, index }: TimelineCardProps) {
           aspectRatio="square"
           className="h-full w-full"
         />
+
+        {/* Indicador de Zoom no Celular e Desktop */}
+        {hasPhoto && (
+          <div className="absolute bottom-2.5 right-2.5 z-10 w-8 h-8 rounded-full bg-brand-wine/80 backdrop-blur-xs text-white flex items-center justify-center shadow-md sm:opacity-0 sm:group-hover/photo:opacity-100 transition-opacity pointer-events-none border border-white/30">
+            <ZoomIn className="w-4 h-4" />
+          </div>
+        )}
       </div>
 
       {/* Legenda Emocional */}
@@ -53,7 +79,7 @@ export function TimelineCard({ moment, index }: TimelineCardProps) {
         >
           {moment.caption}
         </h3>
-        {moment.image.caption && (
+        {moment.image?.caption && (
           <p className="text-xs text-brand-graphite/60 mt-1 line-clamp-1">
             {moment.image.caption}
           </p>

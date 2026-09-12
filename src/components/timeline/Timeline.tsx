@@ -8,9 +8,10 @@ import { TimelineCard } from "./TimelineCard";
 interface TimelineProps {
   moments: TimelineMoment[];
   forceMobileCarousel?: boolean;
+  onOpenPhoto?: (index: number) => void;
 }
 
-export function Timeline({ moments, forceMobileCarousel = false }: TimelineProps) {
+export function Timeline({ moments, forceMobileCarousel = false, onOpenPhoto }: TimelineProps) {
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
 
   const scroll = (direction: "left" | "right") => {
@@ -75,7 +76,11 @@ export function Timeline({ moments, forceMobileCarousel = false }: TimelineProps
               key={moment.monthNumber}
               className="w-[280px] shrink-0 snap-start"
             >
-              <TimelineCard moment={moment} index={index} />
+              <TimelineCard
+                moment={moment}
+                index={index}
+                onOpenPhoto={() => onOpenPhoto?.(index)}
+              />
             </div>
           ))}
           {/* Espaçador final para garantir visualização confortável do último card */}
@@ -91,7 +96,12 @@ export function Timeline({ moments, forceMobileCarousel = false }: TimelineProps
       {!forceMobileCarousel && (
         <div className="hidden md:grid md:grid-cols-3 lg:grid-cols-4 gap-6">
           {moments.map((moment, index) => (
-            <TimelineCard key={moment.monthNumber} moment={moment} index={index} />
+            <TimelineCard
+              key={moment.monthNumber}
+              moment={moment}
+              index={index}
+              onOpenPhoto={() => onOpenPhoto?.(index)}
+            />
           ))}
         </div>
       )}

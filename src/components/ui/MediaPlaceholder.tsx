@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Camera, Image as ImageIcon } from "lucide-react";
 import { MediaItem } from "@/types/gift";
 
@@ -10,6 +10,7 @@ interface MediaPlaceholderProps {
   alt?: string;
   caption?: string;
   aspectRatio?: "square" | "portrait" | "landscape" | "auto";
+  objectFit?: "cover" | "contain";
   label?: string;
   sublabel?: string;
   className?: string;
@@ -22,18 +23,35 @@ export function MediaPlaceholder({
   alt,
   caption,
   aspectRatio = "portrait",
+  objectFit = "cover",
   label = "Foto da memória",
   sublabel = "Foto será adicionada em breve.",
   className = "",
+  priority = false,
 }: MediaPlaceholderProps) {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
+  const imgRef = useRef<HTMLImageElement | null>(null);
 
   const imageSrc = src || item?.url;
   const imageAlt = alt || item?.altText || label;
   const activeAspect = item?.aspectRatio || aspectRatio;
   const hasUrl = Boolean(imageSrc && imageSrc.trim() !== '');
   const isAvailable = (item?.isAvailable ?? hasUrl) && hasUrl;
+
+  // Verifica imediatamente se a imagem já foi baixada/armazenada em cache pelo navegador
+  useEffect(() => {
+    setImageError(false);
+    if (imgRef.current) {
+      if (imgRef.current.complete) {
+        if (imgRef.current.naturalWidth > 0) {
+          setImageLoaded(true);
+        } else if (imageSrc) {
+          setImageError(true);
+        }
+      }
+    }
+  }, [imageSrc]);
 
   const aspectClasses = {
     square: "aspect-square",
@@ -42,18 +60,26 @@ export function MediaPlaceholder({
     auto: "h-full w-full min-h-[220px]",
   };
 
+  const fitClass = objectFit === "contain" ? "object-contain" : "object-cover";
+
   // Se a mídia possuir URL e não estiver com erro
   if (isAvailable && imageSrc && !imageError) {
     return (
       <figure className={`relative overflow-hidden rounded-2xl bg-brand-cream-dark ${aspectClasses[activeAspect]} ${className}`}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
+          ref={imgRef}
           src={imageSrc}
           alt={imageAlt}
-          className={`w-full h-full object-cover transition-opacity duration-300 ${
-            imageLoaded ? "opacity-100" : "opacity-0"
+          loading={priority ? "eager" : "lazy"}
+          decoding="async"
+          className={`w-full h-full ${fitClass} transition-opacity duration-300 ${
+            imageLoaded ? "opacity-100" : "opacity-90"
           }`}
-          onLoad={() => setImageLoaded(true)}
+          onLoad={() => {
+            setImageLoaded(true);
+            setImageError(false);
+          }}
           onError={() => setImageError(true)}
         />
         {caption && (
