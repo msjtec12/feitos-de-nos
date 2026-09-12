@@ -4,9 +4,12 @@ import { getAdminSessionAndProfile } from '@/lib/supabase/admin-queries';
 
 export const dynamic = 'force-dynamic';
 
-async function canAccessMedia(storagePath: string) {
+async function canAccessMedia(request: NextRequest, storagePath: string) {
   const { profile } = await getAdminSessionAndProfile();
   if (profile) return true;
+
+  const token = request.nextUrl.searchParams.get('token');
+  if (!token) return false;
 
   const adminClient = createSupabaseAdminClient();
 
@@ -21,11 +24,15 @@ async function canAccessMedia(storagePath: string) {
 
   const { data: giftPage } = await adminClient
     .from('gift_pages')
-    .select('status, reveal_at, archived_at')
+    .select('status, reveal_at, archived_at, public_token')
     .eq('id', asset.gift_page_id)
     .maybeSingle();
 
   if (!giftPage || giftPage.archived_at || giftPage.status !== 'published') {
+    return false;
+  }
+
+  if (giftPage.public_token !== token) {
     return false;
   }
 
@@ -47,7 +54,7 @@ export async function GET(
 
     const storagePath = params.path.map(decodeURIComponent).join('/');
 
-    if (!(await canAccessMedia(storagePath))) {
+    if (!(await canAccessMedia(request, storagePath))) {
       return new NextResponse('Media not found', { status: 404 });
     }
 
