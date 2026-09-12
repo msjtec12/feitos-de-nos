@@ -4,10 +4,10 @@ import React, { useState, useEffect } from 'react';
 import { GiftExperience } from '@/types/gift';
 import { PresenteClientView } from '@/app/presente/[slug]/PresenteClientView';
 import { getThemeCssVariables } from '@/lib/theme-utils';
-import { Sparkles, Heart, Clock } from 'lucide-react';
+import { Sparkles, Heart } from 'lucide-react';
 
 interface DynamicGiftViewProps {
-  giftExperience: GiftExperience;
+  giftExperience?: GiftExperience;
   revealAt: string | null;
   recipientName: string;
 }
@@ -17,11 +17,6 @@ export default function DynamicGiftView({
   revealAt,
   recipientName,
 }: DynamicGiftViewProps) {
-  const [isRevealed, setIsRevealed] = useState<boolean>(() => {
-    if (!revealAt) return true;
-    return new Date(revealAt).getTime() <= Date.now();
-  });
-
   const [timeLeft, setTimeLeft] = useState<{
     days: number;
     hours: number;
@@ -30,12 +25,15 @@ export default function DynamicGiftView({
   }>({ days: 0, hours: 0, minutes: 0, seconds: 0 });
 
   useEffect(() => {
-    if (!revealAt || isRevealed) return;
+    if (!revealAt || giftExperience) return;
 
     const calculateTime = () => {
       const difference = new Date(revealAt).getTime() - Date.now();
+
       if (difference <= 0) {
-        setIsRevealed(true);
+        // O servidor não enviou o conteúdo antes da hora. Recarrega para buscá-lo
+        // somente depois que a regra de reveal_at for satisfeita no backend.
+        window.location.reload();
         return;
       }
 
@@ -48,21 +46,18 @@ export default function DynamicGiftView({
     };
 
     calculateTime();
-    const timer = setInterval(calculateTime, 1000);
-    return () => clearInterval(timer);
-  }, [revealAt, isRevealed]);
+    const timer = window.setInterval(calculateTime, 1000);
+    return () => window.clearInterval(timer);
+  }, [revealAt, giftExperience]);
 
-  if (!isRevealed && revealAt) {
+  if (!giftExperience && revealAt) {
     const formattedDate = new Date(revealAt).toLocaleString('pt-BR', {
       dateStyle: 'long',
       timeStyle: 'short',
     });
 
     return (
-      <div
-        style={getThemeCssVariables(giftExperience.theme)}
-        className="min-h-screen bg-brand-cream flex flex-col items-center justify-center p-6 text-center transition-colors duration-500"
-      >
+      <div className="min-h-screen bg-brand-cream flex flex-col items-center justify-center p-6 text-center transition-colors duration-500">
         <div className="max-w-md w-full bg-white rounded-3xl p-8 sm:p-10 shadow-xl border border-brand-wine/10 space-y-8 animate-in fade-in zoom-in-95 duration-500">
           <div className="relative mx-auto w-20 h-20 rounded-full bg-brand-cream flex items-center justify-center border-2 border-brand-terracotta/30">
             <Sparkles className="w-10 h-10 text-brand-terracotta animate-pulse" />
@@ -83,32 +78,22 @@ export default function DynamicGiftView({
             </p>
           </div>
 
-          {/* Countdown timer */}
           <div className="grid grid-cols-4 gap-2 pt-2">
-            <div className="bg-brand-cream p-3 rounded-2xl border border-brand-wine/10">
-              <span className="text-2xl font-serif font-bold text-brand-wine block">
-                {String(timeLeft.days).padStart(2, '0')}
-              </span>
-              <span className="text-[10px] uppercase text-brand-graphite/60 font-semibold">Dias</span>
-            </div>
-            <div className="bg-brand-cream p-3 rounded-2xl border border-brand-wine/10">
-              <span className="text-2xl font-serif font-bold text-brand-wine block">
-                {String(timeLeft.hours).padStart(2, '0')}
-              </span>
-              <span className="text-[10px] uppercase text-brand-graphite/60 font-semibold">Horas</span>
-            </div>
-            <div className="bg-brand-cream p-3 rounded-2xl border border-brand-wine/10">
-              <span className="text-2xl font-serif font-bold text-brand-wine block">
-                {String(timeLeft.minutes).padStart(2, '0')}
-              </span>
-              <span className="text-[10px] uppercase text-brand-graphite/60 font-semibold">Min</span>
-            </div>
-            <div className="bg-brand-cream p-3 rounded-2xl border border-brand-wine/10">
-              <span className="text-2xl font-serif font-bold text-brand-terracotta block">
-                {String(timeLeft.seconds).padStart(2, '0')}
-              </span>
-              <span className="text-[10px] uppercase text-brand-graphite/60 font-semibold">Seg</span>
-            </div>
+            {[
+              ['Dias', timeLeft.days],
+              ['Horas', timeLeft.hours],
+              ['Min', timeLeft.minutes],
+              ['Seg', timeLeft.seconds],
+            ].map(([label, value]) => (
+              <div key={String(label)} className="bg-brand-cream p-3 rounded-2xl border border-brand-wine/10">
+                <span className="text-2xl font-serif font-bold text-brand-wine block">
+                  {String(value).padStart(2, '0')}
+                </span>
+                <span className="text-[10px] uppercase text-brand-graphite/60 font-semibold">
+                  {label}
+                </span>
+              </div>
+            ))}
           </div>
 
           <div className="pt-4 border-t border-stone-100 flex items-center justify-center gap-2 text-xs text-stone-400">
@@ -120,5 +105,13 @@ export default function DynamicGiftView({
     );
   }
 
-  return <PresenteClientView gift={giftExperience} />;
+  if (!giftExperience) {
+    return null;
+  }
+
+  return (
+    <div style={getThemeCssVariables(giftExperience.theme)}>
+      <PresenteClientView gift={giftExperience} />
+    </div>
+  );
 }
