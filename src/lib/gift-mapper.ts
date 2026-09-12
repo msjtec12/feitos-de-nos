@@ -1,14 +1,32 @@
 import { GiftContentData, GiftThemeData } from '@/types/gift-experience';
 import { GiftExperience } from '@/types/gift';
 
+function withMediaToken(url?: string | null, publicToken?: string | null): string {
+  const value = (url || '').trim();
+  if (!value || !publicToken || !value.startsWith('/api/media/')) return value;
+
+  try {
+    const separator = value.includes('?') ? '&' : '?';
+    if (/[?&]token=/.test(value)) return value;
+    return `${value}${separator}token=${encodeURIComponent(publicToken)}`;
+  } catch {
+    return value;
+  }
+}
+
 /**
- * Converte GiftContentData e GiftThemeData para o formato de GiftExperience usado pelos componentes
- * Função pura e segura para execução no cliente e servidor
+ * Converte GiftContentData e GiftThemeData para o formato de GiftExperience usado pelos componentes.
+ * Quando publicToken é informado, URLs antigas de /api/media recebem automaticamente o token
+ * necessário para continuar funcionando com o bucket privado endurecido.
  */
 export function mapContentToGiftExperience(
   content: GiftContentData,
-  theme?: GiftThemeData | null
+  theme?: GiftThemeData | null,
+  publicToken?: string | null
 ): GiftExperience {
+  const featuredImageUrl = withMediaToken(content.recipient?.featuredImage?.url, publicToken);
+  const primaryAudioUrl = withMediaToken(content.primaryAudio?.audioUrl, publicToken);
+
   return {
     slug: content.slug || 'presente',
     openingText: content.openingText || {
@@ -24,7 +42,8 @@ export function mapContentToGiftExperience(
       featuredImage: content.recipient?.featuredImage
         ? {
             ...content.recipient.featuredImage,
-            isAvailable: Boolean(content.recipient.featuredImage.url && content.recipient.featuredImage.url.trim() !== ''),
+            url: featuredImageUrl,
+            isAvailable: Boolean(featuredImageUrl),
           }
         : {
             id: 'cover',
@@ -37,36 +56,57 @@ export function mapContentToGiftExperience(
     primaryAudio: content.primaryAudio
       ? {
           ...content.primaryAudio,
-          isAvailable: Boolean(content.primaryAudio.audioUrl && content.primaryAudio.audioUrl.trim() !== ''),
+          audioUrl: primaryAudioUrl,
+          isAvailable: Boolean(primaryAudioUrl),
         }
       : undefined,
-    timelineMoments: (content.timelineMoments || []).map((m, idx) => ({
-      ...m,
-      image: m.image
-        ? {
-            ...m.image,
-            isAvailable: Boolean(m.image.url && m.image.url.trim() !== ''),
-          }
-        : {
-            id: `timeline-img-${idx}`,
-            url: '',
-            altText: m.title || `Foto do momento ${idx + 1}`,
-            isAvailable: false,
-          },
-    })),
-    contributorMessages: (content.contributorMessages || []).map((c) => ({
-      ...c,
-      audio: c.audio
-        ? {
-            ...c.audio,
-            isAvailable: Boolean(c.audio.audioUrl && c.audio.audioUrl.trim() !== ''),
-          }
-        : undefined,
-    })),
-    galleryItems: (content.galleryItems || []).map((g) => ({
-      ...g,
-      isAvailable: Boolean(g.url && g.url.trim() !== ''),
-    })),
+    timelineMoments: (content.timelineMoments || []).map((m, idx) => {
+      const imageUrl = withMediaToken(m.image?.url, publicToken);
+      return {
+        ...m,
+        image: m.image
+          ? {
+              ...m.image,
+              url: imageUrl,
+              isAvailable: Boolean(imageUrl),
+            }
+          : {
+              id: `timeline-img-${idx}`,
+              url: '',
+              altText: m.title || `Foto do momento ${idx + 1}`,
+              isAvailable: false,
+            },
+      };
+    }),
+    contributorMessages: (content.contributorMessages || []).map((c) => {
+      const avatarUrl = withMediaToken(c.avatarImage?.url, publicToken);
+      const audioUrl = withMediaToken(c.audio?.audioUrl, publicToken);
+      return {
+        ...c,
+        avatarImage: c.avatarImage
+          ? {
+              ...c.avatarImage,
+              url: avatarUrl,
+              isAvailable: Boolean(avatarUrl),
+            }
+          : undefined,
+        audio: c.audio
+          ? {
+              ...c.audio,
+              audioUrl,
+              isAvailable: Boolean(audioUrl),
+            }
+          : undefined,
+      };
+    }),
+    galleryItems: (content.galleryItems || []).map((g) => {
+      const galleryUrl = withMediaToken(g.url, publicToken);
+      return {
+        ...g,
+        url: galleryUrl,
+        isAvailable: Boolean(galleryUrl),
+      };
+    }),
     closing: content.closing || {
       headline: 'Para Sempre Guardado',
       message: 'Que essas lembranças continuem vivas por toda a vida.',
