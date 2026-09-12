@@ -1,9 +1,9 @@
+import { createHash } from 'node:crypto';
 import { NextRequest, NextResponse } from 'next/server';
 import { publicOrderSchema } from '@/lib/validation/order-schema';
 import { createSupabaseAdminClient } from '@/lib/supabase/server';
 import { ProductType } from '@/types/database';
 
-// Preços fixados no servidor em centavos (Impossível de adulterar pelo cliente)
 const SERVER_PRICES_CENTS: Record<string, number> = {
   digital: 5990,
   cartao: 9990,
@@ -12,14 +12,17 @@ const SERVER_PRICES_CENTS: Record<string, number> = {
   interactive_gift: 19990,
 };
 
+const RATE_LIMIT_WINDOW_MINUTES = 10;
+const RATE_LIMIT_MAX_REQUESTS = 5;
+
 function generateOrderCode(): string {
   const now = new Date();
   const yyyy = String(now.getFullYear());
   const mm = String(now.getMonth() + 1).padStart(2, '0');
   const dd = String(now.getDate()).padStart(2, '0');
-
   const chars = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
   let randomPart = '';
+
   for (let i = 0; i < 4; i++) {
     randomPart += chars.charAt(Math.floor(Math.random() * chars.length));
   }
@@ -27,12 +30,71 @@ function generateOrderCode(): string {
   return `FN-${yyyy}${mm}${dd}-${randomPart}`;
 }
 
+function getClientIp(req: NextRequest): string {
+  const forwarded = req.headers.get('x-forwarded-for');
+  if (forwarded) return forwarded.split(',')[0].trim();
+  return req.headers.get('x-real-ip') || 'unknown';
+}
+
+function hashClientIp(ip: string): string {
+  const salt = process.env.RATE_LIMIT_SALT;
+  if (!salt) {
+    throw new Error('RATE_LIMIT_SALT não configurado');
+  }
+
+  return createHash('sha256').update(`${salt}:${ip}`).digest('hex');
+}
+
+async function enforceRateLimit(req: NextRequest) {
+  const adminClient = createSupabaseAdminClient();
+  const ipHash = hashClientIp(getClientIp(req));
+  const windowStart = new Date(
+    Date.now() - RATE_LIMIT_WINDOW_MINUTES * 60 * 1000
+  ).toISOString();
+
+  const { count, error: countError } = await adminClient
+    .from('order_request_limits')
+    .select('*', { count: 'exact', head: true })
+    .eq('ip_hash', ipHash)
+    .gte('created_at', windowStart);
+
+  if (countError) {
+    throw countError;
+  }
+
+  if ((count || 0) >= RATE_LIMIT_MAX_REQUESTS) {
+    return false;
+  }
+
+  const { error: insertError } = await adminClient
+    .from('order_request_limits')
+    .insert({ ip_hash: ipHash });
+
+  if (insertError) {
+    throw insertError;
+  }
+
+  return true;
+}
+
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
+    if (!(await enforceRateLimit(req))) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Muitas tentativas em pouco tempo. Aguarde alguns minutos e tente novamente.',
+        },
+        {
+          status: 429,
+          headers: { 'Retry-After': String(RATE_LIMIT_WINDOW_MINUTES * 60) },
+        }
+      );
+    }
 
-    // 1. Validação Zod estrita
+    const body = await req.json();
     const parseResult = publicOrderSchema.safeParse(body);
+
     if (!parseResult.success) {
       const errorMsg = parseResult.error.issues.map((e) => e.message).join(', ');
       return NextResponse.json({ success: false, error: errorMsg }, { status: 400 });
@@ -40,26 +102,20 @@ export async function POST(req: NextRequest) {
 
     const data = parseResult.data;
 
-    // 2. Bloqueio de Honeypot contra Bots
     if (data.honeypot && data.honeypot.length > 0) {
       return NextResponse.json({ success: false, error: 'Requisição inválida' }, { status: 400 });
     }
 
-    // 3. Mapeamento de formato para o banco
     let productType: ProductType = 'digital';
     if (data.format === 'cartao') productType = 'talking_card';
     if (data.format === 'interativo') productType = 'interactive_gift';
 
-    // 4. Preço calculado e fixado no servidor
     const priceCents = SERVER_PRICES_CENTS[data.format] || 5990;
     const freightCents = 0;
     const totalCents = priceCents + freightCents;
-
-    // 5. Geração de código exclusivo FN-AAAAMMDD-XXXX
-    let code = generateOrderCode();
+    const code = generateOrderCode();
     const adminClient = createSupabaseAdminClient();
 
-    // Monta array de conteúdos selecionados
     const contents: string[] = [];
     if (data.contentTypes.photos) contents.push('photos');
     if (data.contentTypes.messages) contents.push('messages');
@@ -68,7 +124,6 @@ export async function POST(req: NextRequest) {
     if (data.contentTypes.music) contents.push('music');
     if (data.contentTypes.contributors) contents.push('contributors');
 
-    // 6. Inserção no Supabase usando Admin Client (bypassa RLS anônimo de forma segura)
     const { data: newOrder, error: insertError } = await adminClient
       .from('orders')
       .insert({
@@ -114,7 +169,6 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 7. Registro inicial no histórico de status
     await adminClient.from('order_status_history').insert({
       order_id: newOrder.id,
       previous_status: null,
@@ -135,7 +189,7 @@ export async function POST(req: NextRequest) {
         }).format(newOrder.total_cents / 100),
       },
     });
-  } catch (err: any) {
+  } catch (err) {
     console.error('Erro interno na rota /api/orders:', err);
     return NextResponse.json(
       { success: false, error: 'Erro inesperado ao processar o pedido.' },
