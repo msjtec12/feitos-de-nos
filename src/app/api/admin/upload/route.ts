@@ -79,7 +79,7 @@ export async function POST(req: NextRequest) {
 
     const { data: giftPage } = await adminClient
       .from('gift_pages')
-      .select('id')
+      .select('id, public_token')
       .eq('id', giftPageId)
       .is('archived_at', null)
       .maybeSingle();
@@ -133,7 +133,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const mediaUrl = `/api/media/${storagePath}`;
+    const mediaUrl = `/api/media/${storagePath}?token=${encodeURIComponent(giftPage.public_token)}`;
 
     return NextResponse.json({
       success: true,
