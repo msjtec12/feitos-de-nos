@@ -68,7 +68,8 @@ export default async function PublicTokenGiftPage({ params }: PublicGiftPageProp
 
   const giftExperience = mapContentToGiftExperience(
     giftResult.content,
-    giftResult.theme
+    giftResult.theme,
+    params.publicToken
   );
 
   return (
