@@ -8,8 +8,50 @@ export const ORDER_PRICES_CENTS: Record<string, number> = {
   interactive_gift: 19990,
 };
 
+const occasionSchema = z.enum([
+  'primeiro-ano',
+  'amor-casal',
+  'dia-das-maes',
+  'dia-dos-pais',
+  'aniversario',
+  'casamento-bodas',
+  'formatura',
+  'amizade',
+  'memorial',
+  'religioso',
+  'natal',
+  'cha-de-bebe',
+  // Compatibilidade com pedidos criados antes da expansão das coleções.
+  'nossa-historia',
+  'vozes',
+  'especial',
+]);
+
+const styleSchema = z.enum([
+  'afetuoso',
+  'delicado',
+  'elegante',
+  'infantil-suave',
+  'azul-sereno',
+  'lavanda-bebe',
+  'terracota-boho',
+  'cerejeira-marsala',
+  'noite-estrelada',
+  'verde-botanico',
+  'eucalipto-alecrim',
+  'sol-girassol',
+  'rose-champagne',
+  'floral-mae',
+  'classico-pai',
+  'casamento-champagne',
+  'infantil-encantado',
+  'memorial-sereno',
+  'fe-dourada',
+  'natal-elegante',
+]);
+
 export const publicOrderSchema = z.object({
-  occasion: z.enum(['primeiro-ano', 'nossa-historia', 'vozes', 'especial']),
+  occasion: occasionSchema,
   format: z.enum(['digital', 'cartao', 'interativo']),
   recipientName: z.string().trim().min(2, 'Nome do presenteado deve ter ao menos 2 caracteres').max(80),
   recipientRelationship: z.string().trim().min(2, 'Informe o vínculo ou grau de parentesco').max(50),
@@ -24,7 +66,7 @@ export const publicOrderSchema = z.object({
     music: z.boolean().default(false),
     contributors: z.boolean().default(false),
   }),
-  style: z.enum(['afetuoso', 'delicado', 'elegante', 'infantil-suave']),
+  style: styleSchema,
   customerName: z.string().trim().min(3, 'Nome completo deve ter ao menos 3 caracteres').max(80),
   customerPhone: z.string().trim().min(10, 'WhatsApp deve ter ao menos 10 dígitos').max(20),
   customerEmail: z.string().trim().email('E-mail inválido').max(100),
