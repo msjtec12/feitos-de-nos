@@ -1,1 +1,0 @@
-Componentes da trilha sonora opcional das experiências Feito de Nós.
