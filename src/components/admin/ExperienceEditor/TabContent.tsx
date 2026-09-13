@@ -64,7 +64,7 @@ export function TabContent({ giftPageId, content, updateContent }: TabContentPro
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="space-y-1">
             <div className="flex items-center justify-between text-xs">
-              <label className="font-semibold text-[#713C48]">Nome do Presenteado *</label>
+              <label className="font-semibold text-[#713C48]">Nome do Presenteado / “Para:” *</label>
               <span className={`text-[10px] ${nameLength > 50 ? 'text-rose-600 font-bold' : 'text-stone-400'}`}>
                 {nameLength}/60
               </span>
@@ -77,6 +77,9 @@ export function TabContent({ giftPageId, content, updateContent }: TabContentPro
               placeholder="Ex: Matheus Akira"
               className="w-full px-3.5 py-2.5 rounded-xl bg-[#FFF8F0]/50 border border-[#713C48]/20 text-xs sm:text-sm text-[#302B2D] focus:outline-none focus:ring-2 focus:ring-[#713C48] focus:bg-white transition-all"
             />
+            <p className="text-[10px] text-stone-500 leading-relaxed">
+              Este nome também aparece como “Para:” na lista de experiências, no simulador e no QR Code.
+            </p>
           </div>
 
           <div className="space-y-1">
