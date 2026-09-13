@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { GiftContentData, GiftThemeData } from '@/types/gift-experience';
+import { GiftContentData } from '@/types/gift-experience';
 import { MediaUploader } from '../MediaUploader';
 import { ThemePresetManager } from './ThemePresetManager';
 import { User, Sparkles, Volume2, Info, Music2, ExternalLink, CheckCircle2, AlertCircle } from 'lucide-react';
@@ -10,12 +10,10 @@ import { parseSpotifyUrl } from '@/lib/spotify';
 interface TabContentProps {
   giftPageId: string;
   content: GiftContentData;
-  theme: GiftThemeData;
   updateContent: (fields: Partial<GiftContentData>) => void;
-  updateTheme: (fields: Partial<GiftThemeData>) => void;
 }
 
-export function TabContent({ giftPageId, content, theme, updateContent, updateTheme }: TabContentProps) {
+export function TabContent({ giftPageId, content, updateContent }: TabContentProps) {
   const recipient = content.recipient || {};
   const primaryAudio = content.primaryAudio || {
     id: 'primary-audio',
@@ -54,10 +52,9 @@ export function TabContent({ giftPageId, content, theme, updateContent, updateTh
   return (
     <div className="space-y-6 animate-in fade-in">
       <ThemePresetManager
+        giftPageId={giftPageId}
         content={content}
-        theme={theme}
         updateContent={updateContent}
-        updateTheme={updateTheme}
       />
 
       <div className="p-4 rounded-2xl bg-[#FFF8F0] border border-[#713C48]/15 flex items-start gap-3">
