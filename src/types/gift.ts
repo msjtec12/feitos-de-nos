@@ -2,6 +2,8 @@
  * Feito de Nós — Tipos de Domínio para a Experiência do Presente
  */
 
+import { GiftSectionCopy, GiftThemePresetId } from './theme';
+
 export interface MediaItem {
   id: string;
   url: string;
@@ -67,6 +69,7 @@ export interface BrandSettings {
 
 export interface GiftExperience {
   slug: string;
+  themePresetId?: GiftThemePresetId;
   openingText: {
     headline: string;
     description: string;
@@ -78,6 +81,7 @@ export interface GiftExperience {
   timelineMoments: TimelineMoment[];
   contributorMessages: ContributorMessage[];
   galleryItems: MediaItem[];
+  sectionCopy?: GiftSectionCopy;
   closing: {
     headline: string;
     message: string;
@@ -85,11 +89,16 @@ export interface GiftExperience {
   };
   brand: BrandSettings;
   theme?: {
+    presetId?: GiftThemePresetId;
     styleId?: string;
     primaryColor?: string;
+    secondaryColor?: string;
     accentColor?: string;
     backgroundColor?: string;
+    surfaceColor?: string;
     textColor?: string;
+    mutedColor?: string;
+    borderColor?: string;
     fontFamily?: string;
   };
 }
