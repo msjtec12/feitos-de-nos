@@ -1,26 +1,33 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import QRCode from "qrcode";
-import { QrCode, Download, Printer, Copy, Check, ArrowLeft } from "lucide-react";
+import { QrCode, Download, Printer, Copy, Check, ArrowLeft, Music2 } from "lucide-react";
 import Link from "next/link";
 import { BrandLogo } from "../brand/BrandLogo";
-import { BrandSymbol, BackgroundKnotArt } from "../brand/BrandSymbol";
+import { parseSpotifyUrl } from "@/lib/spotify";
 
 interface QRCodeCardProps {
   slug: string;
   recipientName: string;
   tagline?: string;
+  spotifyUrl?: string;
+  soundtrackTitle?: string;
 }
 
 export function QRCodeCard({
   slug,
   recipientName,
   tagline = "Meu primeiro ano",
+  spotifyUrl,
+  soundtrackTitle = "Nossa música",
 }: QRCodeCardProps) {
   const [qrDataUrl, setQrDataUrl] = useState<string>("");
+  const [spotifyQrDataUrl, setSpotifyQrDataUrl] = useState<string>("");
   const [targetUrl, setTargetUrl] = useState<string>("");
   const [copied, setCopied] = useState(false);
+
+  const spotify = parseSpotifyUrl(spotifyUrl);
 
   useEffect(() => {
     const origin = typeof window !== "undefined" ? window.location.origin : "https://feitodenos.com.br";
@@ -30,19 +37,29 @@ export function QRCodeCard({
     QRCode.toDataURL(fullUrl, {
       width: 400,
       margin: 2,
-      color: {
-        dark: "#302B2D",
-        light: "#FFFFFF",
-      },
+      color: { dark: "#302B2D", light: "#FFFFFF" },
       errorCorrectionLevel: "H",
     })
-      .then((url) => {
-        setQrDataUrl(url);
-      })
-      .catch((err) => {
-        console.error("Erro ao gerar QR Code:", err);
-      });
+      .then(setQrDataUrl)
+      .catch((err) => console.error("Erro ao gerar QR Code:", err));
   }, [slug]);
+
+  useEffect(() => {
+    const parsed = parseSpotifyUrl(spotifyUrl);
+    if (!parsed) {
+      setSpotifyQrDataUrl("");
+      return;
+    }
+
+    QRCode.toDataURL(parsed.canonicalUrl, {
+      width: 320,
+      margin: 2,
+      color: { dark: "#302B2D", light: "#FFFFFF" },
+      errorCorrectionLevel: "H",
+    })
+      .then(setSpotifyQrDataUrl)
+      .catch((err) => console.error("Erro ao gerar QR da música:", err));
+  }, [spotifyUrl]);
 
   const handleCopy = async () => {
     if (typeof navigator !== "undefined" && navigator.clipboard) {
@@ -53,14 +70,11 @@ export function QRCodeCard({
   };
 
   const handlePrint = () => {
-    if (typeof window !== "undefined") {
-      window.print();
-    }
+    if (typeof window !== "undefined") window.print();
   };
 
   return (
     <div className="min-h-screen bg-brand-cream/80 py-8 px-4 sm:px-6 flex flex-col items-center justify-center print:bg-white print:p-0">
-      {/* Botões de controle de tela (ocultos na impressão) */}
       <div className="max-w-md w-full mb-6 flex items-center justify-between print:hidden">
         <Link
           href={`/presente/${slug}`}
@@ -92,9 +106,7 @@ export function QRCodeCard({
         </div>
       </div>
 
-      {/* Cartão Físico Estilizado (Idêntico ao da papelaria oficial da foto de referência) */}
       <div className="relative w-full max-w-[480px] bg-[#FFF8F0] border border-brand-rose/40 rounded-3xl p-8 sm:p-10 shadow-lg print:shadow-none print:border print:rounded-2xl print:max-w-[400px] overflow-hidden">
-        {/* Linhas curvas afetivas no fundo do cartão */}
         <div className="absolute top-2 right-2 opacity-25 pointer-events-none" aria-hidden="true">
           <svg width="160" height="160" viewBox="0 0 160 160" fill="none">
             <path
@@ -106,36 +118,28 @@ export function QRCodeCard({
           </svg>
         </div>
 
-        {/* Topo do Cartão com Logo Oficial */}
         <div className="flex flex-col items-center text-center mb-6">
           <BrandLogo size="md" showSlogan={true} />
         </div>
 
-        {/* Conteúdo Central: Nome do Destinatário & QR Code Oficial */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-6 my-4 bg-white/90 p-5 rounded-2xl border border-brand-rose/30 shadow-xs">
           <div className="text-left flex-1 min-w-0">
             <span className="text-[11px] uppercase tracking-widest text-brand-terracotta font-semibold block mb-1">
               Presente Especial
             </span>
-            <h2 className="font-serif text-2xl text-brand-wine tracking-tight">
-              {recipientName}
-            </h2>
-            <p className="font-serif italic text-sm text-brand-terracotta mt-0.5">
-              {tagline}
-            </p>
+            <h2 className="font-serif text-2xl text-brand-wine tracking-tight">{recipientName}</h2>
+            <p className="font-serif italic text-sm text-brand-terracotta mt-0.5">{tagline}</p>
             <p className="text-xs text-brand-graphite/70 mt-3 leading-relaxed">
-              Aponte a câmera do seu celular para o QR Code ao lado para ouvir vozes e ver momentos inesquecíveis.
+              Aponte a câmera do seu celular para o QR Code ao lado para ouvir vozes, ver momentos inesquecíveis e abrir toda a experiência.
             </p>
           </div>
 
-          {/* QR Code Container */}
           <div className="shrink-0 flex flex-col items-center">
             <div className="p-2.5 bg-white rounded-xl border-2 border-brand-rose/40 shadow-xs">
               {qrDataUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element
                 <img
                   src={qrDataUrl}
-                  alt={`QR Code para o presente do ${recipientName}`}
+                  alt={`QR Code para o presente de ${recipientName}`}
                   className="w-32 h-32 object-contain"
                 />
               ) : (
@@ -145,23 +149,43 @@ export function QRCodeCard({
               )}
             </div>
             <span className="text-[10px] font-mono text-brand-graphite/50 mt-1 uppercase tracking-wider">
-              Escanear QR Code
+              Abrir presente
             </span>
           </div>
         </div>
 
-        {/* Rodapé do Cartão */}
+        {spotify && spotifyQrDataUrl && (
+          <div className="mt-4 bg-white/90 rounded-2xl border border-brand-rose/30 p-4 flex items-center gap-4">
+            <div className="w-9 h-9 rounded-xl bg-brand-wine text-white flex items-center justify-center shrink-0">
+              <Music2 className="w-4 h-4" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <span className="text-[10px] uppercase tracking-widest text-brand-terracotta font-semibold">
+                Trilha sonora
+              </span>
+              <p className="font-serif text-sm font-bold text-brand-wine truncate">
+                {soundtrackTitle || "Nossa música"}
+              </p>
+              <p className="text-[10px] text-brand-graphite/60 mt-0.5">
+                Escaneie para ouvir diretamente no Spotify.
+              </p>
+            </div>
+            <div className="p-1.5 bg-white rounded-lg border border-brand-rose/30 shrink-0">
+              <img
+                src={spotifyQrDataUrl}
+                alt="QR Code para abrir a música no Spotify"
+                className="w-20 h-20 object-contain"
+              />
+            </div>
+          </div>
+        )}
+
         <div className="text-center mt-6 pt-4 border-t border-brand-rose/20">
-          <p className="font-serif text-xs text-brand-wine/80">
-            Feito de Nós • Histórias que viram presente.
-          </p>
-          <p className="text-[10px] font-mono text-brand-graphite/40 mt-1">
-            {targetUrl}
-          </p>
+          <p className="font-serif text-xs text-brand-wine/80">Feito de Nós • Histórias que viram presente.</p>
+          <p className="text-[10px] font-mono text-brand-graphite/40 mt-1">{targetUrl}</p>
         </div>
       </div>
 
-      {/* Instruções de impressão (visíveis apenas na tela) */}
       <div className="max-w-md w-full text-center mt-6 text-xs text-brand-graphite/60 print:hidden">
         <p>
           Dica: Você pode imprimir este cartão em papel couchê ou linho 240g para incluir na caixa ou placa física personalizada.
@@ -174,7 +198,19 @@ export function QRCodeCard({
               className="inline-flex items-center gap-1.5 text-xs text-brand-wine font-medium underline hover:text-brand-terracotta transition-colors"
             >
               <Download className="w-3.5 h-3.5" />
-              <span>Baixar arquivo de imagem do QR Code (.PNG em alta resolução)</span>
+              <span>Baixar QR Code do presente (.PNG)</span>
+            </a>
+          </div>
+        )}
+        {spotifyQrDataUrl && (
+          <div className="mt-2">
+            <a
+              href={spotifyQrDataUrl}
+              download={`qrcode-musica-${slug}.png`}
+              className="inline-flex items-center gap-1.5 text-xs text-brand-wine font-medium underline hover:text-brand-terracotta transition-colors"
+            >
+              <Music2 className="w-3.5 h-3.5" />
+              <span>Baixar QR Code da música (.PNG)</span>
             </a>
           </div>
         )}

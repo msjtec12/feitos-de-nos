@@ -60,6 +60,16 @@ export function mapContentToGiftExperience(
           isAvailable: Boolean(primaryAudioUrl),
         }
       : undefined,
+    soundtrack:
+      content.soundtrack?.enabled && content.soundtrack.url?.trim()
+        ? {
+            enabled: true,
+            provider: 'spotify',
+            url: content.soundtrack.url.trim(),
+            title: content.soundtrack.title?.trim() || 'Nossa música',
+            message: content.soundtrack.message?.trim() || '',
+          }
+        : undefined,
     timelineMoments: (content.timelineMoments || []).map((m, idx) => {
       const imageUrl = withMediaToken(m.image?.url, publicToken);
       return {

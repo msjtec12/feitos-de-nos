@@ -37,6 +37,8 @@ export default async function CartaoPage({ params }: CartaoPageProps) {
       slug={slug}
       recipientName={gift.recipient.name}
       tagline={gift.recipient.subtitle}
+      spotifyUrl={gift.soundtrack?.enabled ? gift.soundtrack.url : undefined}
+      soundtrackTitle={gift.soundtrack?.title}
     />
   );
 }
