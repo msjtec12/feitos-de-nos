@@ -1,7 +1,8 @@
-import { Metadata } from "next";
-import { notFound } from "next/navigation";
-import { getGiftBySlug } from "@/lib/supabase/queries";
-import { PresenteClientView } from "./PresenteClientView";
+import { Metadata } from 'next';
+import { notFound } from 'next/navigation';
+import { getPublishedGiftBySlug } from '@/lib/supabase/public-slug';
+import { matheusAkiraGiftData } from '@/data/matheus-demo';
+import { PresenteClientView } from './PresenteClientView';
 
 interface PresentePageProps {
   params: {
@@ -9,22 +10,25 @@ interface PresentePageProps {
   };
 }
 
-/**
- * Geração de metadados dinâmicos e privados a partir do Supabase.
- */
-export async function generateMetadata({
-  params,
-}: PresentePageProps): Promise<Metadata> {
-  const { slug } = params;
-  const gift = await getGiftBySlug(slug);
+async function loadPublicGift(slug: string) {
+  const publishedGift = await getPublishedGiftBySlug(slug);
+  if (publishedGift) return publishedGift;
+
+  const cleanSlug = decodeURIComponent(slug).trim().toLowerCase();
+  if (cleanSlug === 'matheus-akira' || cleanSlug === 'demo') {
+    return matheusAkiraGiftData;
+  }
+
+  return null;
+}
+
+export async function generateMetadata({ params }: PresentePageProps): Promise<Metadata> {
+  const gift = await loadPublicGift(params.slug);
 
   if (!gift) {
     return {
-      title: "Presente Afetivo | Feito de Nós",
-      robots: {
-        index: false,
-        follow: false,
-      },
+      title: 'Presente Afetivo | Feito de Nós',
+      robots: { index: false, follow: false, noarchive: true },
     };
   }
 
@@ -41,11 +45,11 @@ export async function generateMetadata({
 }
 
 /**
- * Server Component principal da rota /presente/[slug] integrado com Supabase.
+ * Compatibilidade da rota antiga /presente/[slug].
+ * Em produção, usa somente gift_pages publicadas e já reveladas.
  */
 export default async function PresentePage({ params }: PresentePageProps) {
-  const { slug } = params;
-  const giftData = await getGiftBySlug(slug);
+  const giftData = await loadPublicGift(params.slug);
 
   if (!giftData) {
     notFound();

@@ -24,5 +24,22 @@ export default async function GiftPageEditorPage({ params }: EditorPageProps) {
     notFound();
   }
 
-  return <ExperienceEditorClientView giftPage={giftPage} order={order} />;
+  // Algumas páginas antigas podem ter recipient_name diferente do nome já salvo
+  // dentro do conteúdo. O conteúdo editável é a fonte de verdade para o editor,
+  // evitando que um valor legado (ex.: "teset") sobrescreva o nome correto.
+  const content = giftPage.content as {
+    recipient?: { name?: string | null };
+  } | null;
+  const contentRecipientName = content?.recipient?.name?.trim();
+
+  const normalizedGiftPage = contentRecipientName
+    ? { ...giftPage, recipient_name: contentRecipientName }
+    : giftPage;
+
+  return (
+    <ExperienceEditorClientView
+      giftPage={normalizedGiftPage}
+      order={order}
+    />
+  );
 }

@@ -19,12 +19,25 @@ export async function PATCH(
     const { id } = params;
     const body = await request.json();
 
+    // O nome exibido no conteúdo é a fonte de verdade do presenteado.
+    // Mantemos gift_pages.recipient_name sincronizado para a lista administrativa,
+    // QR Code, simulador e demais telas que usam a coluna diretamente.
+    const contentRecipientName = body?.content?.recipient?.name;
+    if (typeof contentRecipientName === 'string' && contentRecipientName.trim()) {
+      body.recipient_name = contentRecipientName.trim();
+    } else if (typeof body.recipient_name === 'string') {
+      body.recipient_name = body.recipient_name.trim();
+    }
+
     const result = await saveGiftPage(id, body, user?.id);
     if (!result.success) {
       return NextResponse.json({ error: result.error }, { status: 400 });
     }
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({
+      success: true,
+      recipientName: body.recipient_name || null,
+    });
   } catch (err: any) {
     return NextResponse.json(
       { error: err.message || 'Erro ao salvar página' },
