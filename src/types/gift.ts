@@ -1,12 +1,5 @@
 /**
  * Feito de Nós — Tipos de Domínio para a Experiência do Presente
- * 
- * Estrutura preparada para mapeamento direto com tabelas futuras do Supabase:
- * - gifts
- * - recipients
- * - timeline_moments
- * - contributor_messages
- * - media_items
  */
 
 export interface MediaItem {
@@ -18,7 +11,7 @@ export interface MediaItem {
   width?: number;
   height?: number;
   placeholderColor?: string;
-  isAvailable?: boolean; // Define explicitamente se o arquivo de imagem real existe no servidor
+  isAvailable?: boolean;
 }
 
 export interface AudioMessage {
@@ -28,7 +21,15 @@ export interface AudioMessage {
   durationSeconds?: number;
   recordedBy?: string;
   transcript?: string;
-  isAvailable?: boolean; // Define explicitamente se o arquivo de áudio real existe no servidor
+  isAvailable?: boolean;
+}
+
+export interface GiftSoundtrack {
+  enabled: boolean;
+  provider: 'spotify';
+  url: string;
+  title?: string;
+  message?: string;
 }
 
 export interface Recipient {
@@ -73,6 +74,7 @@ export interface GiftExperience {
   };
   recipient: Recipient;
   primaryAudio?: AudioMessage;
+  soundtrack?: GiftSoundtrack;
   timelineMoments: TimelineMoment[];
   contributorMessages: ContributorMessage[];
   galleryItems: MediaItem[];
