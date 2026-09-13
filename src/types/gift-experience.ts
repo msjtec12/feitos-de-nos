@@ -1,8 +1,10 @@
 import { MediaItem, AudioMessage, Recipient, TimelineMoment, ContributorMessage, BrandSettings, GiftSoundtrack } from './gift';
 import { StyleId } from './order';
+import { GiftSectionCopy, GiftThemePresetId } from './theme';
 
 export interface GiftContentData {
   slug: string;
+  themePresetId?: GiftThemePresetId;
   openingText: {
     headline: string;
     description: string;
@@ -14,6 +16,7 @@ export interface GiftContentData {
   timelineMoments: TimelineMoment[];
   contributorMessages: ContributorMessage[];
   galleryItems: MediaItem[];
+  sectionCopy?: GiftSectionCopy;
   closing: {
     headline: string;
     message: string;
@@ -23,11 +26,16 @@ export interface GiftContentData {
 }
 
 export interface GiftThemeData {
+  presetId?: GiftThemePresetId;
   styleId: StyleId;
   primaryColor: string;
+  secondaryColor?: string;
   accentColor: string;
   backgroundColor?: string;
+  surfaceColor?: string;
   textColor?: string;
+  mutedColor?: string;
+  borderColor?: string;
   fontFamily?: string;
   bgGradient?: string;
 }
@@ -77,5 +85,11 @@ export const DEFAULT_GIFT_CONTENT: GiftContentData = {
 export const DEFAULT_GIFT_THEME: GiftThemeData = {
   styleId: 'afetuoso',
   primaryColor: '#713C48',
+  secondaryColor: '#D9A4A0',
   accentColor: '#C96E5A',
+  backgroundColor: '#FFF8F0',
+  surfaceColor: '#FFFFFF',
+  textColor: '#302B2D',
+  mutedColor: '#817378',
+  borderColor: '#E8DAD3',
 };
