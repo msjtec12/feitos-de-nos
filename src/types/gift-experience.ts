@@ -1,4 +1,4 @@
-import { MediaItem, AudioMessage, Recipient, TimelineMoment, ContributorMessage, BrandSettings } from './gift';
+import { MediaItem, AudioMessage, Recipient, TimelineMoment, ContributorMessage, BrandSettings, GiftSoundtrack } from './gift';
 import { StyleId } from './order';
 
 export interface GiftContentData {
@@ -10,6 +10,7 @@ export interface GiftContentData {
   };
   recipient: Recipient;
   primaryAudio?: AudioMessage;
+  soundtrack?: GiftSoundtrack;
   timelineMoments: TimelineMoment[];
   contributorMessages: ContributorMessage[];
   galleryItems: MediaItem[];
@@ -51,6 +52,13 @@ export const DEFAULT_GIFT_CONTENT: GiftContentData = {
       placeholderColor: '#D9A4A0',
       isAvailable: false,
     },
+  },
+  soundtrack: {
+    enabled: false,
+    provider: 'spotify',
+    url: '',
+    title: 'Nossa música',
+    message: '',
   },
   timelineMoments: [],
   contributorMessages: [],
