@@ -7,9 +7,10 @@ import { parseSpotifyUrl } from '@/lib/spotify';
 
 interface SpotifySoundtrackProps {
   soundtrack: GiftSoundtrack;
+  eyebrow?: string;
 }
 
-export function SpotifySoundtrack({ soundtrack }: SpotifySoundtrackProps) {
+export function SpotifySoundtrack({ soundtrack, eyebrow = 'Trilha sonora' }: SpotifySoundtrackProps) {
   const parsed = parseSpotifyUrl(soundtrack.url);
 
   if (!soundtrack.enabled || !parsed) return null;
@@ -26,7 +27,7 @@ export function SpotifySoundtrack({ soundtrack }: SpotifySoundtrackProps) {
           </div>
           <div className="min-w-0">
             <span className="text-[10px] uppercase tracking-[0.2em] text-brand-terracotta font-semibold">
-              Trilha sonora
+              {eyebrow}
             </span>
             <h2 className="font-serif text-xl text-brand-wine font-bold leading-tight mt-0.5">
               {soundtrack.title?.trim() || 'Nossa música'}

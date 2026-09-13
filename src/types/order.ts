@@ -1,6 +1,32 @@
-export type OccasionId = 'primeiro-ano' | 'nossa-historia' | 'vozes' | 'especial';
+export type OccasionId =
+  | 'primeiro-ano'
+  | 'amor-casal'
+  | 'dia-das-maes'
+  | 'dia-dos-pais'
+  | 'aniversario'
+  | 'casamento-bodas'
+  | 'formatura'
+  | 'amizade'
+  | 'memorial'
+  | 'religioso'
+  | 'natal'
+  | 'cha-de-bebe'
+  // IDs legados preservados para pedidos já existentes.
+  | 'nossa-historia'
+  | 'vozes'
+  | 'especial';
 
 export type FormatId = 'digital' | 'cartao' | 'interativo';
+
+export type StyleCategory =
+  | 'classicos'
+  | 'infantil'
+  | 'romantico'
+  | 'familia'
+  | 'celebracoes'
+  | 'natureza'
+  | 'serenos'
+  | 'sazonal';
 
 export type StyleId =
   | 'afetuoso'
@@ -15,6 +41,14 @@ export type StyleId =
   | 'verde-botanico'
   | 'eucalipto-alecrim'
   | 'sol-girassol'
+  | 'rose-champagne'
+  | 'floral-mae'
+  | 'classico-pai'
+  | 'casamento-champagne'
+  | 'infantil-encantado'
+  | 'memorial-sereno'
+  | 'fe-dourada'
+  | 'natal-elegante'
   | 'personalizado'
   | (string & {});
 
@@ -24,7 +58,10 @@ export interface OccasionOption {
   subtitle: string;
   description: string;
   badge?: string;
+  popular?: boolean;
   suggestedStyle: StyleId;
+  recommendedFormat?: FormatId;
+  structureHighlights?: string[];
 }
 
 export interface FormatOption {
@@ -41,12 +78,16 @@ export interface FormatOption {
 export interface StyleOption {
   id: StyleId;
   name: string;
-  category?: 'classicos' | 'infantil' | 'romantico' | 'natureza';
+  category?: StyleCategory;
   description: string;
   primaryColor: string;
+  secondaryColor?: string;
   accentColor: string;
   backgroundColor?: string;
+  surfaceColor?: string;
   textColor?: string;
+  mutedColor?: string;
+  borderColor?: string;
   bgPreview: string;
 }
 

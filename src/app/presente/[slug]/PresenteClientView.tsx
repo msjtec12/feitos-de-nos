@@ -23,21 +23,13 @@ interface PresenteClientViewProps {
   isMobileSimulator?: boolean;
 }
 
-export function PresenteClientView({
-  gift,
-  initialOpen = false,
-  isMobileSimulator = false,
-}: PresenteClientViewProps) {
+export function PresenteClientView({ gift, initialOpen = false, isMobileSimulator = false }: PresenteClientViewProps) {
   const [isGiftOpened, setIsGiftOpened] = useState(initialOpen);
   const [lightboxState, setLightboxState] = useState<{
     isOpen: boolean;
     items: LightboxPhotoItem[];
     currentIndex: number;
   }>({ isOpen: false, items: [], currentIndex: 0 });
-
-  const handleOpenGift = () => {
-    setIsGiftOpened(true);
-  };
 
   const timelinePhotos: LightboxPhotoItem[] = useMemo(() => {
     return gift.timelineMoments
@@ -70,47 +62,32 @@ export function PresenteClientView({
     const clickedMoment = gift.timelineMoments[momentIndex];
     if (!clickedMoment?.image?.url) return;
     const targetIdx = timelinePhotos.findIndex((p) => p.url === clickedMoment.image.url);
-    setLightboxState({
-      isOpen: true,
-      items: timelinePhotos,
-      currentIndex: targetIdx >= 0 ? targetIdx : 0,
-    });
+    setLightboxState({ isOpen: true, items: timelinePhotos, currentIndex: targetIdx >= 0 ? targetIdx : 0 });
   };
 
   const dynamicStyles = getThemeCssVariables(gift.theme);
 
   return (
-    <div
-      style={dynamicStyles}
-      className="relative min-h-screen selection:bg-brand-rose selection:text-brand-graphite overflow-x-hidden transition-colors duration-500"
-    >
+    <div style={dynamicStyles} className="relative min-h-screen selection:bg-brand-rose selection:text-brand-graphite overflow-x-hidden transition-colors duration-500">
       <BackgroundKnotArt className="top-40 -left-20" />
       <BackgroundKnotArt className="top-[900px] -right-24 rotate-180" />
       <BackgroundKnotArt className="top-[1800px] -left-20" />
 
       <GiftOpening
         isOpen={isGiftOpened}
-        onOpen={handleOpenGift}
+        onOpen={() => setIsGiftOpened(true)}
         headline={gift.openingText.headline}
         description={gift.openingText.description}
         buttonLabel={gift.openingText.buttonLabel}
         recipientName={gift.recipient.name}
       />
 
-      <main
-        className={`relative z-10 transition-opacity duration-700 ${isGiftOpened ? "opacity-100" : "opacity-0 pointer-events-none"}`}
-        aria-hidden={!isGiftOpened}
-      >
+      <main className={`relative z-10 transition-opacity duration-700 ${isGiftOpened ? "opacity-100" : "opacity-0 pointer-events-none"}`} aria-hidden={!isGiftOpened}>
         <GiftHero recipient={gift.recipient} onOpenPhoto={handleOpenCoverPhoto} />
 
         {gift.primaryAudio && (
           <section className="px-4 sm:px-6 max-w-xl mx-auto w-full mb-8">
-            <AudioPlayer
-              audio={gift.primaryAudio}
-              title={gift.primaryAudio.title}
-              author={gift.primaryAudio.recordedBy}
-              variant="primary"
-            />
+            <AudioPlayer audio={gift.primaryAudio} title={gift.primaryAudio.title} author={gift.primaryAudio.recordedBy} variant="primary" />
           </section>
         )}
 
@@ -120,15 +97,22 @@ export function PresenteClientView({
           moments={gift.timelineMoments}
           forceMobileCarousel={isMobileSimulator}
           onOpenPhoto={handleOpenTimelinePhoto}
+          copy={gift.sectionCopy?.timeline}
         />
 
-        <ContributorMessages messages={gift.contributorMessages} forceSingleColumn={isMobileSimulator} />
-        <MemoryGallery items={gift.galleryItems} isInsideSimulator={isMobileSimulator} />
-        <ClosingMessage
-          headline={gift.closing.headline}
-          message={gift.closing.message}
-          signature={gift.closing.signature}
+        <ContributorMessages
+          messages={gift.contributorMessages}
+          forceSingleColumn={isMobileSimulator}
+          copy={gift.sectionCopy?.messages}
         />
+
+        <MemoryGallery
+          items={gift.galleryItems}
+          isInsideSimulator={isMobileSimulator}
+          copy={gift.sectionCopy?.gallery}
+        />
+
+        <ClosingMessage headline={gift.closing.headline} message={gift.closing.message} signature={gift.closing.signature} />
         <DownloadMemoriesSection gift={gift} />
 
         <div className="max-w-md mx-auto px-4">

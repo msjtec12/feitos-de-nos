@@ -14,11 +14,6 @@ function withMediaToken(url?: string | null, publicToken?: string | null): strin
   }
 }
 
-/**
- * Converte GiftContentData e GiftThemeData para o formato de GiftExperience usado pelos componentes.
- * Quando publicToken é informado, URLs antigas de /api/media recebem automaticamente o token
- * necessário para continuar funcionando com o bucket privado endurecido.
- */
 export function mapContentToGiftExperience(
   content: GiftContentData,
   theme?: GiftThemeData | null,
@@ -29,6 +24,7 @@ export function mapContentToGiftExperience(
 
   return {
     slug: content.slug || 'presente',
+    themePresetId: content.themePresetId || theme?.presetId,
     openingText: content.openingText || {
       headline: 'Um Presente Feito de Nós',
       description: 'Criado com fotos, mensagens e vozes de quem mais te ama.',
@@ -75,11 +71,7 @@ export function mapContentToGiftExperience(
       return {
         ...m,
         image: m.image
-          ? {
-              ...m.image,
-              url: imageUrl,
-              isAvailable: Boolean(imageUrl),
-            }
+          ? { ...m.image, url: imageUrl, isAvailable: Boolean(imageUrl) }
           : {
               id: `timeline-img-${idx}`,
               url: '',
@@ -93,30 +85,15 @@ export function mapContentToGiftExperience(
       const audioUrl = withMediaToken(c.audio?.audioUrl, publicToken);
       return {
         ...c,
-        avatarImage: c.avatarImage
-          ? {
-              ...c.avatarImage,
-              url: avatarUrl,
-              isAvailable: Boolean(avatarUrl),
-            }
-          : undefined,
-        audio: c.audio
-          ? {
-              ...c.audio,
-              audioUrl,
-              isAvailable: Boolean(audioUrl),
-            }
-          : undefined,
+        avatarImage: c.avatarImage ? { ...c.avatarImage, url: avatarUrl, isAvailable: Boolean(avatarUrl) } : undefined,
+        audio: c.audio ? { ...c.audio, audioUrl, isAvailable: Boolean(audioUrl) } : undefined,
       };
     }),
     galleryItems: (content.galleryItems || []).map((g) => {
       const galleryUrl = withMediaToken(g.url, publicToken);
-      return {
-        ...g,
-        url: galleryUrl,
-        isAvailable: Boolean(galleryUrl),
-      };
+      return { ...g, url: galleryUrl, isAvailable: Boolean(galleryUrl) };
     }),
+    sectionCopy: content.sectionCopy,
     closing: content.closing || {
       headline: 'Para Sempre Guardado',
       message: 'Que essas lembranças continuem vivas por toda a vida.',
@@ -128,19 +105,28 @@ export function mapContentToGiftExperience(
     },
     theme: theme
       ? {
+          presetId: theme.presetId,
           styleId: theme.styleId || 'afetuoso',
           primaryColor: theme.primaryColor || '#713C48',
+          secondaryColor: theme.secondaryColor,
           accentColor: theme.accentColor || '#C96E5A',
           backgroundColor: theme.backgroundColor || '#FFF8F0',
+          surfaceColor: theme.surfaceColor,
           textColor: theme.textColor || '#302B2D',
+          mutedColor: theme.mutedColor,
+          borderColor: theme.borderColor,
           fontFamily: theme.fontFamily,
         }
       : {
           styleId: 'afetuoso',
           primaryColor: '#713C48',
+          secondaryColor: '#D9A4A0',
           accentColor: '#C96E5A',
           backgroundColor: '#FFF8F0',
+          surfaceColor: '#FFFFFF',
           textColor: '#302B2D',
+          mutedColor: '#817378',
+          borderColor: '#E8DAD3',
         },
   };
 }

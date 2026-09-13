@@ -6,5 +6,10 @@ import { SpotifySoundtrack } from './SpotifySoundtrack';
 
 export function GiftSoundtrackSlot({ gift }: { gift: GiftExperience }) {
   if (!gift.soundtrack?.enabled) return null;
-  return <SpotifySoundtrack soundtrack={gift.soundtrack} />;
+  return (
+    <SpotifySoundtrack
+      soundtrack={gift.soundtrack}
+      eyebrow={gift.sectionCopy?.soundtrack?.eyebrow}
+    />
+  );
 }
