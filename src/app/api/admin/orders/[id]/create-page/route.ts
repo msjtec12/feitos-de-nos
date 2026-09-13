@@ -4,12 +4,13 @@ import {
   getAdminSessionAndProfile,
   saveGiftPage,
 } from '@/lib/supabase/admin-queries';
-import { GiftContentData } from '@/types/gift-experience';
+import { GiftContentData, GiftThemeData } from '@/types/gift-experience';
 import {
   applyThemePresetToContent,
   getGiftThemePreset,
   themeFromPreset,
 } from '@/data/theme-presets';
+import { STYLE_OPTIONS } from '@/data/home-data';
 
 export async function POST(
   request: NextRequest,
@@ -34,6 +35,7 @@ export async function POST(
     }
 
     const originalContent = result.giftPage.content as unknown as GiftContentData;
+    const originalTheme = result.giftPage.theme as unknown as GiftThemeData;
     const themedContent = applyThemePresetToContent(originalContent, preset);
 
     // Mantém o título e eventuais palavras escritas pelo cliente no pedido.
@@ -52,7 +54,23 @@ export async function POST(
       themedContent.recipient.introQuote = customIntro;
     }
 
-    const themedVisual = themeFromPreset(preset);
+    // A ocasião controla linguagem/estrutura; a escolha visual feita pelo cliente prevalece.
+    const selectedStyle = STYLE_OPTIONS.find((style) => style.id === originalTheme?.styleId);
+    const themedVisual: Partial<GiftThemeData> = selectedStyle
+      ? {
+          ...themeFromPreset(preset),
+          styleId: selectedStyle.id,
+          primaryColor: selectedStyle.primaryColor,
+          secondaryColor: selectedStyle.secondaryColor,
+          accentColor: selectedStyle.accentColor,
+          backgroundColor: selectedStyle.backgroundColor,
+          surfaceColor: selectedStyle.surfaceColor,
+          textColor: selectedStyle.textColor,
+          mutedColor: selectedStyle.mutedColor,
+          borderColor: selectedStyle.borderColor,
+        }
+      : themeFromPreset(preset);
+
     const saveResult = await saveGiftPage(
       result.giftPage.id,
       {
