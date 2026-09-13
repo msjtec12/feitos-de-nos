@@ -2,12 +2,10 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { OrderFormData, OccasionId, FormatId, StyleId, PreparedOrder } from '@/types/order';
-import { GIFT_FORMATS } from '@/data/home-data';
+import { OrderFormData, OccasionId, FormatId, PreparedOrder } from '@/types/order';
+import { GIFT_FORMATS, OCCASIONS } from '@/data/home-data';
 import {
-  generateOrderCode,
   formatCurrency,
-  getFormatPrice,
   saveOrderDraft,
   loadOrderDraft,
   savePreparedOrder,
@@ -58,20 +56,27 @@ export function OrderConfigurator() {
   const [formData, setFormData] = useState<OrderFormData>(INITIAL_FORM_DATA);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isHydrated, setIsHydrated] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
-  // Initialize from LocalStorage and URL searchParams
   useEffect(() => {
     const savedDraft = loadOrderDraft();
     let initial = savedDraft || INITIAL_FORM_DATA;
 
     const paramColecao = searchParams.get('colecao') as OccasionId | null;
     const paramFormato = searchParams.get('formato') as FormatId | null;
+    const occasionIds = OCCASIONS.map((occasion) => occasion.id);
+    const formatIds = GIFT_FORMATS.map((format) => format.id);
 
-    if (paramColecao && ['primeiro-ano', 'nossa-historia', 'vozes', 'especial'].includes(paramColecao)) {
-      initial = { ...initial, occasion: paramColecao };
+    if (paramColecao && occasionIds.includes(paramColecao)) {
+      const occasion = OCCASIONS.find((item) => item.id === paramColecao);
+      initial = {
+        ...initial,
+        occasion: paramColecao,
+        style: occasion?.suggestedStyle || initial.style,
+      };
     }
 
-    if (paramFormato && ['digital', 'cartao', 'interativo'].includes(paramFormato)) {
+    if (paramFormato && formatIds.includes(paramFormato)) {
       initial = { ...initial, format: paramFormato };
     }
 
@@ -79,7 +84,6 @@ export function OrderConfigurator() {
     setIsHydrated(true);
   }, [searchParams]);
 
-  // Persist form changes
   const updateForm = (fields: Partial<OrderFormData>) => {
     setFormData((prev) => {
       const updated = { ...prev, ...fields };
@@ -112,8 +116,6 @@ export function OrderConfigurator() {
     }
   };
 
-  const [submitError, setSubmitError] = useState<string | null>(null);
-
   const handleSubmit = async () => {
     setIsSubmitting(true);
     setSubmitError(null);
@@ -133,7 +135,6 @@ export function OrderConfigurator() {
         return;
       }
 
-      // Pedido registrado com sucesso no banco de dados!
       const serverOrder = result.order;
       const totalPrice = (serverOrder.totalCents || 5990) / 100;
 
@@ -167,7 +168,6 @@ export function OrderConfigurator() {
 
   return (
     <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
-      {/* Stepper Bar */}
       <OrderStepper
         currentStep={currentStep}
         totalSteps={7}
@@ -175,62 +175,13 @@ export function OrderConfigurator() {
         maxReachedStep={maxReachedStep}
       />
 
-      {/* Dynamic Step Panels */}
       <div className="mt-4">
-        {currentStep === 1 && (
-          <StepOccasion
-            formData={formData}
-            updateForm={updateForm}
-            onNext={handleNext}
-          />
-        )}
-
-        {currentStep === 2 && (
-          <StepFormat
-            formData={formData}
-            updateForm={updateForm}
-            onNext={handleNext}
-            onBack={handleBack}
-          />
-        )}
-
-        {currentStep === 3 && (
-          <StepRecipient
-            formData={formData}
-            updateForm={updateForm}
-            onNext={handleNext}
-            onBack={handleBack}
-          />
-        )}
-
-        {currentStep === 4 && (
-          <StepContent
-            formData={formData}
-            updateForm={updateForm}
-            onNext={handleNext}
-            onBack={handleBack}
-          />
-        )}
-
-        {currentStep === 5 && (
-          <StepStyle
-            formData={formData}
-            updateForm={updateForm}
-            onNext={handleNext}
-            onBack={handleBack}
-          />
-        )}
-
-        {currentStep === 6 && (
-          <StepCustomer
-            formData={formData}
-            updateForm={updateForm}
-            onNext={handleNext}
-            onBack={handleBack}
-            isPhysical={isPhysical}
-          />
-        )}
-
+        {currentStep === 1 && <StepOccasion formData={formData} updateForm={updateForm} onNext={handleNext} />}
+        {currentStep === 2 && <StepFormat formData={formData} updateForm={updateForm} onNext={handleNext} onBack={handleBack} />}
+        {currentStep === 3 && <StepRecipient formData={formData} updateForm={updateForm} onNext={handleNext} onBack={handleBack} />}
+        {currentStep === 4 && <StepContent formData={formData} updateForm={updateForm} onNext={handleNext} onBack={handleBack} />}
+        {currentStep === 5 && <StepStyle formData={formData} updateForm={updateForm} onNext={handleNext} onBack={handleBack} />}
+        {currentStep === 6 && <StepCustomer formData={formData} updateForm={updateForm} onNext={handleNext} onBack={handleBack} isPhysical={isPhysical} />}
         {currentStep === 7 && (
           <StepReview
             formData={formData}
