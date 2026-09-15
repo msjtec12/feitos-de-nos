@@ -3,7 +3,7 @@ import { EventThemeConfig } from '@/types/invitation';
 export interface AuthorialThemeDefinition {
   id: string;
   name: string;
-  category: 'infantil' | 'romantico' | 'classico' | 'botanico' | 'moderno' | 'celebracao';
+  category: 'infantil' | 'personagens' | 'romantico' | 'classico' | 'botanico' | 'moderno' | 'celebracao';
   description: string;
   config: EventThemeConfig;
   previewColors: {
@@ -15,9 +15,174 @@ export interface AuthorialThemeDefinition {
 }
 
 export const INVITATION_AUTHORIAL_THEMES: AuthorialThemeDefinition[] = [
+  // --- TEMAS INFANTIS & PERSONAGENS ---
+  {
+    id: 'infantil-pokemon',
+    name: 'Mundo dos Monstrinhos / Pokémon',
+    category: 'personagens',
+    description: 'Amarelo elétrico, vermelho pokébola e azul dinâmico para uma grande jornada de aniversário cheia de energia.',
+    previewColors: {
+      primary: '#CA8A04',
+      background: '#FEFCE8',
+      accent: '#DC2626',
+      card: '#FFFFFF',
+    },
+    config: {
+      themeId: 'infantil-pokemon',
+      themeName: 'Mundo dos Monstrinhos / Pokémon',
+      primaryColor: '#B45309',
+      secondaryColor: '#FEF08A',
+      accentColor: '#DC2626',
+      backgroundColor: '#FEFCE8',
+      surfaceColor: '#FFFFFF',
+      textColor: '#1C1917',
+      mutedColor: '#78716C',
+      headingFont: 'Plus Jakarta Sans, sans-serif',
+      bodyFont: 'Plus Jakarta Sans, sans-serif',
+      photoStyle: 'rounded',
+      buttonStyle: 'pill',
+    },
+  },
+  {
+    id: 'infantil-herois',
+    name: 'Universo dos Super-Heróis',
+    category: 'personagens',
+    description: 'Azul heroico, vermelho vibrante e dourado marcante no estilo dos maiores quadrinhos e heróis do cinema.',
+    previewColors: {
+      primary: '#1E40AF',
+      background: '#EFF6FF',
+      accent: '#DC2626',
+      card: '#FFFFFF',
+    },
+    config: {
+      themeId: 'infantil-herois',
+      themeName: 'Universo dos Super-Heróis',
+      primaryColor: '#1E3A8A',
+      secondaryColor: '#DBEAFE',
+      accentColor: '#DC2626',
+      backgroundColor: '#EFF6FF',
+      surfaceColor: '#FFFFFF',
+      textColor: '#0F172A',
+      mutedColor: '#475569',
+      headingFont: 'Plus Jakarta Sans, sans-serif',
+      bodyFont: 'Plus Jakarta Sans, sans-serif',
+      photoStyle: 'classic',
+      buttonStyle: 'rounded',
+    },
+  },
+  {
+    id: 'infantil-princesas',
+    name: 'Reino das Princesas Encantadas',
+    category: 'personagens',
+    description: 'Rosa nobre, dourado castelo e lilás dos contos de fadas para uma celebração digna da realeza.',
+    previewColors: {
+      primary: '#DB2777',
+      background: '#FDF4FF',
+      accent: '#D97706',
+      card: '#FFFFFF',
+    },
+    config: {
+      themeId: 'infantil-princesas',
+      themeName: 'Reino das Princesas Encantadas',
+      primaryColor: '#BE185D',
+      secondaryColor: '#FCE7F3',
+      accentColor: '#D97706',
+      backgroundColor: '#FDF4FF',
+      surfaceColor: '#FFFFFF',
+      textColor: '#371825',
+      mutedColor: '#831843',
+      headingFont: 'Playfair Display, serif',
+      bodyFont: 'Plus Jakarta Sans, sans-serif',
+      photoStyle: 'arch',
+      buttonStyle: 'pill',
+    },
+  },
+  {
+    id: 'infantil-kpop',
+    name: 'K-Pop & Idol Pop',
+    category: 'personagens',
+    description: 'Magenta chiclete, lilás neon e ciano pastel para fãs de música pop, dança e idols contemporâneos.',
+    previewColors: {
+      primary: '#EC4899',
+      background: '#FDF2F8',
+      accent: '#8B5CF6',
+      card: '#FFFFFF',
+    },
+    config: {
+      themeId: 'infantil-kpop',
+      themeName: 'K-Pop & Idol Pop',
+      primaryColor: '#DB2777',
+      secondaryColor: '#FCE7F3',
+      accentColor: '#7C3AED',
+      backgroundColor: '#FDF2F8',
+      surfaceColor: '#FFFFFF',
+      textColor: '#1E1B4B',
+      mutedColor: '#6B7280',
+      headingFont: 'Plus Jakarta Sans, sans-serif',
+      bodyFont: 'Plus Jakarta Sans, sans-serif',
+      photoStyle: 'polaroid',
+      buttonStyle: 'pill',
+    },
+  },
+  {
+    id: 'infantil-pixel-games',
+    name: 'Aventura dos Blocos / Pixel Games',
+    category: 'personagens',
+    description: 'Verde esmeralda, marrom aventura e azul céu para aniversários temáticos de Minecraft e Roblox.',
+    previewColors: {
+      primary: '#16A34A',
+      background: '#F0FDF4',
+      accent: '#0284C7',
+      card: '#FFFFFF',
+    },
+    config: {
+      themeId: 'infantil-pixel-games',
+      themeName: 'Aventura dos Blocos / Pixel Games',
+      primaryColor: '#15803D',
+      secondaryColor: '#DCFCE7',
+      accentColor: '#0284C7',
+      backgroundColor: '#F0FDF4',
+      surfaceColor: '#FFFFFF',
+      textColor: '#14532D',
+      mutedColor: '#3F6212',
+      headingFont: 'Plus Jakarta Sans, sans-serif',
+      bodyFont: 'Plus Jakarta Sans, sans-serif',
+      photoStyle: 'classic',
+      buttonStyle: 'smooth',
+    },
+  },
+  {
+    id: 'infantil-dinossauros',
+    name: 'Mundo dos Dinossauros & Safari',
+    category: 'personagens',
+    description: 'Verde selva, terracota fóssil e areia para uma expedição pré-histórica emocionante.',
+    previewColors: {
+      primary: '#15803D',
+      background: '#FEFCE8',
+      accent: '#C2410C',
+      card: '#FFFFFF',
+    },
+    config: {
+      themeId: 'infantil-dinossauros',
+      themeName: 'Mundo dos Dinossauros & Safari',
+      primaryColor: '#166534',
+      secondaryColor: '#DCFCE7',
+      accentColor: '#C2410C',
+      backgroundColor: '#FEFCE8',
+      surfaceColor: '#FFFFFF',
+      textColor: '#1C1917',
+      mutedColor: '#57534E',
+      headingFont: 'Plus Jakarta Sans, sans-serif',
+      bodyFont: 'Plus Jakarta Sans, sans-serif',
+      photoStyle: 'rounded',
+      buttonStyle: 'rounded',
+    },
+  },
+
+  // --- TEMAS CLÁSSICOS & DELICADOS ---
   {
     id: 'infantil-delicado',
-    name: 'Infantil Delicado',
+    name: 'Infantil Delicado / Bebê',
     category: 'infantil',
     description: 'Tons suaves de azul-bebê e marfim, com toque afetuoso e acolhedor para os primeiros anos.',
     previewColors: {
@@ -28,7 +193,7 @@ export const INVITATION_AUTHORIAL_THEMES: AuthorialThemeDefinition[] = [
     },
     config: {
       themeId: 'infantil-delicado',
-      themeName: 'Infantil Delicado',
+      themeName: 'Infantil Delicado / Bebê',
       primaryColor: '#2563EB',
       secondaryColor: '#DBEAFE',
       accentColor: '#F59E0B',

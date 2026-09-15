@@ -37,6 +37,9 @@ import {
   Users,
   QrCode,
   Sparkles,
+  Upload,
+  Link2,
+  Check,
 } from 'lucide-react';
 
 interface InvitationEditorProps {
@@ -82,7 +85,12 @@ export function InvitationEditorClientView({ event: initialEvent }: InvitationEd
 
   // Media
   const [coverUrl, setCoverUrl] = useState(initialEvent.cover_url || '');
+  const [coverInputMode, setCoverInputMode] = useState<'file' | 'url'>('file');
+  const [isUploadingCover, setIsUploadingCover] = useState(false);
+
   const [mediaList, setMediaList] = useState<EventMediaRow[]>(initialEvent.media || []);
+  const [galleryInputMode, setGalleryInputMode] = useState<'file' | 'url'>('file');
+  const [isUploadingGallery, setIsUploadingGallery] = useState(false);
   const [newPhotoUrl, setNewPhotoUrl] = useState('');
   const [newPhotoCaption, setNewPhotoCaption] = useState('');
 
@@ -182,6 +190,80 @@ export function InvitationEditorClientView({ event: initialEvent }: InvitationEd
   const handleRemoveMedia = (idx: number) => {
     setMediaList((prev) => prev.filter((_, i) => i !== idx));
     setIsDirty(true);
+  };
+
+  // Upload file for Cover Photo
+  const handleUploadCoverFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setIsUploadingCover(true);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('caption', 'Foto de Capa');
+
+      const res = await fetch(`/api/admin/events/${initialEvent.id}/upload`, {
+        method: 'POST',
+        body: formData,
+      });
+      const resData = await res.json();
+      if (res.ok && resData.url) {
+        setCoverUrl(resData.url);
+        setIsDirty(true);
+      } else {
+        alert(resData.error || 'Erro ao enviar imagem de capa');
+      }
+    } catch (err) {
+      console.error('Erro no upload da capa:', err);
+      alert('Falha no upload do arquivo.');
+    } finally {
+      setIsUploadingCover(false);
+      e.target.value = '';
+    }
+  };
+
+  // Upload file(s) for Gallery
+  const handleUploadGalleryFiles = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+    setIsUploadingGallery(true);
+    try {
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('caption', newPhotoCaption.trim() || file.name.replace(/\.[^/.]+$/, ''));
+
+        const res = await fetch(`/api/admin/events/${initialEvent.id}/upload`, {
+          method: 'POST',
+          body: formData,
+        });
+        const resData = await res.json();
+        if (res.ok && resData.url) {
+          const newItem: EventMediaRow = {
+            id: `media-${Date.now()}-${i}`,
+            event_id: initialEvent.id,
+            media_type: 'image',
+            url: resData.url,
+            caption: newPhotoCaption.trim() || null,
+            sort_order: mediaList.length + 1 + i,
+            created_at: new Date().toISOString(),
+          };
+          setMediaList((prev) => [...prev, newItem]);
+          if (!coverUrl) {
+            setCoverUrl(resData.url);
+          }
+        }
+      }
+      setNewPhotoCaption('');
+      setIsDirty(true);
+    } catch (err) {
+      console.error('Erro no upload da galeria:', err);
+      alert('Falha no upload dos arquivos da galeria.');
+    } finally {
+      setIsUploadingGallery(false);
+      e.target.value = '';
+    }
   };
 
   // Handle Theme Template Selection
@@ -774,62 +856,183 @@ export function InvitationEditorClientView({ event: initialEvent }: InvitationEd
                     Fotos do Convite & Galeria
                   </h2>
                   <p className="text-xs text-slate-500">
-                    Defina a foto principal de capa e adicione até {initialEvent.plan === 'completo' ? '15' : '5'} fotos na galeria.
+                    Envie fotos do celular/computador ou insira URLs da internet (até {initialEvent.plan === 'completo' ? '15' : '5'} fotos na galeria).
                   </p>
                 </div>
 
                 {/* Cover Photo */}
-                <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
-                  <label className="block text-xs font-semibold text-slate-700">
-                    URL da Foto Principal (Capa)
-                  </label>
-                  <input
-                    type="url"
-                    value={coverUrl}
-                    onChange={(e) => {
-                      setCoverUrl(e.target.value);
-                      setIsDirty(true);
-                    }}
-                    placeholder="https://images.unsplash.com/..."
-                    className="w-full px-4 py-2 rounded-xl border border-slate-200 text-xs sm:text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#713C48]"
-                  />
+                <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <label className="block text-xs font-bold text-slate-700">
+                      Foto Principal / Capa do Convite
+                    </label>
+                    <div className="flex items-center bg-white p-0.5 rounded-lg border border-slate-200 text-[11px]">
+                      <button
+                        type="button"
+                        onClick={() => setCoverInputMode('file')}
+                        className={`px-2.5 py-1 rounded-md font-semibold flex items-center gap-1 transition-all ${
+                          coverInputMode === 'file' ? 'bg-[#713C48] text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
+                        }`}
+                      >
+                        <Upload className="w-3 h-3" />
+                        <span>Arquivo</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setCoverInputMode('url')}
+                        className={`px-2.5 py-1 rounded-md font-semibold flex items-center gap-1 transition-all ${
+                          coverInputMode === 'url' ? 'bg-[#713C48] text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
+                        }`}
+                      >
+                        <Link2 className="w-3 h-3" />
+                        <span>URL</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {coverInputMode === 'file' ? (
+                    <div className="flex items-center gap-3">
+                      <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors shadow-2xs">
+                        {isUploadingCover ? (
+                          <>
+                            <Loader2 className="w-3.5 h-3.5 animate-spin text-[#C96E5A]" />
+                            <span>Enviando arquivo...</span>
+                          </>
+                        ) : (
+                          <>
+                            <Upload className="w-3.5 h-3.5 text-[#C96E5A]" />
+                            <span>Escolher Imagem do Dispositivo</span>
+                          </>
+                        )}
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleUploadCoverFile}
+                          disabled={isUploadingCover}
+                          className="hidden"
+                        />
+                      </label>
+                      {coverUrl && (
+                        <span className="text-xs text-emerald-700 font-medium flex items-center gap-1">
+                          <Check className="w-3.5 h-3.5" />
+                          <span>Foto de capa definida</span>
+                        </span>
+                      )}
+                    </div>
+                  ) : (
+                    <input
+                      type="url"
+                      value={coverUrl}
+                      onChange={(e) => {
+                        setCoverUrl(e.target.value);
+                        setIsDirty(true);
+                      }}
+                      placeholder="https://images.unsplash.com/..."
+                      className="w-full px-4 py-2 rounded-xl border border-slate-200 text-xs sm:text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#713C48]"
+                    />
+                  )}
+
+                  {coverUrl && (
+                    <div className="flex items-center gap-3 pt-2">
+                      <div className="w-14 h-14 rounded-xl overflow-hidden bg-slate-200 border border-slate-300 relative shrink-0">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={coverUrl} alt="Capa" className="w-full h-full object-cover" />
+                      </div>
+                      <div className="text-xs text-slate-500 truncate max-w-sm">
+                        <span className="font-semibold text-slate-700 block">Prévia da Capa:</span>
+                        <span className="font-mono text-[10px] text-slate-400 truncate block">{coverUrl}</span>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Add Photo to Gallery */}
-                <div className="space-y-3">
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-slate-600">
-                    Adicionar Nova Foto na Galeria
-                  </h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-12 gap-3">
-                    <div className="sm:col-span-7">
+                <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-xs font-bold text-slate-700">
+                      Adicionar Foto na Galeria
+                    </h3>
+                    <div className="flex items-center bg-white p-0.5 rounded-lg border border-slate-200 text-[11px]">
+                      <button
+                        type="button"
+                        onClick={() => setGalleryInputMode('file')}
+                        className={`px-2.5 py-1 rounded-md font-semibold flex items-center gap-1 transition-all ${
+                          galleryInputMode === 'file' ? 'bg-[#713C48] text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
+                        }`}
+                      >
+                        <Upload className="w-3 h-3" />
+                        <span>Arquivo(s)</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setGalleryInputMode('url')}
+                        className={`px-2.5 py-1 rounded-md font-semibold flex items-center gap-1 transition-all ${
+                          galleryInputMode === 'url' ? 'bg-[#713C48] text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
+                        }`}
+                      >
+                        <Link2 className="w-3 h-3" />
+                        <span>URL</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  <div>
+                    <input
+                      type="text"
+                      value={newPhotoCaption}
+                      onChange={(e) => setNewPhotoCaption(e.target.value)}
+                      placeholder="Legenda da foto (opcional, ex: 'Comemorando os 6 meses')"
+                      className="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-xs sm:text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#713C48] mb-2"
+                    />
+                  </div>
+
+                  {galleryInputMode === 'file' ? (
+                    <div className="flex items-center gap-3">
+                      <label className="cursor-pointer inline-flex items-center gap-2 px-5 py-2.5 bg-[#713C48] hover:bg-[#5a2e39] text-white rounded-xl text-xs font-bold transition-all shadow-xs">
+                        {isUploadingGallery ? (
+                          <>
+                            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                            <span>Enviando fotos...</span>
+                          </>
+                        ) : (
+                          <>
+                            <Upload className="w-3.5 h-3.5" />
+                            <span>Selecionar Fotos do Celular / Computador</span>
+                          </>
+                        )}
+                        <input
+                          type="file"
+                          accept="image/*"
+                          multiple
+                          onChange={handleUploadGalleryFiles}
+                          disabled={isUploadingGallery}
+                          className="hidden"
+                        />
+                      </label>
+                      <span className="text-[11px] text-slate-500">
+                        Selecione uma ou mais fotos simultâneas
+                      </span>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2">
                       <input
                         type="url"
                         value={newPhotoUrl}
                         onChange={(e) => setNewPhotoUrl(e.target.value)}
-                        placeholder="URL da foto (ex: https://...)"
-                        className="w-full px-4 py-2 rounded-xl border border-slate-200 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#713C48]"
+                        placeholder="Cole o link da foto (ex: https://images.unsplash.com/...)"
+                        className="flex-1 px-4 py-2 rounded-xl border border-slate-200 text-xs sm:text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#713C48]"
                       />
-                    </div>
-                    <div className="sm:col-span-3">
-                      <input
-                        type="text"
-                        value={newPhotoCaption}
-                        onChange={(e) => setNewPhotoCaption(e.target.value)}
-                        placeholder="Legenda da foto"
-                        className="w-full px-4 py-2 rounded-xl border border-slate-200 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#713C48]"
-                      />
-                    </div>
-                    <div className="sm:col-span-2">
                       <button
                         type="button"
                         onClick={handleAddMedia}
-                        className="w-full py-2 px-3 rounded-xl bg-[#713C48] text-white text-xs font-semibold hover:bg-[#5a2e39] transition-colors flex items-center justify-center gap-1"
+                        disabled={!newPhotoUrl.trim()}
+                        className="px-4 py-2 rounded-xl bg-[#713C48] text-white text-xs font-semibold hover:bg-[#5a2e39] transition-colors flex items-center gap-1 disabled:opacity-50"
                       >
                         <Plus className="w-3.5 h-3.5" />
                         <span>Adicionar</span>
                       </button>
                     </div>
-                  </div>
+                  )}
                 </div>
 
                 {/* Current Media List */}

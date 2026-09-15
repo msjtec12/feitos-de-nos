@@ -131,7 +131,14 @@ export async function POST(req: NextRequest) {
 
     const adminClient = createSupabaseAdminClient();
 
-    // 1. Insert Order
+    const photoSummaryParts = [
+      data.coverPhotoUrl ? `Foto de Capa: ${data.coverPhotoUrl}` : null,
+      data.photoUrls && data.photoUrls.length > 0
+        ? `Fotos Anexadas (${data.photoUrls.length}): ${data.photoUrls.join(' | ')}`
+        : null,
+      data.photoLinks ? `Links Nuvem/Drive: ${data.photoLinks}` : null,
+    ].filter(Boolean);
+
     const notesSummary = [
       data.notes ? `Observações: ${data.notes}` : null,
       data.venueName ? `Local: ${data.venueName}` : null,
@@ -139,6 +146,7 @@ export async function POST(req: NextRequest) {
       data.eventTime ? `Horário: ${data.eventTime}` : null,
       data.dressCode ? `Traje: ${data.dressCode}` : null,
       data.giftInformation ? `Presentes/Pix: ${data.giftInformation}` : null,
+      photoSummaryParts.length > 0 ? `\n--- MÍDIAS & FOTOS ---\n${photoSummaryParts.join('\n')}` : null,
     ]
       .filter(Boolean)
       .join(' | ');
@@ -186,6 +194,7 @@ export async function POST(req: NextRequest) {
 
     // 2. Insert initial event record
     const eventDateTime = `${data.eventDate}T${data.eventTime ? data.eventTime.padStart(5, '0') : '16:00'}:00-03:00`;
+    const coverUrl = data.coverPhotoUrl || (data.photoUrls && data.photoUrls.length > 0 ? data.photoUrls[0] : null);
 
     const { data: newEvent, error: eventError } = await adminClient
       .from('events')
@@ -204,6 +213,7 @@ export async function POST(req: NextRequest) {
         address: data.address,
         dress_code: data.dressCode || null,
         gift_information: data.giftInformation || null,
+        cover_url: coverUrl,
         theme_config: themeDef.config,
         status: 'awaiting_content',
         expires_at: expirationDate.toISOString(),
@@ -217,6 +227,24 @@ export async function POST(req: NextRequest) {
         .from('orders')
         .update({ event_id: newEvent.id })
         .eq('id', newOrder.id);
+
+      // Insert media if provided
+      if (data.photoUrls && data.photoUrls.length > 0) {
+        const mediaInserts = data.photoUrls.map((url, idx) => ({
+          event_id: newEvent.id,
+          media_type: 'image' as const,
+          url,
+          caption: idx === 0 && data.coverPhotoUrl ? 'Foto de Capa' : `Foto ${idx + 1}`,
+          sort_order: idx,
+        }));
+        const { error: mediaError } = await adminClient
+          .from('event_media')
+          .insert(mediaInserts);
+
+        if (mediaError) {
+          console.warn('Could not insert initial event_media rows:', mediaError.message);
+        }
+      }
     } else if (eventError) {
       console.warn('Preliminary event row creation deferred:', eventError.message);
     }

@@ -45,6 +45,11 @@ export const publicInvitationOrderSchema = z.object({
   customerState: z.string().trim().min(2, 'UF inválida').max(2),
   notes: z.string().trim().max(500).optional().default(''),
 
+  // Mídias e Fotos (upload de arquivos ou URLs/Drive)
+  coverPhotoUrl: z.string().trim().max(1000).optional().default(''),
+  photoUrls: z.array(z.string().trim().max(1000)).optional().default([]),
+  photoLinks: z.string().trim().max(1000).optional().default(''),
+
   // Confirmações e Proteção
   acceptedTerms: z.literal(true),
   honeypot: z.string().max(0, 'Tentativa de submissão inválida').optional().default(''),
