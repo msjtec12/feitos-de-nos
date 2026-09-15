@@ -22,7 +22,7 @@ export function ElementalFire({ className = 'w-12 h-12', primaryColor = '#F97316
       <path
         d="M40 8C43 24 58 26 58 44C58 58 49 68 40 68C31 68 22 58 22 44C22 28 36 20 40 8Z"
         fill="url(#fireGlow)"
-        filter="drop-shadow(0 4px 6px rgba(249, 115, 22, 0.3))"
+        filter="drop-shadow(0 4px 6px rgba(249, 115, 22, 0.4))"
       />
       <path d="M40 28C43 36 50 40 50 48C50 56 45 60 40 60C35 60 30 56 30 48C30 38 38 34 40 28Z" fill="#FEF08A" />
       <ellipse cx="36" cy="46" rx="2.5" ry="3.5" fill="#1E293B" />
@@ -48,7 +48,7 @@ export function ElementalWater({ className = 'w-12 h-12', primaryColor = '#0284C
       <path
         d="M40 12C40 12 60 36 60 50C60 62 51 70 40 70C29 70 20 62 20 50C20 36 40 12 40 12Z"
         fill="url(#waterGrad)"
-        filter="drop-shadow(0 4px 6px rgba(2, 132, 199, 0.25))"
+        filter="drop-shadow(0 4px 6px rgba(2, 132, 199, 0.35))"
       />
       <path d="M30 38C26 44 26 52 28 56" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" opacity="0.6" />
       <ellipse cx="36" cy="50" rx="2.5" ry="3.5" fill="#0C4A6E" />
@@ -64,72 +64,27 @@ export function ElementalWater({ className = 'w-12 h-12', primaryColor = '#0284C
   );
 }
 
-export function ElementalEarth({ className = 'w-12 h-12', primaryColor = '#15803D', accentColor = '#86EFAC' }: DecorationProps) {
-  return (
-    <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
-      <defs>
-        <linearGradient id="earthGrad" x1="0" y1="0" x2="80" y2="80" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stopColor={accentColor} />
-          <stop offset="100%" stopColor={primaryColor} />
-        </linearGradient>
-      </defs>
-      <rect x="22" y="32" width="36" height="34" rx="17" fill="url(#earthGrad)" filter="drop-shadow(0 4px 6px rgba(21, 128, 61, 0.25))" />
-      <path d="M40 32C40 22 46 16 54 18C52 26 44 28 40 32Z" fill="#4ADE80" />
-      <path d="M40 32C40 24 34 18 26 20C28 27 36 29 40 32Z" fill="#22C55E" />
-      <circle cx="34" cy="46" r="3" fill="#14532D" />
-      <circle cx="46" cy="46" r="3" fill="#14532D" />
-      <circle cx="33" cy="45" r="1" fill="#FFFFFF" />
-      <circle cx="45" cy="45" r="1" fill="#FFFFFF" />
-      <path d="M37 52 Q40 56 43 52" stroke="#14532D" strokeWidth="2" strokeLinecap="round" />
-      <circle cx="30" cy="50" r="2.5" fill="#F472B6" opacity="0.6" />
-      <circle cx="50" cy="50" r="2.5" fill="#F472B6" opacity="0.6" />
-    </svg>
-  );
-}
-
-export function ElementalEnergy({ className = 'w-12 h-12', primaryColor = '#EAB308', accentColor = '#FEF08A' }: DecorationProps) {
-  return (
-    <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
-      <defs>
-        <linearGradient id="energyGrad" x1="0" y1="0" x2="80" y2="80" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stopColor={accentColor} />
-          <stop offset="100%" stopColor={primaryColor} />
-        </linearGradient>
-      </defs>
-      <polygon
-        points="40,8 48,28 70,30 52,44 58,66 40,54 22,66 28,44 10,30 32,28"
-        fill="url(#energyGrad)"
-        filter="drop-shadow(0 4px 10px rgba(234, 179, 8, 0.4))"
-      />
-      <ellipse cx="36" cy="38" rx="2.5" ry="3" fill="#713F12" />
-      <ellipse cx="44" cy="38" rx="2.5" ry="3" fill="#713F12" />
-      <circle cx="35" cy="37" r="1" fill="#FFFFFF" />
-      <circle cx="43" cy="37" r="1" fill="#FFFFFF" />
-      <path d="M37 43 Q40 46 43 43" stroke="#713F12" strokeWidth="2" strokeLinecap="round" />
-    </svg>
-  );
-}
-
 // 2. Heróis Originais
-export function HeroActionBurst({ className = 'w-14 h-14', text = 'POW!' }: { className?: string; text?: string }) {
+export function HeroActionBurst({ className = 'w-16 h-16', text = 'POW!' }: { className?: string; text?: string }) {
   return (
     <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
       <polygon
-        points="50,5 62,24 85,15 80,38 98,50 80,62 85,85 62,76 50,95 38,76 15,85 20,62 2,50 20,38 15,15 38,24"
+        points="50,4 64,22 88,12 82,36 100,50 82,64 88,88 64,78 50,96 36,78 12,88 18,64 0,50 18,36 12,12 36,22"
         fill="#FACC15"
         stroke="#DC2626"
-        strokeWidth="4"
-        filter="drop-shadow(0 4px 6px rgba(0,0,0,0.25))"
+        strokeWidth="4.5"
+        strokeLinejoin="round"
+        filter="drop-shadow(0 4px 8px rgba(0,0,0,0.3))"
       />
       <text
         x="50"
         y="58"
         textAnchor="middle"
         fill="#DC2626"
-        fontSize="18"
+        fontSize="20"
         fontWeight="900"
         fontFamily="Impact, sans-serif"
-        transform="rotate(-5 50 50)"
+        transform="rotate(-6 50 50)"
       >
         {text}
       </text>
@@ -140,9 +95,9 @@ export function HeroActionBurst({ className = 'w-14 h-14', text = 'POW!' }: { cl
 export function HeroShield({ className = 'w-12 h-12' }: { className?: string }) {
   return (
     <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
-      <path d="M40 8 L66 18 V42 C66 60 40 72 40 72 C40 72 14 60 14 42 V18 L40 8 Z" fill="#2563EB" stroke="#1E40AF" strokeWidth="3" />
-      <path d="M40 16 L60 24 V42 C60 55 40 65 40 65 C40 65 20 55 20 42 V24 L40 16 Z" fill="#DC2626" />
-      <polygon points="40,26 44,35 54,35 46,42 49,52 40,46 31,52 34,42 26,35 36,35" fill="#FEF08A" stroke="#CA8A04" strokeWidth="1" />
+      <path d="M40 6 L68 18 V44 C68 62 40 74 40 74 C40 74 12 62 12 44 V18 L40 6 Z" fill="#2563EB" stroke="#1E3A8A" strokeWidth="3.5" filter="drop-shadow(0 4px 6px rgba(0,0,0,0.25))" />
+      <path d="M40 14 L62 24 V44 C62 57 40 67 40 67 C40 67 18 57 18 44 V24 L40 14 Z" fill="#DC2626" />
+      <polygon points="40,24 45,35 56,35 47,43 51,54 40,47 29,54 33,43 24,35 35,35" fill="#FEF08A" stroke="#CA8A04" strokeWidth="1" />
     </svg>
   );
 }
@@ -159,26 +114,13 @@ export function FairyCastle({ className = 'w-14 h-14' }: { className?: string })
       <rect x="50" y="28" width="12" height="24" fill="#FBCFE8" stroke="#DB2777" strokeWidth="2" />
       <polygon points="56,14 48,28 64,28" fill="#EC4899" stroke="#DB2777" strokeWidth="1.5" />
       <path d="M34 68 V52 C34 48 46 48 46 52 V68 Z" fill="#BE185D" />
-      <circle cx="40" cy="6" r="2" fill="#FDE047" className="animate-ping" />
-    </svg>
-  );
-}
-
-export function MagicButterfly({ className = 'w-8 h-8' }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
-      <path d="M30 30 C20 14 6 18 10 32 C12 38 24 36 30 32 Z" fill="#F472B6" opacity="0.85" />
-      <path d="M30 30 C40 14 54 18 50 32 C48 38 36 36 30 32 Z" fill="#F472B6" opacity="0.85" />
-      <path d="M30 32 C22 34 16 46 22 50 C26 52 30 42 30 32 Z" fill="#C084FC" opacity="0.75" />
-      <path d="M30 32 C38 34 44 46 38 50 C34 52 30 42 30 32 Z" fill="#C084FC" opacity="0.75" />
-      <line x1="30" y1="20" x2="30" y2="44" stroke="#831843" strokeWidth="2.5" strokeLinecap="round" />
-      <circle cx="30" cy="18" r="2" fill="#831843" />
+      <circle cx="40" cy="6" r="2.5" fill="#FDE047" className="animate-ping" />
     </svg>
   );
 }
 
 // 4. Pop & Música
-export function NeonMusicNotes({ className = 'w-10 h-10' }: { className?: string }) {
+export function NeonMusicNotes({ className = 'w-12 h-12' }: { className?: string }) {
   return (
     <svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
       <path
@@ -187,7 +129,7 @@ export function NeonMusicNotes({ className = 'w-10 h-10' }: { className?: string
         stroke="#EC4899"
         strokeWidth="2.5"
         strokeLinejoin="round"
-        filter="drop-shadow(0 0 8px rgba(236, 72, 153, 0.6))"
+        filter="drop-shadow(0 0 10px rgba(236, 72, 153, 0.7))"
       />
       <line x1="20" y1="22" x2="44" y2="16" stroke="#22D3EE" strokeWidth="3" />
     </svg>
@@ -232,21 +174,6 @@ export function FriendlyDino({ className = 'w-14 h-14' }: { className?: string }
   );
 }
 
-export function DinoFootprint({ className = 'w-8 h-8' }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
-      <path
-        d="M30 24 C22 24 18 32 18 42 C18 50 24 54 30 54 C36 54 42 50 42 42 C42 32 38 24 30 24 Z"
-        fill="#CA8A04"
-        opacity="0.5"
-      />
-      <ellipse cx="18" cy="18" rx="5" ry="8" transform="rotate(-20 18 18)" fill="#CA8A04" opacity="0.5" />
-      <ellipse cx="30" cy="14" rx="5" ry="9" fill="#CA8A04" opacity="0.5" />
-      <ellipse cx="42" cy="18" rx="5" ry="8" transform="rotate(20 42 18)" fill="#CA8A04" opacity="0.5" />
-    </svg>
-  );
-}
-
 // 7. Bebê Delicado
 export function DreamyMoon({ className = 'w-12 h-12' }: { className?: string }) {
   return (
@@ -264,27 +191,29 @@ export function DreamyMoon({ className = 'w-12 h-12' }: { className?: string }) 
   );
 }
 
-// Master Decoration Selector based on theme slug
+// Master Decoration Selector - checks themeId OR themeSlug OR eventType
 export function ThemeDecorationBadge({
   themeSlug,
+  themeId,
   primaryColor,
   accentColor,
-  className = 'w-12 h-12',
+  className = 'w-14 h-14',
 }: {
   themeSlug?: string;
+  themeId?: string;
   primaryColor?: string;
   accentColor?: string;
   className?: string;
 }) {
-  const slug = themeSlug || '';
+  const slug = (themeId || themeSlug || '').toLowerCase();
 
-  if (slug.includes('monstrinho') || slug.includes('pokemon')) {
+  if (slug.includes('monstrinho') || slug.includes('pokemon') || slug.includes('elemental')) {
     return <ElementalFire className={className} primaryColor={primaryColor} accentColor={accentColor} />;
   }
-  if (slug.includes('heroi') || slug.includes('super')) {
-    return <HeroActionBurst className={className} />;
+  if (slug.includes('heroi') || slug.includes('super') || slug.includes('comic')) {
+    return <HeroActionBurst className={className} text="POW!" />;
   }
-  if (slug.includes('reino') || slug.includes('princesa')) {
+  if (slug.includes('reino') || slug.includes('princesa') || slug.includes('castelo')) {
     return <FairyCastle className={className} />;
   }
   if (slug.includes('pop') || slug.includes('k-pop') || slug.includes('musica')) {
@@ -300,13 +229,116 @@ export function ThemeDecorationBadge({
     return <DreamyMoon className={className} />;
   }
 
-  // Generic elegant sparkle badge
+  // Romântico / Elegante / Floral / Default
   return (
     <div className={'inline-flex items-center justify-center ' + className}>
-      <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-        <circle cx="20" cy="20" r="18" stroke={primaryColor || '#713C48'} strokeWidth="1.5" strokeDasharray="3 3" opacity="0.4" />
-        <path d="M20 6 L22 17 L33 19 L22 21 L20 32 L18 21 L7 19 L18 17 Z" fill={accentColor || '#C96E5A'} />
+      <svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full drop-shadow-md">
+        <circle cx="30" cy="30" r="26" stroke={primaryColor || '#713C48'} strokeWidth="2.5" strokeDasharray="4 3" opacity="0.6" />
+        <path d="M30 10 L34 24 L48 28 L34 32 L30 46 L26 32 L12 28 L26 24 Z" fill={accentColor || '#C96E5A'} />
+        <circle cx="30" cy="28" r="3" fill="#FFFFFF" />
       </svg>
+    </div>
+  );
+}
+
+// Full Thematic Banner Badge for the Header
+export function ThematicHeaderBanner({
+  themeId,
+  themeSlug,
+  primaryColor = '#713C48',
+  accentColor = '#C96E5A',
+  badgeText,
+}: {
+  themeId?: string;
+  themeSlug?: string;
+  primaryColor?: string;
+  accentColor?: string;
+  badgeText?: string;
+}) {
+  const slug = (themeId || themeSlug || '').toLowerCase();
+
+  // 1. Heróis: Comic Action Ribbon
+  if (slug.includes('heroi') || slug.includes('super')) {
+    return (
+      <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-xl bg-amber-300 text-red-700 border-2 border-red-600 shadow-[3px_3px_0px_#1E3A8A] font-black uppercase text-xs tracking-wider animate-comic-action">
+        <HeroShield className="w-5 h-5 shrink-0" />
+        <span>{badgeText || '⚡ SUPER CONVITE OFICIAL ⚡'}</span>
+      </div>
+    );
+  }
+
+  // 2. Monstrinhos: Elemental Energy Pill
+  if (slug.includes('monstrinho') || slug.includes('pokemon')) {
+    return (
+      <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gradient-to-r from-amber-400 to-orange-500 text-white font-extrabold text-xs tracking-wider shadow-md ring-2 ring-white">
+        <span className="animate-bounce">🔥</span>
+        <span>{badgeText || '✨ AVENTURA DOS ELEMENTOS ✨'}</span>
+        <span className="animate-pulse">⚡</span>
+      </div>
+    );
+  }
+
+  // 3. Reino Encantado: Royal Gold Tiara Ribbon
+  if (slug.includes('reino') || slug.includes('princesa')) {
+    return (
+      <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-pink-100 text-pink-900 border-2 border-amber-300 shadow-sm font-serif font-bold text-xs tracking-wider">
+        <span>👑</span>
+        <span>{badgeText || 'CONVITE REAL ENCANTADO'}</span>
+        <span>✨</span>
+      </div>
+    );
+  }
+
+  // 4. Pop & Música: Neon Concert Badge
+  if (slug.includes('pop') || slug.includes('musica')) {
+    return (
+      <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-purple-900 text-pink-300 border-2 border-pink-500 shadow-[0_0_12px_rgba(236,72,153,0.5)] font-bold text-xs tracking-wider">
+        <span>🎵</span>
+        <span>{badgeText || 'CONVITE VIP • PALCO PRINCIPAL'}</span>
+        <span className="animate-pulse">✨</span>
+      </div>
+    );
+  }
+
+  // 5. Aventura em Blocos: Pixel Box Badge
+  if (slug.includes('bloco') || slug.includes('pixel')) {
+    return (
+      <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-none bg-emerald-700 text-white border-2 border-emerald-950 shadow-[3px_3px_0px_#052E16] font-mono font-black text-xs tracking-wider">
+        <span>🧱</span>
+        <span>{badgeText || 'MISSÃO MUNDO PIXEL'}</span>
+        <span>💎</span>
+      </div>
+    );
+  }
+
+  // 6. Dinossauros: Safari Stamp
+  if (slug.includes('dino') || slug.includes('safari')) {
+    return (
+      <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-2xl bg-amber-100 text-emerald-900 border-2 border-emerald-700 shadow-xs font-bold text-xs tracking-wider">
+        <span>🦖</span>
+        <span>{badgeText || 'EXPEDIÇÃO JURÁSSICA'}</span>
+        <span>🌿</span>
+      </div>
+    );
+  }
+
+  // 7. Bebê Delicado: Dreamy Cloud Badge
+  if (slug.includes('delicado') || slug.includes('bebe')) {
+    return (
+      <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/90 text-blue-900 border border-blue-200 shadow-sm font-serif font-semibold text-xs tracking-wide">
+        <span>🌙</span>
+        <span>{badgeText || 'UM DIA MUITO ESPECIAL'}</span>
+        <span>⭐</span>
+      </div>
+    );
+  }
+
+  // Standard Default
+  return (
+    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/90 text-[#302B2D] border border-black/5 shadow-xs font-semibold text-xs tracking-wide">
+      <span style={{ color: accentColor }}>✦</span>
+      <span>{badgeText || 'CONVITE EXCLUSIVO'}</span>
+      <span style={{ color: accentColor }}>✦</span>
     </div>
   );
 }

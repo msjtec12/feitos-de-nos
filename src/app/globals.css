@@ -78,14 +78,70 @@
   }
 }
 
-/* Respeito estrito a prefers-reduced-motion */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
+/* Animações festivas e interativas dos convites */
+@keyframes partyFloatSlow {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg) scale(1);
   }
+  50% {
+    transform: translateY(-24px) rotate(180deg) scale(1.1);
+  }
+}
+
+@keyframes partyFloatUp {
+  0% {
+    transform: translateY(100vh) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.85;
+  }
+  90% {
+    opacity: 0.85;
+  }
+  100% {
+    transform: translateY(-20vh) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+@keyframes partyPulseGlow {
+  0%, 100% {
+    opacity: 0.5;
+    transform: scale(0.98);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.04);
+  }
+}
+
+@keyframes comicActionWiggle {
+  0%, 100% {
+    transform: rotate(-3deg) scale(1);
+  }
+  50% {
+    transform: rotate(3deg) scale(1.05);
+  }
+}
+
+.animate-party-float {
+  animation: partyFloatSlow 7s ease-in-out infinite;
+}
+
+.animate-party-pulse {
+  animation: partyPulseGlow 3s ease-in-out infinite;
+}
+
+.animate-comic-action {
+  animation: comicActionWiggle 2.5s ease-in-out infinite;
+}
+
+/* Respeito à preferência manual de redução de movimento */
+.reduced-motion *,
+.reduced-motion *::before,
+.reduced-motion *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
 }

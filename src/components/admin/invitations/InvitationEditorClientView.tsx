@@ -56,6 +56,7 @@ export function InvitationEditorClientView({ event: initialEvent }: InvitationEd
   const [activeTab, setActiveTab] = useState<TabType>('info');
   const [viewMode, setViewMode] = useState<ViewMode>('split');
   const [simulatorKey, setSimulatorKey] = useState(0);
+  const [testOpeningInSimulator, setTestOpeningInSimulator] = useState(false);
 
   // Form Fields
   const [title, setTitle] = useState(initialEvent.title);
@@ -270,8 +271,13 @@ export function InvitationEditorClientView({ event: initialEvent }: InvitationEd
   const handleApplyThemePreset = (presetId: string) => {
     const found = INVITATION_AUTHORIAL_THEMES.find((t) => t.id === presetId);
     if (found) {
-      setThemeConfig(found.config);
+      setThemeConfig({
+        ...found.config,
+        themeId: found.id,
+        slug: found.id,
+      });
       setIsDirty(true);
+      setSimulatorKey((k) => k + 1);
     }
   };
 
@@ -1301,7 +1307,23 @@ export function InvitationEditorClientView({ event: initialEvent }: InvitationEd
                 <Smartphone className="w-3.5 h-3.5 text-[#C96E5A]" />
                 <span>Simulador iPhone</span>
               </span>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setTestOpeningInSimulator(!testOpeningInSimulator);
+                    setSimulatorKey((k) => k + 1);
+                  }}
+                  className={
+                    'text-[10px] font-bold px-2 py-0.5 rounded-full transition-all ' +
+                    (testOpeningInSimulator
+                      ? 'bg-amber-500 text-white shadow-xs'
+                      : 'bg-slate-200 hover:bg-slate-300 text-slate-700')
+                  }
+                  title="Alternar entre ver o convite aberto ou testar a tela de abertura com o lacre"
+                >
+                  {testOpeningInSimulator ? 'Testando Lacre' : 'Ver Lacre'}
+                </button>
                 <button
                   type="button"
                   onClick={() => setSimulatorKey((k) => k + 1)}
@@ -1332,7 +1354,7 @@ export function InvitationEditorClientView({ event: initialEvent }: InvitationEd
               >
                 <InvitationPublicClientView
                   event={livePreviewEvent}
-                  initialEnvelopeOpened={true}
+                  initialEnvelopeOpened={!testOpeningInSimulator}
                 />
               </div>
             </div>

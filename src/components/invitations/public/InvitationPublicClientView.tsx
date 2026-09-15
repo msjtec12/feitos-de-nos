@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { EventDetailWithMedia, EventGuestRow, EventGuestbookMessageRow } from '@/types/invitation';
+import { EventDetailWithMedia, EventGuestRow, EventGuestbookMessageRow, EventThemeConfig } from '@/types/invitation';
 import { InvitationOpening } from '../experience/InvitationOpening';
 import { ThemeParticles } from '../experience/ThemeParticles';
 import { MusicController } from '../experience/MusicController';
@@ -12,12 +12,11 @@ import { EventLocationCard } from '../experience/EventLocationCard';
 import { RsvpExperience } from '../experience/RsvpExperience';
 import { GuestbookWall } from '../experience/GuestbookWall';
 import { SurpriseMessage } from '../experience/SurpriseMessage';
-import { ThemeDecorationBadge } from '../experience/ThemeDecorations';
 import { InvitationHeader } from './InvitationHeader';
 import { InvitationGallery } from './InvitationGallery';
 import { InvitationGiftRegistry } from './InvitationGiftRegistry';
 import { BrandLogo } from '@/components/brand/BrandLogo';
-import { Sparkles } from 'lucide-react';
+import { Sparkles, MailOpen } from 'lucide-react';
 
 interface InvitationPublicClientViewProps {
   event: EventDetailWithMedia;
@@ -36,7 +35,8 @@ export function InvitationPublicClientView({
   const [audioGestureTriggered, setAudioGestureTriggered] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
 
-  const themeConfig = event.theme_config || {
+  // Normalize theme config to guarantee themeId and slug are always defined
+  const rawConfig = event.theme_config || {
     primaryColor: '#713C48',
     accentColor: '#C96E5A',
     backgroundColor: '#FFF8F0',
@@ -44,8 +44,20 @@ export function InvitationPublicClientView({
     textColor: '#302B2D',
   };
 
+  const themeIdentifier = (rawConfig.themeId || rawConfig.slug || event.event_type || 'infantil-monstrinhos-elementais').toLowerCase();
+
+  const themeConfig: EventThemeConfig = {
+    ...rawConfig,
+    themeId: themeIdentifier,
+    slug: themeIdentifier,
+  };
+
   const backgroundColor = themeConfig.backgroundColor || '#FFF8F0';
   const textColor = themeConfig.textColor || '#302B2D';
+
+  const isHero = themeIdentifier.includes('heroi') || themeIdentifier.includes('super');
+  const isBlocos = themeIdentifier.includes('bloco') || themeIdentifier.includes('pixel');
+  const isPop = themeIdentifier.includes('pop') || themeIdentifier.includes('musica');
 
   const handleOpenInvitation = (withAudioGesture: boolean) => {
     setEnvelopeOpened(true);
@@ -56,13 +68,24 @@ export function InvitationPublicClientView({
 
   const resolvedMusicUrl = event.music_url || themeConfig.musicTrackUrl || null;
 
+  // Background pattern for hero/blocos themes
+  let bgPatternStyle: React.CSSProperties = {
+    backgroundColor,
+    color: textColor,
+  };
+
+  if (isHero) {
+    bgPatternStyle.backgroundImage = 'radial-gradient(circle, rgba(37, 99, 235, 0.08) 15%, transparent 16%)';
+    bgPatternStyle.backgroundSize = '18px 18px';
+  } else if (isBlocos) {
+    bgPatternStyle.backgroundImage = 'linear-gradient(90deg, rgba(21, 128, 61, 0.05) 1px, transparent 1px), linear-gradient(rgba(21, 128, 61, 0.05) 1px, transparent 1px)';
+    bgPatternStyle.backgroundSize = '24px 24px';
+  }
+
   return (
     <div
       className="min-h-screen relative flex flex-col font-sans selection:bg-[#D9A4A0]/40 transition-colors duration-500 overflow-x-hidden"
-      style={{
-        backgroundColor,
-        color: textColor,
-      }}
+      style={bgPatternStyle}
     >
       {/* Background Ambient Particles */}
       <ThemeParticles themeConfig={themeConfig} reducedMotion={reducedMotion} />
@@ -81,6 +104,19 @@ export function InvitationPublicClientView({
         themeConfig={themeConfig}
       />
 
+      {/* Floating Re-Open Envelope Button (Allows visitors and hosts to re-experience opening anytime) */}
+      {envelopeOpened && (
+        <button
+          type="button"
+          onClick={() => setEnvelopeOpened(false)}
+          className="fixed bottom-5 left-5 z-40 inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full text-xs font-bold bg-white/95 text-[#302B2D] backdrop-blur-md shadow-lg border border-black/10 transition-all hover:scale-105 active:scale-95 hover:bg-white"
+          title="Ver animação de abertura novamente"
+        >
+          <MailOpen className="w-3.5 h-3.5 text-red-500" />
+          <span>Rever Abertura</span>
+        </button>
+      )}
+
       {/* Interactive Opening Screen (Envelope, Gift Box, Curtain, etc.) */}
       {!envelopeOpened && (
         <InvitationOpening
@@ -96,18 +132,8 @@ export function InvitationPublicClientView({
       )}
 
       {/* Main Public Invitation Content */}
-      <main className="flex-1 pb-16 relative z-10">
-        {/* Top Thematic Decoration Header */}
-        <div className="pt-8 text-center">
-          <ThemeDecorationBadge
-            themeSlug={themeConfig.slug}
-            primaryColor={themeConfig.primaryColor}
-            accentColor={themeConfig.accentColor}
-            className="w-12 h-12 mx-auto drop-shadow-xs"
-          />
-        </div>
-
-        {/* Hero Header with Honoree & Main Cover */}
+      <main className="flex-1 pb-16 relative z-10 pt-4">
+        {/* Hero Header with Honoree & Main Cover Artwork */}
         <InvitationHeader
           title={event.title}
           honoreeName={event.honoree_name}
