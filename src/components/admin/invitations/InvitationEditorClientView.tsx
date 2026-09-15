@@ -860,11 +860,118 @@ export function InvitationEditorClientView({ event: initialEvent }: InvitationEd
                       }}
                       className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-[#713C48]"
                     >
-                      <option value="rounded">Arredondada</option>
+                      <option value="rounded">Arredondada Suave</option>
                       <option value="polaroid">Polaroid Clássica</option>
                       <option value="arch">Arco Nobre</option>
                       <option value="classic">Clássico com Borda</option>
+                      <option value="pixel">Pixel Art / Retrô</option>
+                      <option value="gold-border">Borda Dourada / Luxo</option>
+                      <option value="floral-wreath">Guirlanda Floral</option>
                     </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">
+                      Estilo de Abertura
+                    </label>
+                    <select
+                      value={themeConfig.openingStyle || 'envelope'}
+                      onChange={(e) => {
+                        setThemeConfig((prev) => ({
+                          ...prev,
+                          openingStyle: e.target.value as any,
+                        }));
+                        setIsDirty(true);
+                        setSimulatorKey((k) => k + 1);
+                      }}
+                      className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-[#713C48]"
+                    >
+                      <option value="envelope">Envelope com Lacre de Cera</option>
+                      <option value="gift-box">Caixa de Presente com Laço</option>
+                      <option value="curtain">Cortina de Palco / Revelação</option>
+                      <option value="card">Cartão Dobrável</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">
+                      Intensidade de Animações
+                    </label>
+                    <select
+                      value={themeConfig.animationIntensity || 'festive'}
+                      onChange={(e) => {
+                        setThemeConfig((prev) => ({
+                          ...prev,
+                          animationIntensity: e.target.value as any,
+                        }));
+                        setIsDirty(true);
+                      }}
+                      className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-[#713C48]"
+                    >
+                      <option value="festive">Festivo (Partículas & Brilho)</option>
+                      <option value="soft">Suave (Efeitos Leves)</option>
+                      <option value="none">Estático (Sem Partículas)</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">
+                      Partículas de Fundo
+                    </label>
+                    <select
+                      value={themeConfig.particlePreset || 'sparkles'}
+                      onChange={(e) => {
+                        setThemeConfig((prev) => ({
+                          ...prev,
+                          particlePreset: e.target.value as any,
+                        }));
+                        setIsDirty(true);
+                      }}
+                      className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-[#713C48]"
+                    >
+                      <option value="sparkles">Fagulhas & Brilho</option>
+                      <option value="elemental">Monstrinhos & Elementos</option>
+                      <option value="confetti">Chuva de Confetes</option>
+                      <option value="stars">Estrelas Mágicas</option>
+                      <option value="petals">Pétalas Florais</option>
+                      <option value="bubbles">Bolhas Flutuantes</option>
+                    </select>
+                  </div>
+
+                  <div className="sm:col-span-2">
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">
+                      Trilha Sonora / Música de Fundo (URL de áudio MP3)
+                    </label>
+                    <div className="flex gap-2">
+                      <input
+                        type="url"
+                        placeholder="https://exemplo.com/musica.mp3"
+                        value={themeConfig.musicTrackUrl || ''}
+                        onChange={(e) => {
+                          setThemeConfig((prev) => ({
+                            ...prev,
+                            musicTrackUrl: e.target.value,
+                          }));
+                          setIsDirty(true);
+                        }}
+                        className="flex-1 px-3 py-2 rounded-xl border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-[#713C48]"
+                      />
+                      {themeConfig.musicTrackUrl && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const audio = new Audio(themeConfig.musicTrackUrl!);
+                            audio.play().catch(() => alert('Não foi possível reproduzir este áudio. Verifique se o link direto é público.'));
+                          }}
+                          className="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-colors"
+                        >
+                          Testar
+                        </button>
+                      )}
+                    </div>
+                    <p className="text-[10px] text-slate-500 mt-1">
+                      * A música inicia apenas após o convidado tocar para abrir o convite, respeitando as políticas dos navegadores.
+                    </p>
                   </div>
                 </div>
               </div>

@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Image from 'next/image';
 import { EventThemeConfig } from '@/types/invitation';
-import { Sparkles, Heart } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 
 interface InvitationHeaderProps {
   title: string;
@@ -15,88 +15,54 @@ interface InvitationHeaderProps {
   themeConfig: EventThemeConfig;
 }
 
-interface TimeRemaining {
-  days: number;
-  hours: number;
-  minutes: number;
-  seconds: number;
-  isPast: boolean;
-}
-
-function calculateTimeRemaining(targetDateStr: string): TimeRemaining {
-  const targetTime = new Date(targetDateStr).getTime();
-  const now = Date.now();
-  const diff = targetTime - now;
-
-  if (diff <= 0) {
-    return { days: 0, hours: 0, minutes: 0, seconds: 0, isPast: true };
-  }
-
-  const seconds = Math.floor((diff / 1000) % 60);
-  const minutes = Math.floor((diff / (1000 * 60)) % 60);
-  const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-
-  return { days, hours, minutes, seconds, isPast: false };
-}
-
 export function InvitationHeader({
   title,
   honoreeName,
   hostNames,
   headline,
   coverUrl,
-  eventDate,
   themeConfig,
 }: InvitationHeaderProps) {
-  const [timeRemaining, setTimeRemaining] = useState<TimeRemaining>({
-    days: 0,
-    hours: 0,
-    minutes: 0,
-    seconds: 0,
-    isPast: false,
-  });
-
-  useEffect(() => {
-    setTimeRemaining(calculateTimeRemaining(eventDate));
-    const interval = setInterval(() => {
-      setTimeRemaining(calculateTimeRemaining(eventDate));
-    }, 1000);
-    return () => clearInterval(interval);
-  }, [eventDate]);
-
   const primaryColor = themeConfig.primaryColor || '#713C48';
   const accentColor = themeConfig.accentColor || '#C96E5A';
   const photoStyle = themeConfig.photoStyle || 'rounded';
 
   // Photo frame styling based on theme
   let frameClasses = 'rounded-3xl shadow-xl';
+  let innerExtra = null;
+
   if (photoStyle === 'polaroid') {
-    frameClasses = 'bg-white p-3.5 pb-10 rounded-2xl shadow-2xl rotate-1';
+    frameClasses = 'bg-white p-3.5 pb-12 rounded-2xl shadow-2xl rotate-1 hover:rotate-0 transition-transform';
   } else if (photoStyle === 'arch') {
     frameClasses = 'rounded-t-[140px] rounded-b-3xl shadow-xl overflow-hidden';
   } else if (photoStyle === 'classic') {
     frameClasses = 'rounded-xl border-4 border-white shadow-xl';
+  } else if (photoStyle === 'pixel') {
+    frameClasses = 'rounded-none border-4 border-slate-900 shadow-[6px_6px_0px_#000]';
+  } else if (photoStyle === 'gold-border') {
+    frameClasses = 'rounded-3xl border-4 border-amber-400/80 p-1 shadow-2xl ring-2 ring-amber-300/40';
+  } else if (photoStyle === 'floral-wreath') {
+    frameClasses = 'rounded-full border-4 border-rose-200 shadow-xl p-1.5';
   }
 
   return (
-    <section className="text-center pt-8 pb-12 px-4 space-y-6">
+    <section className="text-center pt-4 pb-6 px-4 space-y-5">
       {/* Top Hosts badge */}
-      <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-semibold tracking-wide bg-white/70 shadow-xs border border-black/5">
+      <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-semibold tracking-wide bg-white/80 shadow-xs border border-black/5">
         <Sparkles className="w-3.5 h-3.5" style={{ color: accentColor }} />
-        <span>Convite por {hostNames}</span>
+        <span>Convite especial por {hostNames}</span>
       </div>
 
       {/* Main Titles */}
       <div className="space-y-2 max-w-lg mx-auto">
         <h1
-          className="font-serif text-3xl sm:text-5xl font-bold leading-tight"
+          className="font-serif text-3xl sm:text-5xl font-black leading-tight tracking-tight"
           style={{ color: primaryColor }}
         >
           {honoreeName || title}
         </h1>
         {headline && (
-          <p className="text-sm sm:text-base text-[#302B2D]/80 leading-relaxed font-normal">
+          <p className="text-sm sm:text-base text-[#302B2D]/80 leading-relaxed font-normal max-w-md mx-auto">
             {headline}
           </p>
         )}
@@ -105,7 +71,7 @@ export function InvitationHeader({
       {/* Cover / Main Photo */}
       {coverUrl && (
         <div className="max-w-xs sm:max-w-sm mx-auto pt-2">
-          <div className={`relative aspect-[4/5] overflow-hidden ${frameClasses}`}>
+          <div className={'relative aspect-[4/5] overflow-hidden ' + frameClasses}>
             <Image
               src={coverUrl}
               alt={honoreeName || title}
@@ -114,79 +80,14 @@ export function InvitationHeader({
               sizes="(max-width: 640px) 320px, 400px"
               priority
             />
+            {photoStyle === 'polaroid' && (
+              <div className="absolute bottom-3 inset-x-0 text-center font-serif text-xs italic text-slate-700">
+                {honoreeName || title}
+              </div>
+            )}
           </div>
         </div>
       )}
-
-      {/* Countdown Timer */}
-      <div className="pt-4 max-w-md mx-auto">
-        {timeRemaining.isPast ? (
-          <div className="p-4 rounded-2xl bg-white/80 border border-[#713C48]/10 shadow-xs">
-            <span className="font-serif text-lg font-bold" style={{ color: primaryColor }}>
-              O grande dia chegou!
-            </span>
-            <p className="text-xs text-[#302B2D]/70 mt-0.5">
-              Celebrando este momento inesquecível.
-            </p>
-          </div>
-        ) : (
-          <div className="space-y-2">
-            <span className="text-xs uppercase tracking-widest font-bold text-[#302B2D]/60">
-              Contagem Regressiva
-            </span>
-
-            <div className="grid grid-cols-4 gap-2 sm:gap-3">
-              <div className="bg-white rounded-2xl p-3 sm:p-4 shadow-sm border border-black/5">
-                <span
-                  className="block font-serif text-2xl sm:text-3xl font-extrabold"
-                  style={{ color: primaryColor }}
-                >
-                  {timeRemaining.days}
-                </span>
-                <span className="text-[10px] uppercase font-semibold text-[#302B2D]/60">
-                  Dias
-                </span>
-              </div>
-
-              <div className="bg-white rounded-2xl p-3 sm:p-4 shadow-sm border border-black/5">
-                <span
-                  className="block font-serif text-2xl sm:text-3xl font-extrabold"
-                  style={{ color: primaryColor }}
-                >
-                  {timeRemaining.hours}
-                </span>
-                <span className="text-[10px] uppercase font-semibold text-[#302B2D]/60">
-                  Horas
-                </span>
-              </div>
-
-              <div className="bg-white rounded-2xl p-3 sm:p-4 shadow-sm border border-black/5">
-                <span
-                  className="block font-serif text-2xl sm:text-3xl font-extrabold"
-                  style={{ color: primaryColor }}
-                >
-                  {timeRemaining.minutes}
-                </span>
-                <span className="text-[10px] uppercase font-semibold text-[#302B2D]/60">
-                  Min
-                </span>
-              </div>
-
-              <div className="bg-white rounded-2xl p-3 sm:p-4 shadow-sm border border-black/5">
-                <span
-                  className="block font-serif text-2xl sm:text-3xl font-extrabold"
-                  style={{ color: accentColor }}
-                >
-                  {timeRemaining.seconds}
-                </span>
-                <span className="text-[10px] uppercase font-semibold text-[#302B2D]/60">
-                  Seg
-                </span>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
     </section>
   );
 }

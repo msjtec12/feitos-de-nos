@@ -76,7 +76,7 @@ export function InvitationOrderConfigurator() {
   const [isUploadingPhotos, setIsUploadingPhotos] = useState(false);
 
   // Theme & Category Filter State
-  const [themeId, setThemeId] = useState('infantil-pokemon');
+  const [themeId, setThemeId] = useState('infantil-monstrinhos-elementais');
   const [themeFilterCategory, setThemeFilterCategory] = useState<string>('personagens');
   const [planId, setPlanId] = useState<InvitationPlanId>(paramPlan || 'interativo');
 

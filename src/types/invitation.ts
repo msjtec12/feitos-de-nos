@@ -26,12 +26,52 @@ export type EventStatus =
 
 export type GuestAttendanceStatus = 'pending' | 'confirmed' | 'declined';
 
-export type PhotoFrameStyle = 'polaroid' | 'rounded' | 'arch' | 'classic';
-export type ButtonCornerStyle = 'pill' | 'rounded' | 'smooth';
+export type PhotoFrameStyle =
+  | 'polaroid'
+  | 'rounded'
+  | 'arch'
+  | 'classic'
+  | 'pixel'
+  | 'gold-border'
+  | 'floral-wreath';
+
+export type ButtonCornerStyle =
+  | 'pill'
+  | 'rounded'
+  | 'smooth'
+  | 'retro-pixel'
+  | 'gold-glow';
+
+export type AnimationIntensity = 'none' | 'soft' | 'dynamic' | 'festive';
+
+export type ParticlePreset =
+  | 'sparkles'
+  | 'elemental'
+  | 'stars'
+  | 'confetti'
+  | 'petals'
+  | 'leaves'
+  | 'bubbles'
+  | 'none';
+
+export type OpeningStyle =
+  | 'envelope'
+  | 'card'
+  | 'curtain'
+  | 'gift-box'
+  | 'simple';
+
+export type ConfirmationEffect =
+  | 'confetti-burst'
+  | 'elemental-energy'
+  | 'star-shower'
+  | 'petal-fall'
+  | 'action-boom';
 
 export interface EventThemeConfig {
   themeId?: string;
   themeName?: string;
+  slug?: string;
   primaryColor: string;
   secondaryColor?: string;
   accentColor: string;
@@ -43,6 +83,14 @@ export interface EventThemeConfig {
   bodyFont?: string;
   photoStyle?: PhotoFrameStyle;
   buttonStyle?: ButtonCornerStyle;
+  animationIntensity?: AnimationIntensity;
+  particlePreset?: ParticlePreset;
+  openingStyle?: OpeningStyle;
+  confirmationEffect?: ConfirmationEffect;
+  backgroundTexture?: string;
+  musicTrackUrl?: string | null;
+  hasSurpriseMessage?: boolean;
+  surpriseMessageText?: string | null;
 }
 
 export interface EventRow {
@@ -64,6 +112,7 @@ export interface EventRow {
   dress_code: string | null;
   gift_information: string | null;
   cover_url: string | null;
+  music_url?: string | null;
   theme_config: EventThemeConfig;
   rsvp_deadline: string | null;
   status: EventStatus;
