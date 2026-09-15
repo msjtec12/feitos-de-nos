@@ -404,6 +404,17 @@ export function InvitationEditorClientView({ event: initialEvent }: InvitationEd
             <span>Convidados</span>
           </Link>
 
+          {lastSavedTime && !isDirty && !saveError && (
+            <span className="hidden md:inline-block text-[11px] text-emerald-700 font-medium">
+              Salvo às {lastSavedTime}
+            </span>
+          )}
+          {saveError && (
+            <span className="hidden md:inline-block text-[11px] text-red-600 font-medium">
+              Falha ao salvar
+            </span>
+          )}
+
           <button
             type="button"
             onClick={handleSave}
@@ -430,6 +441,17 @@ export function InvitationEditorClientView({ event: initialEvent }: InvitationEd
         {/* Left Side: Modular Editor */}
         {viewMode !== 'simulator' && (
           <div className="flex-1 flex flex-col overflow-y-auto max-w-4xl mx-auto p-4 sm:p-6 space-y-6">
+            {/* Save Error Alert */}
+            {saveError && (
+              <div className="p-4 rounded-2xl bg-red-50 border border-red-200 text-red-700 text-xs sm:text-sm flex items-start gap-3 shadow-xs">
+                <AlertCircle className="w-5 h-5 shrink-0 mt-0.5 text-red-600" />
+                <div className="space-y-1">
+                  <span className="font-semibold block">Erro ao salvar convite:</span>
+                  <span className="leading-relaxed block">{saveError}</span>
+                </div>
+              </div>
+            )}
+
             {/* Tabs Bar */}
             <div className="flex items-center gap-1 bg-white p-1 rounded-2xl border border-slate-200 overflow-x-auto shadow-xs">
               <button

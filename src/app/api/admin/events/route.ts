@@ -127,7 +127,22 @@ export async function POST(req: NextRequest) {
 
     if (error) {
       console.error('Error inserting event:', error);
-      return NextResponse.json({ error: error.message }, { status: 400 });
+      let friendlyError = error.message;
+      if (
+        error.code === 'PGRST205' ||
+        error.message?.includes('public.events') ||
+        error.message?.includes('does not exist')
+      ) {
+        friendlyError =
+          'A tabela "events" ainda não foi criada no Supabase. Execute o script SQL de migração no painel do Supabase para ativar a criação e edição de convites.';
+      } else if (
+        error.code === '23505' ||
+        error.message?.includes('duplicate key') ||
+        error.message?.includes('events_slug_key')
+      ) {
+        friendlyError = `O link/slug "${slug}" já está em uso por outro evento. Por favor, modifique o slug da URL.`;
+      }
+      return NextResponse.json({ error: friendlyError, details: error.message }, { status: 400 });
     }
 
     return NextResponse.json({ event: newEvent }, { status: 201 });

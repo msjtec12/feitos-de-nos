@@ -62,6 +62,7 @@ export function NewEventClientForm() {
     e.preventDefault();
     if (!title.trim() || !slug.trim() || !hostNames.trim() || !eventDate.trim()) {
       setErrorMessage('Preencha os campos obrigatórios (Título, Slug, Anfitriões e Data).');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
 
@@ -102,6 +103,7 @@ export function NewEventClientForm() {
       const msg = err instanceof Error ? err.message : 'Falha na comunicação';
       setErrorMessage(msg);
       setIsSubmitting(false);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
@@ -339,6 +341,16 @@ export function NewEventClientForm() {
             />
           </div>
         </div>
+
+        {errorMessage && (
+          <div className="p-4 rounded-2xl bg-red-50 border border-red-200 text-red-700 text-xs sm:text-sm flex items-start gap-3">
+            <AlertCircle className="w-5 h-5 shrink-0 mt-0.5 text-red-600" />
+            <div className="space-y-1">
+              <span className="font-semibold block">Não foi possível criar o convite:</span>
+              <span className="leading-relaxed block">{errorMessage}</span>
+            </div>
+          </div>
+        )}
 
         <div className="pt-4 border-t border-slate-100 flex items-center justify-end gap-3">
           <Link
