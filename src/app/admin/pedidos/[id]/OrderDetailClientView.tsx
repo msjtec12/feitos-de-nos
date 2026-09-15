@@ -18,6 +18,8 @@ import {
   Edit3,
   Trash2,
   MessageCircle,
+  Sparkles,
+  Users,
 } from 'lucide-react';
 
 interface OrderDetailClientViewProps {
@@ -315,7 +317,42 @@ export default function OrderDetailClientView({
               )}
             </div>
 
-            {giftPage ? (
+            {order.order_type === 'invitation' ? (
+              <div className="bg-[#FFF8F0] rounded-xl p-5 border border-[#C96E5A]/30 space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div>
+                    <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#C96E5A] text-white">
+                      Convite Digital Interativo
+                    </span>
+                    <h3 className="font-medium text-[#713C48] text-base mt-2">{order.requested_title}</h3>
+                    <p className="text-xs text-stone-500 mt-1">
+                      {order.recipient_relationship}
+                    </p>
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-2">
+                    {order.event_id && (
+                      <Link
+                        href={`/admin/convites/${order.event_id}/editar`}
+                        className="px-3.5 py-2 bg-[#713C48] hover:bg-[#592F39] text-white rounded-xl text-xs font-bold transition-all shadow-sm flex items-center gap-1.5"
+                      >
+                        <Sparkles className="w-3.5 h-3.5" />
+                        <span>Editar Convite</span>
+                      </Link>
+                    )}
+                    {order.event_id && (
+                      <Link
+                        href={`/admin/convites/${order.event_id}/convidados`}
+                        className="px-3.5 py-2 bg-white hover:bg-stone-50 text-[#713C48] border border-[#713C48]/30 rounded-xl text-xs font-semibold transition-all shadow-xs flex items-center gap-1.5"
+                      >
+                        <Users className="w-3.5 h-3.5" />
+                        <span>Convidados & RSVP</span>
+                      </Link>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ) : giftPage ? (
               <div className="bg-[#FFF8F0] rounded-xl p-5 border border-[#C96E5A]/20 space-y-4">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div>

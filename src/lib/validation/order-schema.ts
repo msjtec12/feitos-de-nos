@@ -6,6 +6,9 @@ export const ORDER_PRICES_CENTS: Record<string, number> = {
   talking_card: 9990,
   interativo: 19990,
   interactive_gift: 19990,
+  convite_essencial: 5990,
+  convite_interativo: 9990,
+  convite_completo: 19990,
 };
 
 const occasionSchema = z.enum([

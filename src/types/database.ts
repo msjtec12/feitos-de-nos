@@ -1,4 +1,4 @@
-﻿export type Json =
+export type Json =
   | string
   | number
   | boolean
@@ -30,7 +30,10 @@ export type PaymentStatus =
 export type ProductType =
   | 'digital'
   | 'talking_card'
-  | 'interactive_gift';
+  | 'interactive_gift'
+  | 'convite_essencial'
+  | 'convite_interativo'
+  | 'convite_completo';
 
 export type GiftPageStatus =
   | 'draft'
@@ -69,6 +72,8 @@ export interface OrderRow {
   main_phrase: string | null;
   collection_type: string;
   product_type: ProductType;
+  order_type?: 'gift' | 'invitation';
+  event_id?: string | null;
   visual_style: string;
   requested_contents: string[];
   price_cents: number;
@@ -85,6 +90,8 @@ export interface OrderRow {
   updated_at: string;
   archived_at: string | null;
 }
+
+export * from './invitation';
 
 export interface OrderStatusHistoryRow {
   id: string;

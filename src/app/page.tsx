@@ -1,6 +1,7 @@
-﻿import type { Metadata } from 'next';
+import type { Metadata } from 'next';
 import { HomeNavbar } from '@/components/home/HomeNavbar';
 import { HomeHero } from '@/components/home/HomeHero';
+import { HomeCategoryShowcase } from '@/components/home/HomeCategoryShowcase';
 import { HowItWorks } from '@/components/home/HowItWorks';
 import { CollectionsSection } from '@/components/home/CollectionsSection';
 import { GiftOptionsSection } from '@/components/home/GiftOptionsSection';
@@ -10,22 +11,25 @@ import { FAQSection } from '@/components/home/FAQSection';
 import { HomeFooter } from '@/components/home/HomeFooter';
 
 export const metadata: Metadata = {
-  title: 'Feito de Nós | Histórias que viram presente',
+  title: 'Feito de Nós | Histórias que viram presente & Convites Inesquecíveis',
   description:
-    'Presentes afetivos interativos criados com fotos, mensagens e vozes reais de quem você ama. Para tocar, ouvir e guardar para sempre.',
+    'Presentes afetivos interativos e convites digitais modernos para momentos inesquecíveis. Para tocar, ouvir e guardar para sempre.',
   keywords: [
     'presente afetivo',
     'presente interativo',
+    'convite digital interativo',
+    'convite casamento',
+    'convite primeiro aninho',
+    'rsvp online',
     'álbum de fotos e áudio',
     'meu primeiro ano',
     'presente com qr code',
     'feito de nós',
-    'cartão que fala',
   ],
   openGraph: {
-    title: 'Feito de Nós | Histórias que viram presente',
+    title: 'Feito de Nós | Histórias que viram presente & Convites Inesquecíveis',
     description:
-      'Presentes afetivos interativos criados com fotos, mensagens e vozes reais de quem você ama.',
+      'Presentes afetivos interativos e convites digitais modernos para momentos inesquecíveis.',
     url: 'https://feitos-de-nos.vercel.app',
     siteName: 'Feito de Nós',
     locale: 'pt_BR',
@@ -43,6 +47,7 @@ export default function HomePage() {
       <HomeNavbar />
       <main className="flex-1">
         <HomeHero />
+        <HomeCategoryShowcase />
         <HowItWorks />
         <CollectionsSection />
         <GiftOptionsSection />

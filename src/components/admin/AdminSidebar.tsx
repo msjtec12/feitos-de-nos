@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React from 'react';
 import Link from 'next/link';
@@ -14,6 +14,7 @@ import {
   LogOut,
   ShieldCheck,
   ChevronRight,
+  Mail,
 } from 'lucide-react';
 
 interface AdminSidebarProps {
@@ -56,9 +57,15 @@ export function AdminSidebar({
       exact: true,
     },
     {
-      label: 'Páginas & Experiências',
+      label: 'Páginas & Presentes',
       href: '/admin/paginas',
       icon: Sparkles,
+      exact: false,
+    },
+    {
+      label: 'Eventos e Convites',
+      href: '/admin/convites',
+      icon: Mail,
       exact: false,
     },
   ];
