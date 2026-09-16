@@ -82,6 +82,7 @@ export function InvitationOpening(props: InvitationOpeningProps) {
   };
 
   const openingSvg = activeTheme.assets.openingCoverSvg;
+  const isDino = activeTheme.assetFolder === 'dinosaurs';
   const primaryColor = themeConfig.primaryColor || activeTheme.previewColors.primary;
   const accentColor = themeConfig.accentColor || activeTheme.previewColors.accent;
 
@@ -105,7 +106,7 @@ export function InvitationOpening(props: InvitationOpeningProps) {
         <ChevronRight className="w-3.5 h-3.5" />
       </button>
 
-      <div className="relative w-full max-w-sm cursor-pointer" onClick={() => handleTriggerOpen(true)}>
+      <div className={`relative w-full cursor-pointer ${isDino ? 'max-w-[320px]' : 'max-w-sm'}`} onClick={() => handleTriggerOpen(true)}>
         <div className="relative z-10 mb-2 space-y-1 text-center text-white">
           <span className="text-[10px] font-bold uppercase tracking-[.24em] text-white/70">
             {activeTheme.name}
@@ -126,15 +127,21 @@ export function InvitationOpening(props: InvitationOpeningProps) {
         />
 
         {/* Card interativo de abertura com asset vetorial personalizado por tema */}
-        <div className="relative aspect-[3/4] max-h-[75vh] w-full mx-auto flex flex-col items-center justify-center transition-transform duration-300 hover:scale-[1.02] active:scale-[0.98]">
+        <div className={`relative max-h-[75vh] w-full mx-auto flex flex-col items-center justify-center transition-transform duration-500 hover:scale-[1.01] active:scale-[0.995] ${isDino ? 'aspect-[9/16] overflow-hidden rounded-[28px] border-[5px] border-[#f5dfab] bg-[#f8edce] shadow-[0_28px_80px_rgba(0,0,0,.42)]' : 'aspect-[3/4]'}`}>
           <div className="relative w-full h-full">
             <Image
-              src={openingSvg}
+              src={isDino ? '/invitations/themes/dinosaurs/safari-premium-background.webp' : openingSvg}
               alt={`Abertura temática ${activeTheme.name}`}
               fill
               priority
-              className="object-contain drop-shadow-2xl"
+              className={isDino ? 'object-cover' : 'object-contain drop-shadow-2xl'}
             />
+            {isDino && (
+              <div className="absolute inset-x-[12%] top-[42%] rounded-2xl border border-[#b98748]/60 bg-[#fff4d6]/94 px-4 py-4 text-center shadow-[0_12px_30px_rgba(69,43,20,.24)] backdrop-blur-sm">
+                <span className="block text-[9px] font-black uppercase tracking-[.2em] text-[#15803d]">Convite de expedição</span>
+                <strong className="mt-1 block font-serif text-xl text-[#5b351f]">Uma aventura espera por você</strong>
+              </div>
+            )}
           </div>
 
           {/* Dica interativa de toque */}
