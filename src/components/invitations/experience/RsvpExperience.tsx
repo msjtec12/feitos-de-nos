@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import { EventRow, EventGuestRow, EventThemeConfig, ConfirmationEffect } from '@/types/invitation';
 import {
   CheckCircle2,
@@ -9,20 +10,26 @@ import {
   Utensils,
   MessageSquare,
   Loader2,
-  AlertCircle,
-  Sparkles,
-  Heart,
   PartyPopper,
+  Sparkles,
 } from 'lucide-react';
-import { ThemeDecorationBadge } from './ThemeDecorations';
+import { useOptionalInvitationTheme } from './InvitationExperience';
+import { getInvitationTheme } from '@/data/invitation-themes';
 
 interface RsvpExperienceProps {
-  event: EventRow;
+  event?: EventRow;
   guest?: EventGuestRow | null;
-  themeConfig: EventThemeConfig;
+  themeConfig?: EventThemeConfig;
 }
 
-export function RsvpExperience({ event, guest, themeConfig }: RsvpExperienceProps) {
+export function RsvpExperience(props: RsvpExperienceProps) {
+  const contextValues = useOptionalInvitationTheme();
+
+  const activeTheme = contextValues?.theme || getInvitationTheme(props.themeConfig?.theme_key || props.themeConfig?.themeId || props.themeConfig?.slug);
+  const themeConfig = contextValues?.themeConfig || props.themeConfig || activeTheme.config;
+  const event = contextValues?.event || props.event;
+  const guest = contextValues?.guest ?? props.guest;
+
   const [name, setName] = useState(guest?.name || '');
   const [phone, setPhone] = useState(guest?.phone || '');
   const [attendance, setAttendance] = useState<'confirmed' | 'declined'>(
@@ -43,11 +50,15 @@ export function RsvpExperience({ event, guest, themeConfig }: RsvpExperienceProp
   const [showCelebration, setShowCelebration] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const primaryColor = themeConfig.primaryColor || '#713C48';
-  const accentColor = themeConfig.accentColor || '#C96E5A';
-  const confirmationEffect: ConfirmationEffect = themeConfig.confirmationEffect || 'confetti-burst';
+  const primaryColor = themeConfig.primaryColor || activeTheme.previewColors.primary;
+  const accentColor = themeConfig.accentColor || activeTheme.previewColors.accent;
+  const isDino = activeTheme.assetFolder === 'dinosaurs';
+  const isHero = activeTheme.assetFolder === 'heroes';
+  const isBlocos = activeTheme.assetFolder === 'blocks';
+  const isMinimal = activeTheme.assetFolder === 'minimal';
+  const isPop = activeTheme.assetFolder === 'pop';
 
-  const maxCompanionsAllowed = guest?.max_companions ?? 5;
+  if (!event) return null;
 
   const isDeadlinePassed = event.rsvp_deadline
     ? new Date(event.rsvp_deadline).getTime() < Date.now()
@@ -97,109 +108,58 @@ export function RsvpExperience({ event, guest, themeConfig }: RsvpExperienceProp
   };
 
   return (
-    <section id="rsvp" className="max-w-xl mx-auto px-4 py-8 space-y-6 relative">
-      {/* Celebration Overlay Effect */}
+    <section id="rsvp" className="max-w-xl mx-auto px-4 py-6 space-y-6 relative">
+      {/* Celebração pós-confirmação com efeito temático */}
       {showCelebration && (
         <div className="absolute inset-0 z-40 pointer-events-none flex items-center justify-center overflow-hidden">
-          <div className="text-center animate-in zoom-in-50 duration-500 p-6 rounded-3xl bg-white/90 shadow-2xl border-2 border-emerald-400 backdrop-blur-md">
-            <div className="w-16 h-16 mx-auto rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mb-3">
-              <PartyPopper className="w-9 h-9 animate-bounce" />
+          <div className="text-center animate-in zoom-in-50 duration-500 p-6 rounded-3xl bg-white/95 shadow-2xl border-2 border-emerald-400 backdrop-blur-md max-w-sm mx-4">
+            <div className="w-14 h-14 mx-auto rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mb-2">
+              <PartyPopper className="w-8 h-8 animate-bounce" />
             </div>
             <h3 className="font-serif text-2xl font-black" style={{ color: primaryColor }}>
               Presença Confirmada! 🎉
             </h3>
-            <p className="text-xs text-[#302B2D]/80 mt-1">
+            <p className="text-xs text-slate-700 mt-1">
               Mal podemos esperar para celebrar com você!
             </p>
           </div>
         </div>
       )}
 
-      <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-black/5 space-y-6">
-        {/* Header */}
-        <div className="text-center space-y-1">
-          <span
-            className="text-[11px] uppercase tracking-widest font-extrabold"
-            style={{ color: accentColor }}
-          >
-            Confirmação de Presença
-          </span>
-          <h3
-            className="font-serif text-2xl sm:text-3xl font-bold"
-            style={{ color: primaryColor }}
-          >
-            Você vai comemorar conosco?
-          </h3>
-          {event.rsvp_deadline && (
-            <p className="text-xs text-[#302B2D]/70">
-              Favor confirmar até{' '}
-              {new Date(event.rsvp_deadline).toLocaleDateString('pt-BR', {
-                day: '2-digit',
-                month: 'long',
-              })}
-            </p>
-          )}
-        </div>
-
-        {isDeadlinePassed && !isSuccess && (
-          <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-800 text-xs sm:text-sm text-center">
-            O prazo limite para confirmação de presença encerrou em{' '}
-            {new Date(event.rsvp_deadline!).toLocaleDateString('pt-BR')}. Se precisar confirmar, contate os anfitriões diretamente.
-          </div>
-        )}
-
-        {/* Success State */}
-        {isSuccess ? (
-          <div className="p-6 rounded-2xl bg-[#FAF3EC] border border-[#713C48]/10 text-center space-y-3 animate-in zoom-in-95 duration-200">
-            <div className="w-12 h-12 mx-auto rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center">
-              {attendance === 'confirmed' ? (
-                <CheckCircle2 className="w-6 h-6" />
-              ) : (
-                <Heart className="w-6 h-6 text-rose-500" />
+      {/* Botão de Destaque RSVP ou Formulário Completo */}
+      {!isSuccess ? (
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="bg-white/95 backdrop-blur-xs rounded-3xl p-5 sm:p-7 shadow-md border border-black/5 space-y-4">
+            <div className="text-center space-y-1">
+              <span
+                className="text-[11px] uppercase tracking-widest font-extrabold block"
+                style={{ color: isDino ? '#15803D' : accentColor }}
+              >
+                Confirmação de Presença
+              </span>
+              <h3
+                className="text-2xl sm:text-3xl font-bold font-serif"
+                style={{ color: primaryColor }}
+              >
+                Você vai comemorar conosco?
+              </h3>
+              {event.rsvp_deadline && (
+                <p className="text-xs text-slate-500">
+                  Favor confirmar até {new Date(event.rsvp_deadline).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long' })}
+                </p>
               )}
             </div>
 
-            <h4 className="font-serif text-xl font-bold" style={{ color: primaryColor }}>
-              {attendance === 'confirmed'
-                ? 'Presença Confirmada com Sucesso!'
-                : 'Agradecemos por nos avisar!'}
-            </h4>
-
-            <p className="text-xs sm:text-sm text-[#302B2D]/80 leading-relaxed max-w-sm mx-auto">
-              {attendance === 'confirmed'
-                ? `Que alegria, ${name}! Sua confirmação foi registrada com carinho para ${event.title}.`
-                : `Sentiremos sua falta no grande dia, ${name}. Agradecemos o carinho por nos avisar com antecedência.`}
-            </p>
-
-            <button
-              type="button"
-              onClick={() => setIsSuccess(false)}
-              className="text-xs text-[#713C48] underline pt-2 hover:opacity-80"
-            >
-              Deseja alterar sua resposta?
-            </button>
-          </div>
-        ) : (
-          /* RSVP Form */
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {errorMessage && (
-              <div className="flex items-center gap-2 p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs">
-                <AlertCircle className="w-4 h-4 shrink-0" />
-                <span>{errorMessage}</span>
-              </div>
-            )}
-
-            {/* Attendance Choice Buttons */}
-            <div className="grid grid-cols-2 gap-3">
+            {/* Alternância: Confirmar ou Recusar */}
+            <div className="grid grid-cols-2 gap-2 pt-1">
               <button
                 type="button"
                 onClick={() => setAttendance('confirmed')}
-                className={
-                  'flex items-center justify-center gap-2 p-3.5 rounded-2xl font-semibold text-xs sm:text-sm transition-all ' +
-                  (attendance === 'confirmed'
-                    ? 'bg-[#15803D] text-white shadow-sm ring-2 ring-[#15803D]/30'
-                    : 'bg-[#FFF8F0] text-[#302B2D]/80 border border-black/5 hover:bg-[#FAF3EC]')
-                }
+                className={`py-2.5 px-3 rounded-2xl font-bold text-xs flex items-center justify-center gap-2 border transition-all ${
+                  attendance === 'confirmed'
+                    ? 'bg-emerald-600 text-white border-emerald-700 shadow-xs'
+                    : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
+                }`}
               >
                 <CheckCircle2 className="w-4 h-4" />
                 <span>Sim, eu vou!</span>
@@ -208,131 +168,148 @@ export function RsvpExperience({ event, guest, themeConfig }: RsvpExperienceProp
               <button
                 type="button"
                 onClick={() => setAttendance('declined')}
-                className={
-                  'flex items-center justify-center gap-2 p-3.5 rounded-2xl font-semibold text-xs sm:text-sm transition-all ' +
-                  (attendance === 'declined'
-                    ? 'bg-rose-700 text-white shadow-sm ring-2 ring-rose-700/30'
-                    : 'bg-[#FFF8F0] text-[#302B2D]/80 border border-black/5 hover:bg-[#FAF3EC]')
-                }
+                className={`py-2.5 px-3 rounded-2xl font-bold text-xs flex items-center justify-center gap-2 border transition-all ${
+                  attendance === 'declined'
+                    ? 'bg-rose-600 text-white border-rose-700 shadow-xs'
+                    : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
+                }`}
               >
                 <XCircle className="w-4 h-4" />
                 <span>Não poderei ir</span>
               </button>
             </div>
 
-            {/* Full Name */}
+            {/* Campo Nome */}
             <div className="space-y-1">
-              <label className="text-xs font-semibold text-[#302B2D]/80 block">
-                Seu Nome Completo *
-              </label>
+              <label className="block text-xs font-bold text-slate-700">Seu Nome Completo</label>
               <input
                 type="text"
                 required
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="Ex: Ana Clara Santos"
-                className="w-full px-4 py-3 rounded-2xl border border-black/10 bg-[#FFF8F0]/40 text-sm focus:outline-none focus:ring-2 focus:ring-[#713C48]/30 transition-all"
+                placeholder="Ex: Ana Clara Silva"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
               />
             </div>
 
-            {/* Phone */}
+            {/* Campo Telefone */}
             <div className="space-y-1">
-              <label className="text-xs font-semibold text-[#302B2D]/80 block">
-                WhatsApp / Celular
-              </label>
+              <label className="block text-xs font-bold text-slate-700">WhatsApp / Telefone</label>
               <input
                 type="tel"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                placeholder="(00) 00000-0000"
-                className="w-full px-4 py-3 rounded-2xl border border-black/10 bg-[#FFF8F0]/40 text-sm focus:outline-none focus:ring-2 focus:ring-[#713C48]/30 transition-all"
+                placeholder="(11) 99999-9999"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
               />
             </div>
 
-            {/* Companions Count (Only if confirmed) */}
+            {/* Acompanhantes se confirmado */}
             {attendance === 'confirmed' && (
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-[#302B2D]/80 flex items-center justify-between">
-                  <span className="flex items-center gap-1.5">
-                    <Users className="w-3.5 h-3.5 text-[#C96E5A]" />
-                    <span>Acompanhantes adicionais</span>
-                  </span>
-                  <span className="text-[11px] text-[#302B2D]/60">
-                    Máx: {maxCompanionsAllowed}
-                  </span>
+                <label className="block text-xs font-bold text-slate-700 flex items-center justify-between">
+                  <span>Número de Acompanhantes</span>
+                  <span className="text-slate-500 font-normal">Além de você</span>
                 </label>
                 <select
                   value={companionsCount}
                   onChange={(e) => setCompanionsCount(Number(e.target.value))}
-                  className="w-full px-4 py-3 rounded-2xl border border-black/10 bg-[#FFF8F0]/40 text-sm focus:outline-none focus:ring-2 focus:ring-[#713C48]/30 transition-all"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
                 >
-                  {Array.from({ length: maxCompanionsAllowed + 1 }).map((_, i) => (
-                    <option key={i} value={i}>
-                      {i === 0 ? 'Apenas eu (0 acompanhantes)' : `+${i} acompanhante${i > 1 ? 's' : ''}`}
-                    </option>
-                  ))}
+                  <option value={0}>Apenas eu</option>
+                  <option value={1}>+1 acompanhante</option>
+                  <option value={2}>+2 acompanhantes</option>
+                  <option value={3}>+3 acompanhantes</option>
+                  <option value={4}>+4 acompanhantes</option>
                 </select>
               </div>
             )}
 
-            {/* Dietary Restrictions (Only if confirmed) */}
-            {attendance === 'confirmed' && (
-              <div className="space-y-1">
-                <label className="text-xs font-semibold text-[#302B2D]/80 flex items-center gap-1.5">
-                  <Utensils className="w-3.5 h-3.5 text-[#C96E5A]" />
-                  <span>Restrições alimentares ou alergias (opcional)</span>
-                </label>
-                <input
-                  type="text"
-                  value={dietaryRestrictions}
-                  onChange={(e) => setDietaryRestrictions(e.target.value)}
-                  placeholder="Ex: Vegetariano, intolerância a glúten, etc."
-                  className="w-full px-4 py-3 rounded-2xl border border-black/10 bg-[#FFF8F0]/40 text-sm focus:outline-none focus:ring-2 focus:ring-[#713C48]/30 transition-all"
-                />
-              </div>
+            {/* Erro */}
+            {errorMessage && (
+              <p className="text-xs text-rose-600 font-semibold text-center">{errorMessage}</p>
             )}
 
-            {/* Note for hosts */}
-            <div className="space-y-1">
-              <label className="text-xs font-semibold text-[#302B2D]/80 flex items-center gap-1.5">
-                <MessageSquare className="w-3.5 h-3.5 text-[#C96E5A]" />
-                <span>Recado com carinho para os anfitriões (opcional)</span>
-              </label>
-              <textarea
-                rows={2}
-                value={note}
-                onChange={(e) => setNote(e.target.value)}
-                placeholder="Deixe uma mensagem especial..."
-                className="w-full px-4 py-2.5 rounded-2xl border border-black/10 bg-[#FFF8F0]/40 text-sm focus:outline-none focus:ring-2 focus:ring-[#713C48]/30 transition-all resize-none"
-              />
-            </div>
-
-            {/* Submit Button */}
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="w-full py-3.5 rounded-2xl font-bold text-white text-sm shadow-md transition-all hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2 disabled:opacity-50"
-              style={{ backgroundColor: primaryColor }}
-            >
-              {isSubmitting ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  <span>Registrando sua confirmação...</span>
-                </>
+            {/* BOTÃO PRINCIPAL DE RSVP: ESTILIZADO DE ACORDO COM O TEMA */}
+            <div className="pt-2">
+              {isDino ? (
+                /* Botão de Prancha de Madeira Rústica Entalhada com Veios */
+                <button
+                  type="submit"
+                  disabled={isSubmitting || isDeadlinePassed}
+                  className="relative w-full max-w-sm mx-auto h-[62px] flex items-center justify-center transition-transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
+                >
+                  <Image
+                    src="/invitations/themes/dinosaurs/wood-button.svg"
+                    alt="Confirmar presença"
+                    fill
+                    className="object-contain drop-shadow-md"
+                  />
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                    <span className="text-white font-sans font-black text-lg sm:text-xl tracking-wide drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)]">
+                      {isSubmitting ? 'Enviando...' : 'Confirmar presença >'}
+                    </span>
+                  </div>
+                </button>
+              ) : isHero ? (
+                <button
+                  type="submit"
+                  disabled={isSubmitting || isDeadlinePassed}
+                  className="w-full py-4 rounded-xl font-black uppercase tracking-wider text-white text-base bg-red-600 border-3 border-slate-900 shadow-[4px_4px_0px_#1E3A8A] hover:bg-red-700 active:translate-x-1 active:translate-y-1 transition-all disabled:opacity-50"
+                >
+                  {isSubmitting ? 'CONFIRMANDO...' : 'CONFIRMAR PRESENÇA ⚡'}
+                </button>
+              ) : isBlocos ? (
+                <button
+                  type="submit"
+                  disabled={isSubmitting || isDeadlinePassed}
+                  className="w-full py-3.5 rounded-none font-mono font-black uppercase text-white text-sm bg-emerald-700 border-3 border-emerald-950 shadow-[4px_4px_0px_#052E16] hover:bg-emerald-800 transition-all disabled:opacity-50"
+                >
+                  {isSubmitting ? 'SALVANDO...' : '[ CONFIRMAR PRESENÇA ]'}
+                </button>
+              ) : isMinimal ? (
+                <button
+                  type="submit"
+                  disabled={isSubmitting || isDeadlinePassed}
+                  className="w-full py-3.5 rounded-none font-sans font-bold uppercase tracking-[2px] text-white text-xs bg-black hover:bg-zinc-800 transition-all disabled:opacity-50"
+                >
+                  {isSubmitting ? 'ENVIANDO...' : 'CONFIRMAR PRESENÇA —'}
+                </button>
               ) : (
-                <>
-                  <Sparkles className="w-4 h-4" />
-                  <span>
-                    {attendance === 'confirmed'
-                      ? 'Confirmar Minha Presença'
-                      : 'Enviar Justificativa'}
-                  </span>
-                </>
+                <button
+                  type="submit"
+                  disabled={isSubmitting || isDeadlinePassed}
+                  className="w-full py-3.5 rounded-full font-bold text-white text-sm shadow-md hover:opacity-90 active:scale-95 transition-all disabled:opacity-50"
+                  style={{ backgroundColor: primaryColor }}
+                >
+                  {isSubmitting ? 'Enviando...' : 'Confirmar Presença'}
+                </button>
               )}
-            </button>
-          </form>
-        )}
-      </div>
+            </div>
+          </div>
+        </form>
+      ) : (
+        <div className="bg-white/95 rounded-3xl p-6 sm:p-8 shadow-sm border border-black/5 text-center space-y-3">
+          <div className="w-12 h-12 mx-auto rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center">
+            <CheckCircle2 className="w-7 h-7" />
+          </div>
+          <h4 className="font-serif text-xl font-bold" style={{ color: primaryColor }}>
+            {attendance === 'confirmed' ? 'Presença Confirmada!' : 'Resposta Registrada'}
+          </h4>
+          <p className="text-xs text-slate-600">
+            {attendance === 'confirmed'
+              ? 'Obrigado por confirmar! Aguardamos você para celebrar juntos.'
+              : 'Agradecemos pelo carinho em nos avisar!'}
+          </p>
+          <button
+            type="button"
+            onClick={() => setIsSuccess(false)}
+            className="text-xs font-semibold text-slate-500 hover:text-slate-800 underline pt-1"
+          >
+            Alterar minha resposta
+          </button>
+        </div>
+      )}
     </section>
   );
 }

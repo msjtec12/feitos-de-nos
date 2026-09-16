@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 440" fill="none">
+  <defs>
+    <!-- Papel artesanal feito à mão com textura e bordas suaves -->
+    <linearGradient id="handmadePaper" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stopColor="#FFFDFB"/>
+      <stop offset="60%" stopColor="#FFF7F2"/>
+      <stop offset="100%" stopColor="#F8EDE5"/>
+    </linearGradient>
+    <radialGradient id="waxSealGrad" cx="40%" cy="40%" r="60%">
+      <stop offset="0%" stopColor="#B94D62"/>
+      <stop offset="40%" stopColor="#963246"/>
+      <stop offset="85%" stopColor="#711C2C"/>
+      <stop offset="100%" stopColor="#4D0E1A"/>
+    </radialGradient>
+    <filter id="envelopeShadow" x="-10%" y="-10%" width="125%" height="125%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="12" stdDeviation="12" flood-color="#50242D" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+
+  <!-- Envelope de papel artesanal com borda irregular e lacre de cera autêntico -->
+  <g filter="url(#envelopeShadow)">
+    <!-- Corpo do envelope -->
+    <rect x="20" y="35" width="280" height="370" rx="16" fill="url(#handmadePaper)" stroke="#EBD8CE" stroke-width="2"/>
+
+    <!-- Aba superior dobrada do envelope em V -->
+    <path d="M 20 35 L 160 210 L 300 35" stroke="#DFCBC0" stroke-width="2.5" fill="none"/>
+    <path d="M 20 35 L 160 205 L 300 35 Z" fill="#FFF2EC" opacity="0.6"/>
+
+    <!-- Linhas laterais de dobra interna -->
+    <line x1="20" y1="405" x2="135" y2="230" stroke="#DFCBC0" stroke-width="1.5" opacity="0.6"/>
+    <line x1="300" y1="405" x2="185" y2="230" stroke="#DFCBC0" stroke-width="1.5" opacity="0.6"/>
+
+    <!-- Ramo de folhagem seca prensada sob o lacre -->
+    <g stroke="#9E8276" stroke-width="1.2" fill="#D4C0B6" opacity="0.8">
+      <path d="M 120 180 Q 160 215 200 180"/>
+      <ellipse cx="130" cy="188" rx="4" ry="2" transform="rotate(-30 130 188)"/>
+      <ellipse cx="145" cy="198" rx="4" ry="2" transform="rotate(-15 145 198)"/>
+      <ellipse cx="175" cy="198" rx="4" ry="2" transform="rotate(15 175 198)"/>
+      <ellipse cx="190" cy="188" rx="4" ry="2" transform="rotate(30 190 188)"/>
+    </g>
+
+    <!-- Lacre de cera vermelho escuro artesanal no centro -->
+    <g transform="translate(160, 210)">
+      <!-- Gotas irregulares de cera derretida -->
+      <path d="M -30 -5 C -35 -20, -18 -32, 0 -30 C 18 -32, 35 -18, 30 -2 C 36 15, 20 34, 0 32 C -20 34, -36 15, -30 -5 Z" 
+            fill="url(#waxSealGrad)" 
+            stroke="#5C1622" 
+            stroke-width="2"/>
+      <!-- Borda interna rebaixada do sinete -->
+      <circle cx="0" cy="0" r="22" fill="#8B2639" stroke="#5C1622" stroke-width="1.5"/>
+      <!-- Brasão gravado no sinete (coração delicado entrelaçado) -->
+      <path d="M 0 8 C -12 -5, -12 -14, 0 -8 C 12 -14, 12 -5, 0 8 Z" fill="#DE7A8C" stroke="#711C2C" stroke-width="1"/>
+    </g>
+
+    <!-- Texto caligráfico delicado -->
+    <text x="160" y="315" text-anchor="middle" fill="#713C48" font-size="14" font-family="Playfair Display, serif" font-style="italic">
+      Você é nosso convidado especial
+    </text>
+
+    <!-- Botão de romper o lacre -->
+    <rect x="80" y="345" width="160" height="38" rx="19" fill="#713C48"/>
+    <text x="160" y="369" text-anchor="middle" fill="#FFFFFF" font-size="11" font-weight="700" letter-spacing="1.5" font-family="sans-serif">
+      ROMPER O LACRE
+    </text>
+  </g>
+</svg>

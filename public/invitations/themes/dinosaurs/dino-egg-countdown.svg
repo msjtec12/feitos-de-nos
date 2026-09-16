@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 150" fill="none">
+  <defs>
+    <!-- Gradiente 3D do ovo manchado com iluminação superior esquerda -->
+    <radialGradient id="eggGrad" cx="35%" cy="30%" r="70%">
+      <stop offset="0%" stopColor="#FFFFFF"/>
+      <stop offset="25%" stopColor="#FAF5E6"/>
+      <stop offset="65%" stopColor="#EDE1C6"/>
+      <stop offset="90%" stopColor="#D4C29D"/>
+      <stop offset="100%" stopColor="#B39E75"/>
+    </radialGradient>
+    <!-- Sombra suave sob o ninho -->
+    <radialGradient id="nestShadow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stopColor="#2E1C0C" stop-opacity="0.4"/>
+      <stop offset="100%" stopColor="#2E1C0C" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="twigGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stopColor="#5E3A1A"/>
+      <stop offset="50%" stopColor="#8A5A2B"/>
+      <stop offset="100%" stopColor="#4A2D14"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Sombra no chão -->
+  <ellipse cx="60" cy="142" rx="46" ry="7" fill="url(#nestShadow)"/>
+
+  <!-- Ninho de gravetos (camada traseira) -->
+  <g stroke="url(#twigGrad)" stroke-width="3" stroke-linecap="round">
+    <path d="M 22 124 Q 60 138 98 124"/>
+    <path d="M 16 128 Q 60 144 104 128"/>
+    <path d="M 28 120 Q 60 134 92 120"/>
+  </g>
+
+  <!-- O ovo de dinossauro tridimensional -->
+  <path d="M 60 8
+           C 84 8, 102 38, 102 78
+           C 102 110, 84 130, 60 130
+           C 36 130, 18 110, 18 78
+           C 18 38, 36 8, 60 8 Z"
+        fill="url(#eggGrad)"
+        stroke="#C9B68D"
+        stroke-width="1.8"/>
+
+  <!-- Manchas e salpicos naturais no ovo -->
+  <g fill="#A68D63" opacity="0.4">
+    <circle cx="36" cy="38" r="4.5"/>
+    <circle cx="48" cy="24" r="3"/>
+    <ellipse cx="78" cy="46" rx="5" ry="3.5" transform="rotate(20 78 46)"/>
+    <circle cx="82" cy="74" r="4"/>
+    <circle cx="32" cy="70" r="5.5"/>
+    <ellipse cx="40" cy="100" rx="6" ry="4" transform="rotate(-15 40 100)"/>
+    <circle cx="74" cy="104" r="3.5"/>
+    <circle cx="58" cy="116" r="4"/>
+    <circle cx="68" cy="30" r="2.5"/>
+    <circle cx="26" cy="52" r="2"/>
+    <circle cx="88" cy="90" r="2.5"/>
+  </g>
+
+  <!-- Brilho especular sutil -->
+  <ellipse cx="42" cy="32" rx="9" ry="16" fill="#FFFFFF" opacity="0.35" transform="rotate(-20 42 32)"/>
+
+  <!-- Ninho de gravetos (camada frontal com folhagens verdes) -->
+  <g stroke="url(#twigGrad)" stroke-width="3.5" stroke-linecap="round">
+    <path d="M 12 132 Q 60 146 108 132"/>
+    <path d="M 20 136 Q 60 148 100 136"/>
+    <path d="M 32 140 Q 60 149 88 140"/>
+  </g>
+  <g stroke="#3A200B" stroke-width="2" stroke-linecap="round" opacity="0.6">
+    <path d="M 15 130 L 35 142"/>
+    <path d="M 105 130 L 85 142"/>
+    <path d="M 45 133 L 75 144"/>
+  </g>
+
+  <!-- Folhas tropicais decorativas brotando do ninho -->
+  <g fill="#3D7A25" stroke="#255214" stroke-width="1">
+    <!-- Folha esquerda -->
+    <path d="M 14 130 C 6 122, 6 112, 16 110 C 22 118, 20 126, 14 130 Z"/>
+    <path d="M 10 120 L 17 116" stroke="#255214" stroke-width="0.8"/>
+    <!-- Folha direita -->
+    <path d="M 106 130 C 114 122, 114 112, 104 110 C 98 118, 100 126, 106 130 Z"/>
+    <path d="M 110 120 L 103 116" stroke="#255214" stroke-width="0.8"/>
+  </g>
+</svg>

@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 70" fill="none">
+  <defs>
+    <linearGradient id="ticketGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stopColor="#831843"/>
+      <stop offset="50%" stopColor="#BE185D"/>
+      <stop offset="100%" stopColor="#6B21A8"/>
+    </linearGradient>
+    <filter id="ticketShadow" x="-5%" y="-10%" width="110%" height="130%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="5" stdDeviation="6" flood-color="#EC4899" flood-opacity="0.4"/>
+    </filter>
+  </defs>
+
+  <!-- Ingresso VIP Pass de show pop com picotes laterais -->
+  <g filter="url(#ticketShadow)">
+    <path d="M 12 10 
+             L 260 10 
+             L 260 22 C 266 22, 272 26, 272 35 C 272 44, 266 48, 260 48 
+             L 260 60 
+             L 12 60 
+             L 12 48 C 18 48, 24 44, 24 35 C 24 26, 18 22, 12 22 Z" 
+          fill="url(#ticketGrad)" 
+          stroke="#F472B6" 
+          stroke-width="2"/>
+
+    <!-- Canhoto destacado à direita -->
+    <path d="M 265 10 
+             L 328 10 
+             L 328 60 
+             L 265 60" 
+          stroke="#F472B6" 
+          stroke-width="2" 
+          stroke-dasharray="3 3"/>
+
+    <!-- Linha tracejada de destaque do canhoto -->
+    <line x1="262" y1="12" x2="262" y2="58" stroke="#FDE047" stroke-width="2" stroke-dasharray="4 3"/>
+
+    <!-- Estrelas e notas no canhoto VIP -->
+    <polygon points="296,25 298,30 304,30 299,34 301,39 296,36 291,39 293,34 288,30 294,30" fill="#FDE047"/>
+    <text x="296" y="52" text-anchor="middle" fill="#FFFFFF" font-size="9" font-weight="900" font-family="sans-serif">VIP PASS</text>
+  </g>
+</svg>

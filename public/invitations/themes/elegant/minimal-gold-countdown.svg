@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 140" fill="none">
+  <defs>
+    <linearGradient id="fineGold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stopColor="#FFFBEB"/>
+      <stop offset="35%" stopColor="#FDE68A"/>
+      <stop offset="70%" stopColor="#D97706"/>
+      <stop offset="100%" stopColor="#92400E"/>
+    </linearGradient>
+    <filter id="goldHairlineShadow" x="-10%" y="-10%" width="125%" height="125%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#000000" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+
+  <!-- Moldura minimalista com filetes duplos de ouro e cantos lapidados -->
+  <g filter="url(#goldHairlineShadow)">
+    <rect x="14" y="16" width="92" height="108" rx="4" fill="#FFFFFF" stroke="url(#fineGold)" stroke-width="1.8"/>
+    <!-- Filete interno fino -->
+    <rect x="19" y="21" width="82" height="98" rx="2" fill="none" stroke="url(#fineGold)" stroke-width="0.8" opacity="0.7"/>
+
+    <!-- Detalhes geométricos nos quatro cantos -->
+    <polygon points="19,21 24,21 19,26" fill="url(#fineGold)"/>
+    <polygon points="101,21 96,21 101,26" fill="url(#fineGold)"/>
+    <polygon points="19,119 24,119 19,114" fill="url(#fineGold)"/>
+    <polygon points="101,119 96,119 101,114" fill="url(#fineGold)"/>
+
+    <!-- Losango minimalista no topo -->
+    <polygon points="60,11 64,16 60,21 56,16" fill="url(#fineGold)"/>
+  </g>
+</svg>

@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 440" fill="none">
+  <defs>
+    <linearGradient id="luxGold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stopColor="#FFFBEB"/>
+      <stop offset="35%" stopColor="#FDE68A"/>
+      <stop offset="70%" stopColor="#D97706"/>
+      <stop offset="100%" stopColor="#78350F"/>
+    </linearGradient>
+    <filter id="luxShadow" x="-10%" y="-10%" width="125%" height="125%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="14" stdDeviation="14" flood-color="#000" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+
+  <!-- Envelope de gala em grafite nobre com acabamento a ouro quente -->
+  <g filter="url(#luxShadow)">
+    <rect x="20" y="30" width="280" height="380" rx="8" fill="#1C1917" stroke="url(#luxGold)" stroke-width="1.8"/>
+
+    <!-- Moldura interna fina em dourado -->
+    <rect x="32" y="42" width="256" height="356" rx="4" fill="none" stroke="url(#luxGold)" stroke-width="0.8" stroke-dasharray="6 3" opacity="0.6"/>
+
+    <!-- Dobra clássica superior do envelope -->
+    <path d="M 20 30 L 160 195 L 300 30" stroke="url(#luxGold)" stroke-width="1.5" fill="none"/>
+    <path d="M 20 30 L 160 190 L 300 30 Z" fill="#292524" opacity="0.6"/>
+
+    <!-- Brasão de monograma dourado geométrico no centro -->
+    <g transform="translate(160, 195)">
+      <circle cx="0" cy="0" r="28" fill="#1C1917" stroke="url(#luxGold)" stroke-width="2"/>
+      <circle cx="0" cy="0" r="24" fill="none" stroke="url(#luxGold)" stroke-width="0.8"/>
+      <!-- Monograma abstrato geométrico -->
+      <polygon points="0,-16 14,0 0,16 -14,0" fill="none" stroke="url(#luxGold)" stroke-width="1.5"/>
+      <circle cx="0" cy="0" r="4" fill="url(#luxGold)"/>
+    </g>
+
+    <!-- Tipografia refinada -->
+    <text x="160" y="285" text-anchor="middle" fill="#D97706" font-size="10" font-weight="700" letter-spacing="3" font-family="sans-serif">
+      CONVITE EXCLUSIVO
+    </text>
+    <text x="160" y="315" text-anchor="middle" fill="#FAFAF9" font-size="20" font-family="Playfair Display, serif">
+      Gala & Celebração
+    </text>
+
+    <!-- Botão fino minimalista -->
+    <rect x="85" y="345" width="150" height="36" rx="4" fill="#292524" stroke="url(#luxGold)" stroke-width="1.2"/>
+    <text x="160" y="367" text-anchor="middle" fill="url(#luxGold)" font-size="10" font-weight="700" letter-spacing="2" font-family="sans-serif">
+      ABRIR CONVITE
+    </text>
+  </g>
+</svg>

@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 36" fill="none">
+  <defs>
+    <linearGradient id="botanicalLine" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stopColor="#7C3AED" stop-opacity="0"/>
+      <stop offset="50%" stopColor="#7C3AED"/>
+      <stop offset="100%" stopColor="#7C3AED" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <line x1="20" y1="18" x2="135" y2="18" stroke="url(#botanicalLine)" stroke-width="1.2"/>
+  <line x1="225" y1="18" x2="340" y2="18" stroke="url(#botanicalLine)" stroke-width="1.2"/>
+
+  <!-- Raminho de lavanda e folhas no centro -->
+  <g transform="translate(180, 18)">
+    <path d="M -18 0 L 18 0" stroke="#059669" stroke-width="1.5"/>
+    <ellipse cx="-10" cy="-3" rx="3.5" ry="1.8" fill="#7C3AED" transform="rotate(-25 -10 -3)"/>
+    <ellipse cx="-4" cy="3" rx="3.5" ry="1.8" fill="#8B5CF6" transform="rotate(25 -4 3)"/>
+    <ellipse cx="4" cy="-3" rx="3.5" ry="1.8" fill="#7C3AED" transform="rotate(-25 4 -3)"/>
+    <ellipse cx="10" cy="3" rx="3.5" ry="1.8" fill="#8B5CF6" transform="rotate(25 10 3)"/>
+    <circle cx="0" cy="0" r="2.5" fill="#D97706"/>
+  </g>
+</svg>

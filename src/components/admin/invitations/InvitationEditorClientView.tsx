@@ -125,10 +125,17 @@ export function InvitationEditorClientView({ event: initialEvent }: InvitationEd
   // Construct live preview data
   const livePreviewEvent = useMemo<EventDetailWithMedia>(() => {
     const combinedDate = `${eventDate || '2026-10-24'}T${eventTime || '16:00'}:00-03:00`;
+    const canonicalKey =
+      themeConfig.theme_key ||
+      themeConfig.themeId ||
+      themeConfig.slug ||
+      'infantil-monstrinhos-elementais';
+
     return {
       ...initialEvent,
       title,
       slug,
+      theme_key: canonicalKey,
       event_type: eventType,
       plan,
       status,
@@ -143,7 +150,12 @@ export function InvitationEditorClientView({ event: initialEvent }: InvitationEd
       dress_code: dressCode || null,
       gift_information: giftInformation || null,
       cover_url: coverUrl || null,
-      theme_config: themeConfig,
+      theme_config: {
+        ...themeConfig,
+        theme_key: canonicalKey,
+        themeId: canonicalKey,
+        slug: canonicalKey,
+      },
       rsvp_deadline: rsvpDeadline ? `${rsvpDeadline}T23:59:59-03:00` : null,
       media: mediaList,
     };
@@ -281,6 +293,12 @@ export function InvitationEditorClientView({ event: initialEvent }: InvitationEd
         themeId: found.id,
         slug: found.id,
         heroBadge: found.heroBadge,
+        countdownStyle: found.countdownStyle,
+        photoStyle: found.photoFrameStyle,
+        buttonStyle: found.buttonStyle,
+        cardMaterial: found.cardMaterial,
+        openingStyle: found.openingStyle,
+        particlePreset: found.particlePreset,
       });
       setIsDirty(true);
       setSimulatorKey((k) => k + 1);
@@ -790,37 +808,53 @@ export function InvitationEditorClientView({ event: initialEvent }: InvitationEd
                           key={t.id}
                           type="button"
                           onClick={() => handleApplyThemePreset(t.id)}
-                          title={t.name}
-                          className={`p-3 rounded-2xl border text-left transition-all relative flex flex-col justify-between min-h-[92px] ${
+                          title={`${t.name} — ${t.tagline}`}
+                          className={`p-3 rounded-2xl border text-left transition-all relative flex flex-col justify-between min-h-[108px] ${
                             isSelected
-                              ? 'border-[#713C48] bg-[#713C48]/8 ring-2 ring-[#713C48] shadow-xs'
-                              : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/60 shadow-2xs'
+                              ? 'border-[#713C48] bg-[#713C48]/8 ring-2 ring-[#713C48] shadow-md scale-[1.01]'
+                              : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/80 shadow-2xs'
                           }`}
                         >
-                          <div className="flex items-center justify-between gap-1 mb-2">
-                            <div className="flex items-center gap-1.5">
-                              <div
-                                className="w-3.5 h-3.5 rounded-full border border-black/10 shrink-0"
-                                style={{ backgroundColor: t.previewColors.primary }}
-                              />
-                              <div
-                                className="w-3.5 h-3.5 rounded-full border border-black/10 shrink-0"
-                                style={{ backgroundColor: t.previewColors.accent }}
-                              />
-                              <div
-                                className="w-3.5 h-3.5 rounded-full border border-black/10 shrink-0"
-                                style={{ backgroundColor: t.previewColors.background }}
-                              />
-                            </div>
-                            {isSelected && (
-                              <div className="w-4 h-4 rounded-full bg-[#713C48] text-white flex items-center justify-center shrink-0">
-                                <Check className="w-2.5 h-2.5 stroke-[3]" />
+                          <div>
+                            <div className="flex items-center justify-between gap-1 mb-2">
+                              {/* Amostra da paleta */}
+                              <div className="flex items-center gap-1">
+                                <div
+                                  className="w-3.5 h-3.5 rounded-full border border-black/10 shrink-0"
+                                  style={{ backgroundColor: t.previewColors.primary }}
+                                  title="Cor primária"
+                                />
+                                <div
+                                  className="w-3.5 h-3.5 rounded-full border border-black/10 shrink-0"
+                                  style={{ backgroundColor: t.previewColors.accent }}
+                                  title="Cor de destaque"
+                                />
+                                <div
+                                  className="w-3.5 h-3.5 rounded-full border border-black/10 shrink-0"
+                                  style={{ backgroundColor: t.previewColors.background }}
+                                  title="Fundo"
+                                />
                               </div>
-                            )}
+
+                              {isSelected && (
+                                <div className="w-4 h-4 rounded-full bg-[#713C48] text-white flex items-center justify-center shrink-0">
+                                  <Check className="w-2.5 h-2.5 stroke-[3]" />
+                                </div>
+                              )}
+                            </div>
+
+                            {/* Nome do tema */}
+                            <span className="text-xs font-bold text-slate-900 leading-tight block line-clamp-1">
+                              {t.name}
+                            </span>
                           </div>
-                          <span className="text-xs font-bold text-slate-800 leading-snug line-clamp-2 break-words">
-                            {t.name}
-                          </span>
+
+                          {/* Tagline / Badge do tema */}
+                          <div className="mt-2 pt-1 border-t border-slate-100">
+                            <span className="text-[10px] text-slate-500 font-medium line-clamp-1 block">
+                              {t.tagline}
+                            </span>
+                          </div>
                         </button>
                       );
                     })}

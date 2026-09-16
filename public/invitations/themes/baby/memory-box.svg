@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 440" fill="none">
+  <defs>
+    <linearGradient id="boxGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stopColor="#FFFFFF"/>
+      <stop offset="60%" stopColor="#F8FAFC"/>
+      <stop offset="100%" stopColor="#EFF6FF"/>
+    </linearGradient>
+    <linearGradient id="ribbonPastel" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stopColor="#93C5FD"/>
+      <stop offset="50%" stopColor="#BFDBFE"/>
+      <stop offset="100%" stopColor="#60A5FA"/>
+    </linearGradient>
+    <filter id="babyBoxShadow" x="-10%" y="-10%" width="125%" height="125%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#93C5FD" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+
+  <!-- Caixa de lembranças com fita de cetim e laço delicado -->
+  <g filter="url(#babyBoxShadow)">
+    <rect x="25" y="30" width="270" height="380" rx="32" fill="url(#boxGrad)" stroke="#DBEAFE" stroke-width="3"/>
+
+    <!-- Fita vertical de cetim -->
+    <rect x="142" y="30" width="36" height="380" fill="url(#ribbonPastel)"/>
+    <!-- Fita horizontal de cetim -->
+    <rect x="25" y="190" width="270" height="36" fill="url(#ribbonPastel)"/>
+
+    <!-- Laço de cetim no cruzamento central -->
+    <g transform="translate(160, 208)">
+      <!-- Laço esquerdo -->
+      <path d="M 0 0 C -35 -40, -75 -15, -45 15 C -20 20, 0 0, 0 0 Z" fill="#93C5FD" stroke="#60A5FA" stroke-width="2"/>
+      <!-- Laço direito -->
+      <path d="M 0 0 C 35 -40, 75 -15, 45 15 C 20 20, 0 0, 0 0 Z" fill="#93C5FD" stroke="#60A5FA" stroke-width="2"/>
+      <!-- Pontas soltas da fita -->
+      <path d="M -8 10 C -25 45, -45 50, -35 70" stroke="#60A5FA" stroke-width="8" stroke-linecap="round"/>
+      <path d="M 8 10 C 25 45, 45 50, 35 70" stroke="#60A5FA" stroke-width="8" stroke-linecap="round"/>
+      <!-- Nó do laço -->
+      <circle cx="0" cy="0" r="14" fill="#BFDBFE" stroke="#3B82F6" stroke-width="2"/>
+      <circle cx="0" cy="0" r="8" fill="#FFFFFF" opacity="0.6"/>
+    </g>
+
+    <!-- Nuvens e estrelas flutuantes na caixa -->
+    <g fill="#FDE68A" opacity="0.8">
+      <polygon points="65,90 68,98 76,98 70,103 72,111 65,106 58,111 60,103 54,98 62,98"/>
+      <polygon points="255,100 257,106 263,106 258,110 260,116 255,112 250,116 252,110 247,106 253,106"/>
+      <polygon points="75,320 77,326 83,326 78,330 80,336 75,332 70,336 72,330 67,326 73,326"/>
+    </g>
+
+    <!-- Botão de abertura delicado -->
+    <rect x="75" y="345" width="170" height="42" rx="21" fill="#FFFFFF" stroke="#93C5FD" stroke-width="2"/>
+    <text x="160" y="371" text-anchor="middle" fill="#1E40AF" font-size="12" font-weight="700" letter-spacing="1" font-family="sans-serif">
+      ABRIR ESTE PRESENTE
+    </text>
+  </g>
+</svg>

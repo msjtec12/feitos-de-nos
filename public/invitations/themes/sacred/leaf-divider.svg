@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 36" fill="none">
+  <defs>
+    <linearGradient id="sacredLineGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stopColor="#059669" stop-opacity="0"/>
+      <stop offset="50%" stopColor="#059669"/>
+      <stop offset="100%" stopColor="#059669" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <line x1="20" y1="18" x2="140" y2="18" stroke="url(#sacredLineGrad)" stroke-width="1.2"/>
+  <line x1="220" y1="18" x2="340" y2="18" stroke="url(#sacredLineGrad)" stroke-width="1.2"/>
+
+  <!-- Raminho de oliveira da paz no centro -->
+  <g transform="translate(180, 18)" stroke="#047857" stroke-width="1.2" fill="#10B981">
+    <path d="M -16 4 Q 0 0 16 4"/>
+    <ellipse cx="-10" cy="2" rx="3.5" ry="1.8" transform="rotate(-20 -10 2)"/>
+    <ellipse cx="-3" cy="0" rx="3.5" ry="1.8" transform="rotate(15 -3 0)"/>
+    <ellipse cx="3" cy="0" rx="3.5" ry="1.8" transform="rotate(-15 3 0)"/>
+    <ellipse cx="10" cy="2" rx="3.5" ry="1.8" transform="rotate(20 10 2)"/>
+  </g>
+</svg>

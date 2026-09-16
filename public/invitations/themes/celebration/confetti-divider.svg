@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 36" fill="none">
+  <line x1="20" y1="18" x2="135" y2="18" stroke="#FDE047" stroke-width="2" stroke-linecap="round"/>
+  <line x1="225" y1="18" x2="340" y2="18" stroke="#FDE047" stroke-width="2" stroke-linecap="round"/>
+
+  <!-- Explosão central de confetes e serpentinas -->
+  <g transform="translate(180, 18)">
+    <polygon points="0,-12 3,-3 12,-3 5,2 7,11 0,6 -7,11 -5,2 -12,-3 -3,-3" fill="#FACC15"/>
+    <circle cx="-16" cy="-4" r="3" fill="#EC4899"/>
+    <circle cx="16" cy="4" r="3" fill="#38BDF8"/>
+    <rect x="-24" y="2" width="6" height="4" fill="#A855F7" transform="rotate(25 -24 2)"/>
+    <rect x="22" y="-6" width="6" height="4" fill="#4ADE80" transform="rotate(-30 22 -6)"/>
+  </g>
+</svg>

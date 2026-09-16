@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 140" fill="none">
+  <defs>
+    <linearGradient id="sacredGold" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stopColor="#FFFBEB"/>
+      <stop offset="40%" stopColor="#FEF08A"/>
+      <stop offset="100%" stopColor="#CA8A04"/>
+    </linearGradient>
+    <radialGradient id="haloGlow" cx="50%" cy="30%" r="60%">
+      <stop offset="0%" stopColor="#FFFFFF"/>
+      <stop offset="60%" stopColor="#F0FDF4"/>
+      <stop offset="100%" stopColor="#DCFCE7"/>
+    </radialGradient>
+    <filter id="sacredGlow" x="-10%" y="-10%" width="125%" height="125%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="#059669" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+
+  <!-- Card luminoso em arco ogival clássico -->
+  <g filter="url(#sacredGlow)">
+    <!-- Base em arco triunfal sacro -->
+    <path d="M 20 54 
+             C 20 20, 60 12, 60 12 
+             C 60 12, 100 20, 100 54 
+             L 100 124 
+             L 20 124 Z" 
+          fill="url(#haloGlow)" 
+          stroke="url(#sacredGold)" 
+          stroke-width="1.8"/>
+
+    <!-- Filete interno do arco -->
+    <path d="M 26 56 
+             C 26 26, 60 18, 60 18 
+             C 60 18, 94 26, 94 56 
+             L 94 118 
+             L 26 118 Z" 
+          fill="none" 
+          stroke="url(#sacredGold)" 
+          stroke-width="0.8" 
+          opacity="0.7"/>
+
+    <!-- Raminho de oliveira da paz no ápice do arco -->
+    <g transform="translate(60, 24)" stroke="#047857" stroke-width="1.2" fill="#10B981">
+      <path d="M -15 8 Q 0 2 15 8"/>
+      <ellipse cx="-10" cy="5" rx="3.5" ry="1.8" transform="rotate(-20 -10 5)"/>
+      <ellipse cx="-4" cy="3" rx="3.5" ry="1.8" transform="rotate(15 -4 3)"/>
+      <ellipse cx="4" cy="3" rx="3.5" ry="1.8" transform="rotate(-15 4 3)"/>
+      <ellipse cx="10" cy="5" rx="3.5" ry="1.8" transform="rotate(20 10 5)"/>
+    </g>
+  </g>
+</svg>

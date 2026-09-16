@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 40" fill="none">
+  <defs>
+    <linearGradient id="babyLine" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stopColor="#BFDBFE" stop-opacity="0"/>
+      <stop offset="50%" stopColor="#93C5FD"/>
+      <stop offset="100%" stopColor="#BFDBFE" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <line x1="20" y1="20" x2="135" y2="20" stroke="url(#babyLine)" stroke-width="1.8"/>
+  <line x1="225" y1="20" x2="340" y2="20" stroke="url(#babyLine)" stroke-width="1.8"/>
+
+  <!-- Nuvenzinha e lua sorridente no centro -->
+  <g transform="translate(180, 20)">
+    <!-- Lua crescente suave -->
+    <path d="M -8 -10 C -2 -10, 4 -4, 4 4 C 4 12, -2 18, -8 18 C 0 16, 8 10, 8 4 C 8 -2, 0 -8, -8 -10 Z" fill="#FDE68A" stroke="#F59E0B" stroke-width="1"/>
+    <!-- Estrelinhas nas laterais -->
+    <polygon points="-24,0 -22,4 -18,4 -21,7 -19,11 -24,8 -29,11 -27,7 -30,4 -26,4" fill="#BFDBFE"/>
+    <polygon points="24,0 26,4 30,4 27,7 29,11 24,8 19,11 21,7 18,4 22,4" fill="#BFDBFE"/>
+  </g>
+</svg>

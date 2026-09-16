@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 40" fill="none">
+  <!-- Linha mística de energia com orbe e faíscas centrais -->
+  <line x1="20" y1="20" x2="140" y2="20" stroke="url(#lineGradLeft)" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="220" y1="20" x2="340" y2="20" stroke="url(#lineGradRight)" stroke-width="2.5" stroke-linecap="round"/>
+  
+  <defs>
+    <linearGradient id="lineGradLeft" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stopColor="#EA580C" stop-opacity="0"/>
+      <stop offset="100%" stopColor="#EA580C"/>
+    </linearGradient>
+    <linearGradient id="lineGradRight" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stopColor="#0284C7"/>
+      <stop offset="100%" stopColor="#0284C7" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Cristais centrais conectados -->
+  <g transform="translate(180, 20)">
+    <!-- Orbe central -->
+    <polygon points="0,-12 10,0 0,12 -10,0" fill="#F59E0B" stroke="#FEF08A" stroke-width="1.8"/>
+    <circle cx="0" cy="0" r="3" fill="#FFFFFF"/>
+    <!-- Chaminha e gota -->
+    <circle cx="-22" cy="0" r="5" fill="#EF4444"/>
+    <circle cx="22" cy="0" r="5" fill="#0284C7"/>
+    <!-- Centelhas -->
+    <circle cx="-35" cy="-6" r="2" fill="#FBBF24"/>
+    <circle cx="35" cy="6" r="2" fill="#38BDF8"/>
+  </g>
+</svg>

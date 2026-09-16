@@ -2,25 +2,33 @@
 
 import React, { useState } from 'react';
 import { EventThemeConfig } from '@/types/invitation';
-import { Gift, Copy, Check, HeartHandshake } from 'lucide-react';
+import { Gift, Copy, Check } from 'lucide-react';
+import { useOptionalInvitationTheme } from '../experience/InvitationExperience';
+import { getInvitationTheme } from '@/data/invitation-themes';
 
 interface InvitationGiftRegistryProps {
   giftInformation?: string | null;
-  themeConfig: EventThemeConfig;
+  themeConfig?: EventThemeConfig;
 }
 
-export function InvitationGiftRegistry({
-  giftInformation,
-  themeConfig,
-}: InvitationGiftRegistryProps) {
+export function InvitationGiftRegistry(props: InvitationGiftRegistryProps) {
+  const contextValues = useOptionalInvitationTheme();
+
+  const activeTheme = contextValues?.theme || getInvitationTheme(props.themeConfig?.theme_key || props.themeConfig?.themeId || props.themeConfig?.slug);
+  const themeConfig = contextValues?.themeConfig || props.themeConfig || activeTheme.config;
+  const giftInformation = contextValues?.event.gift_information ?? props.giftInformation;
+
   const [copied, setCopied] = useState(false);
 
   if (!giftInformation) return null;
 
-  const primaryColor = themeConfig.primaryColor || '#713C48';
-  const accentColor = themeConfig.accentColor || '#C96E5A';
+  const primaryColor = themeConfig.primaryColor || activeTheme.previewColors.primary;
+  const accentColor = themeConfig.accentColor || activeTheme.previewColors.accent;
+  const isDino = activeTheme.assetFolder === 'dinosaurs';
+  const isHero = activeTheme.assetFolder === 'heroes';
+  const isBlocos = activeTheme.assetFolder === 'blocks';
 
-  // Check if there is an explicit Pix key inside giftInformation (e.g. key: xxx or email / phone / CPF)
+  // Identificar chave Pix se houver
   const pixMatch = giftInformation.match(/(?:pix|chave)\s*(?::|é)?\s*([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}|\d{11}|\d{14}|[a-zA-Z0-9-]{20,})/i);
   const detectedPixKey = pixMatch ? pixMatch[1] : null;
 
@@ -34,20 +42,32 @@ export function InvitationGiftRegistry({
     }
   };
 
+  let cardContainerClass = 'bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-black/5 text-center space-y-4';
+  if (isDino) {
+    cardContainerClass = 'bg-[#FAF5E6] rounded-[28px] p-6 sm:p-8 shadow-md border-2 border-[#D4C29D] text-center space-y-4';
+  } else if (isHero) {
+    cardContainerClass = 'bg-white rounded-2xl p-6 sm:p-8 border-3 border-slate-900 shadow-[5px_5px_0px_#DC2626] text-center space-y-4';
+  } else if (isBlocos) {
+    cardContainerClass = 'bg-[#F0FDF4] rounded-none p-6 sm:p-8 border-3 border-emerald-950 shadow-[5px_5px_0px_#15803D] text-center space-y-4 font-mono';
+  }
+
   return (
-    <section className="max-w-xl mx-auto px-4 py-8 space-y-6">
-      <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-black/5 text-center space-y-5">
+    <section className="max-w-xl mx-auto px-4 py-4 space-y-4">
+      <div className={cardContainerClass}>
         <div
-          className="w-14 h-14 mx-auto rounded-2xl flex items-center justify-center"
-          style={{ backgroundColor: `${accentColor}15`, color: accentColor }}
+          className="w-12 h-12 mx-auto rounded-2xl flex items-center justify-center"
+          style={{
+            backgroundColor: isDino ? '#E07A28' : `${accentColor}18`,
+            color: isDino ? '#FFFFFF' : accentColor,
+          }}
         >
-          <Gift className="w-7 h-7" />
+          <Gift className="w-6 h-6" />
         </div>
 
         <div className="space-y-1">
           <span
-            className="text-[11px] uppercase tracking-widest font-extrabold"
-            style={{ color: accentColor }}
+            className="text-[11px] uppercase tracking-widest font-extrabold block"
+            style={{ color: isDino ? '#15803D' : accentColor }}
           >
             Mimo & Sugestão
           </span>
@@ -59,19 +79,19 @@ export function InvitationGiftRegistry({
           </h3>
         </div>
 
-        <p className="text-xs sm:text-sm text-[#302B2D]/80 leading-relaxed max-w-md mx-auto">
+        <p className="text-xs sm:text-sm text-slate-700 leading-relaxed max-w-md mx-auto">
           {giftInformation}
         </p>
 
-        {/* If a Pix key is detected or provided */}
+        {/* Chave Pix destacada */}
         {detectedPixKey && (
           <div className="pt-2">
-            <div className="p-3.5 rounded-2xl bg-[#FFF8F0] border border-black/5 flex items-center justify-between gap-3 max-w-sm mx-auto">
+            <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-between gap-3 max-w-sm mx-auto">
               <div className="text-left overflow-hidden">
-                <span className="text-[10px] uppercase tracking-wider font-bold text-[#302B2D]/50 block">
+                <span className="text-[10px] uppercase tracking-wider font-bold text-slate-500 block">
                   Chave Pix
                 </span>
-                <span className="font-mono text-xs text-[#1E293B] truncate block">
+                <span className="font-mono text-xs text-slate-800 truncate block">
                   {detectedPixKey}
                 </span>
               </div>
@@ -97,11 +117,6 @@ export function InvitationGiftRegistry({
             </div>
           </div>
         )}
-
-        <div className="pt-2 flex items-center justify-center gap-1.5 text-xs text-[#302B2D]/60 italic">
-          <HeartHandshake className="w-4 h-4 text-[#C96E5A]" />
-          <span>Sua presença e carinho são o que mais importa para nós!</span>
-        </div>
       </div>
     </section>
   );

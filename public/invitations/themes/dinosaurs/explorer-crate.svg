@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 320" fill="none">
+  <defs>
+    <!-- Gradiente da caixa de expedição de madeira rústica -->
+    <linearGradient id="crateWood" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stopColor="#C4803E"/>
+      <stop offset="30%" stopColor="#9C5A20"/>
+      <stop offset="70%" stopColor="#784013"/>
+      <stop offset="100%" stopColor="#502809"/>
+    </linearGradient>
+    <linearGradient id="ironBand" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stopColor="#2E3440"/>
+      <stop offset="50%" stopColor="#4C566A"/>
+      <stop offset="100%" stopColor="#1E222A"/>
+    </linearGradient>
+    <filter id="crateShadow" x="-10%" y="-10%" width="125%" height="135%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="12" stdDeviation="10" flood-color="#000" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <!-- Caixa de madeira reforçada -->
+  <g filter="url(#crateShadow)">
+    <rect x="25" y="40" width="270" height="240" rx="16" fill="url(#crateWood)" stroke="#502809" stroke-width="5"/>
+    
+    <!-- Tábuas horizontais -->
+    <line x1="25" y1="100" x2="295" y2="100" stroke="#421E04" stroke-width="4"/>
+    <line x1="25" y1="160" x2="295" y2="160" stroke="#421E04" stroke-width="4"/>
+    <line x1="25" y1="220" x2="295" y2="220" stroke="#421E04" stroke-width="4"/>
+
+    <!-- Tábuas cruzadas diagonais -->
+    <line x1="30" y1="45" x2="290" y2="275" stroke="#421E04" stroke-width="5" stroke-dasharray="24 6" opacity="0.4"/>
+    <line x1="290" y1="45" x2="30" y2="275" stroke="#421E04" stroke-width="5" stroke-dasharray="24 6" opacity="0.4"/>
+
+    <!-- Cantoneiras de ferro escuro -->
+    <rect x="25" y="40" width="40" height="240" fill="url(#ironBand)" opacity="0.9"/>
+    <rect x="255" y="40" width="40" height="240" fill="url(#ironBand)" opacity="0.9"/>
+    <rect x="25" y="40" width="270" height="30" fill="url(#ironBand)" opacity="0.9"/>
+    <rect x="25" y="250" width="270" height="30" fill="url(#ironBand)" opacity="0.9"/>
+
+    <!-- Rebites de ferro -->
+    <circle cx="45" cy="55" r="5" fill="#D8DEE9" stroke="#1E222A" stroke-width="1.5"/>
+    <circle cx="275" cy="55" r="5" fill="#D8DEE9" stroke="#1E222A" stroke-width="1.5"/>
+    <circle cx="45" cy="265" r="5" fill="#D8DEE9" stroke="#1E222A" stroke-width="1.5"/>
+    <circle cx="275" cy="265" r="5" fill="#D8DEE9" stroke="#1E222A" stroke-width="1.5"/>
+    <circle cx="45" cy="160" r="4.5" fill="#D8DEE9" stroke="#1E222A" stroke-width="1.5"/>
+    <circle cx="275" cy="160" r="4.5" fill="#D8DEE9" stroke="#1E222A" stroke-width="1.5"/>
+    <circle cx="160" cy="55" r="4.5" fill="#D8DEE9" stroke="#1E222A" stroke-width="1.5"/>
+    <circle cx="160" cy="265" r="4.5" fill="#D8DEE9" stroke="#1E222A" stroke-width="1.5"/>
+
+    <!-- Selo central de expedição com pegada gravada a fogo -->
+    <g transform="translate(110, 110)">
+      <circle cx="50" cy="50" r="44" fill="#E8D5B0" stroke="#875E2E" stroke-width="4"/>
+      <circle cx="50" cy="50" r="38" fill="#F4E9CE" stroke="#875E2E" stroke-width="1.5" stroke-dasharray="3 3"/>
+      <!-- Pegada estilizada de dinossauro -->
+      <g fill="#8B4A14" transform="translate(32, 28) scale(1)">
+        <ellipse cx="18" cy="24" rx="10" ry="13"/>
+        <ellipse cx="8" cy="10" rx="4.5" ry="7" transform="rotate(-25 8 10)"/>
+        <ellipse cx="18" cy="6" rx="4.5" ry="7"/>
+        <ellipse cx="28" cy="10" rx="4.5" ry="7" transform="rotate(25 28 10)"/>
+      </g>
+    </g>
+
+    <!-- Folhagens tropicais envolvendo a caixa -->
+    <path d="M 20 220 C -5 200, -10 160, 15 150 C 25 180, 40 200, 20 220 Z" fill="#2E6B1D"/>
+    <path d="M 290 230 C 320 210, 325 170, 300 160 C 290 190, 275 210, 290 230 Z" fill="#2E6B1D"/>
+  </g>
+</svg>

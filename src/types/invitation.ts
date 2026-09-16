@@ -27,15 +27,40 @@ export type EventStatus =
 export type GuestAttendanceStatus = 'pending' | 'confirmed' | 'declined';
 
 export type PhotoFrameStyle =
+  | 'organic-jungle'
+  | 'elemental-quad'
+  | 'comic-action'
+  | 'royal-arch'
+  | 'polaroid-neon'
+  | 'pixel-block'
+  | 'dreamy-cloud'
+  | 'floral-wreath'
+  | 'luxury-gold'
+  | 'sacred-arch'
+  | 'botanical-frame'
+  | 'editorial-minimal'
+  | 'party-glow'
   | 'polaroid'
   | 'rounded'
   | 'arch'
   | 'classic'
   | 'pixel'
-  | 'gold-border'
-  | 'floral-wreath';
+  | 'gold-border';
 
 export type ButtonCornerStyle =
+  | 'wood-plank'
+  | 'elemental-insignia'
+  | 'comic-button'
+  | 'royal-gold'
+  | 'neon-ticket'
+  | 'pixel-retro'
+  | 'baby-pillow'
+  | 'romantic-satin'
+  | 'luxury-classic'
+  | 'sacred-gentle'
+  | 'botanical-leaf'
+  | 'editorial-pure'
+  | 'party-glow'
   | 'pill'
   | 'rounded'
   | 'smooth'
@@ -45,21 +70,71 @@ export type ButtonCornerStyle =
 export type AnimationIntensity = 'none' | 'soft' | 'dynamic' | 'festive';
 
 export type ParticlePreset =
-  | 'sparkles'
-  | 'elemental'
-  | 'stars'
-  | 'confetti'
-  | 'petals'
   | 'leaves'
+  | 'elemental'
+  | 'comic-stars'
+  | 'sparkles'
+  | 'notes'
+  | 'pixel-dust'
+  | 'stars'
+  | 'petals'
+  | 'gold-dust'
+  | 'peace-feathers'
+  | 'lavender-buds'
+  | 'minimal-dust'
+  | 'party-confetti'
+  | 'confetti'
   | 'bubbles'
   | 'none';
 
 export type OpeningStyle =
+  | 'explorer-crate'
+  | 'comic-book'
+  | 'storybook'
+  | 'stage-curtain'
+  | 'pixel-portal'
+  | 'elemental-card'
+  | 'memory-box'
+  | 'wax-seal-letter'
+  | 'luxury-envelope'
+  | 'ceremonial-book'
+  | 'botanical-letter'
+  | 'editorial-cover'
+  | 'celebration-curtain'
   | 'envelope'
   | 'card'
   | 'curtain'
   | 'gift-box'
   | 'simple';
+
+export type CountdownStyle =
+  | 'dino-eggs'
+  | 'elemental-crystals'
+  | 'comic-badges'
+  | 'royal-medallions'
+  | 'music-panels'
+  | 'pixel-cubes'
+  | 'dreamy-stars'
+  | 'rose-medallions'
+  | 'gold-minimal'
+  | 'sacred-cards'
+  | 'botanical-wreath'
+  | 'editorial-type'
+  | 'celebration-burst';
+
+export type CardMaterial =
+  | 'carved-parchment'
+  | 'comic-panel'
+  | 'royal-scroll'
+  | 'neon-laminate'
+  | 'pixel-stone'
+  | 'baby-cloud'
+  | 'pressed-paper'
+  | 'ivory-gilded'
+  | 'luminous-serene'
+  | 'kraft-linen'
+  | 'clean-editorial'
+  | 'party-sparkle';
 
 export type ConfirmationEffect =
   | 'confetti-burst'
@@ -74,6 +149,8 @@ export interface EventThemeConfig {
   themeName?: string;
   slug?: string;
   heroBadge?: string;
+  countdownStyle?: CountdownStyle;
+  cardMaterial?: CardMaterial;
   primaryColor: string;
   secondaryColor?: string;
   accentColor: string;

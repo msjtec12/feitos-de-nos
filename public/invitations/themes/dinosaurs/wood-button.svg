@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 70" fill="none">
+  <defs>
+    <linearGradient id="btnWood" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stopColor="#DF7B2F"/>
+      <stop offset="20%" stopColor="#C45E1B"/>
+      <stop offset="70%" stopColor="#A24510"/>
+      <stop offset="100%" stopColor="#6C2A05"/>
+    </linearGradient>
+    <linearGradient id="btnBevel" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stopColor="#FFA45B"/>
+      <stop offset="10%" stopColor="#E27425"/>
+      <stop offset="90%" stopColor="#642404"/>
+      <stop offset="100%" stopColor="#3B1401"/>
+    </linearGradient>
+    <filter id="btnShadow" x="-5%" y="-15%" width="110%" height="140%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="6" stdDeviation="4" flood-color="#2D1103" flood-opacity="0.45"/>
+    </filter>
+  </defs>
+
+  <!-- Corpo da prancha de madeira entalhada e polida -->
+  <g filter="url(#btnShadow)">
+    <path d="M 28 6 
+             C 45 4, 180 5, 332 6 
+             C 348 7, 356 18, 354 35 
+             C 356 52, 348 63, 332 64 
+             C 180 65, 45 66, 28 64 
+             C 12 63, 4 52, 6 35 
+             C 4 18, 12 7, 28 6 Z" 
+          fill="url(#btnWood)" 
+          stroke="url(#btnBevel)" 
+          stroke-width="3" 
+          stroke-linejoin="round"/>
+
+    <!-- Veios sutis de madeira -->
+    <path d="M 20 22 Q 180 18 340 22 M 25 36 Q 190 32 335 36 M 18 50 Q 180 47 342 50" 
+          stroke="#531F04" 
+          stroke-width="1.6" 
+          stroke-linecap="round" 
+          opacity="0.35"/>
+
+    <!-- Brilho superior acetinado -->
+    <path d="M 32 10 Q 180 8 328 10" 
+          stroke="#FFBE88" 
+          stroke-width="2" 
+          stroke-linecap="round" 
+          opacity="0.6"/>
+
+    <!-- Cavilhas de fixação nas extremidades -->
+    <circle cx="24" cy="35" r="3.5" fill="#3D1703" stroke="#8A4016" stroke-width="1"/>
+    <circle cx="336" cy="35" r="3.5" fill="#3D1703" stroke="#8A4016" stroke-width="1"/>
+  </g>
+</svg>

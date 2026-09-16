@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 44" fill="none">
+  <!-- Divisor com raio heroico no centro e linhas de velocidade nos quadrinhos -->
+  <line x1="15" y1="22" x2="140" y2="22" stroke="#0F172A" stroke-width="4" stroke-linecap="round"/>
+  <line x1="220" y1="22" x2="345" y2="22" stroke="#0F172A" stroke-width="4" stroke-linecap="round"/>
+  <line x1="25" y1="28" x2="130" y2="28" stroke="#DC2626" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="230" y1="28" x2="335" y2="28" stroke="#2563EB" stroke-width="2.5" stroke-linecap="round"/>
+
+  <!-- Raio heroico central com explosão amarela -->
+  <g transform="translate(180, 22)">
+    <polygon points="-24,-14 -12,-20 18,-18 24,-12 28,6 16,20 -14,18 -26,4" fill="#FDE047" stroke="#0F172A" stroke-width="2.5"/>
+    <!-- Relâmpago de ação -->
+    <polygon points="4,-16 -12,2 0,2 -6,16 14,-2 2,-2" fill="#DC2626" stroke="#0F172A" stroke-width="1.8"/>
+  </g>
+</svg>

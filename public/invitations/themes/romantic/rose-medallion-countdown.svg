@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 140" fill="none">
+  <defs>
+    <!-- Gradiente ouro rosê / champagne -->
+    <linearGradient id="roseGold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stopColor="#FFF8F5"/>
+      <stop offset="30%" stopColor="#F9D7D7"/>
+      <stop offset="70%" stopColor="#D98A95"/>
+      <stop offset="100%" stopColor="#9E4E5D"/>
+    </linearGradient>
+    <radialGradient id="roseMedallionBack" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stopColor="#FFFFFF"/>
+      <stop offset="80%" stopColor="#FFF5F5"/>
+      <stop offset="100%" stopColor="#FDE8E8"/>
+    </radialGradient>
+    <filter id="romanticGlow" x="-10%" y="-10%" width="125%" height="125%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="5" stdDeviation="6" flood-color="#713C48" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+
+  <!-- Medalhão clássico rosê com rosas de aquarela e arabescos -->
+  <g filter="url(#romanticGlow)">
+    <!-- Moldura dupla fina de ouro rosê -->
+    <circle cx="60" cy="74" r="48" fill="url(#roseGold)"/>
+    <circle cx="60" cy="74" r="44" fill="#FFFFFF"/>
+    <circle cx="60" cy="74" r="41" fill="url(#roseMedallionBack)" stroke="url(#roseGold)" stroke-width="1.5" stroke-dasharray="4 2"/>
+
+    <!-- Guirlanda de rosas e botões delicados no topo -->
+    <g transform="translate(60, 26)">
+      <!-- Rosas em aquarela -->
+      <circle cx="0" cy="0" r="7" fill="#E18A97"/>
+      <path d="M -3 -1 C -1 -4, 3 -4, 4 -1 C 4 2, 1 4, -2 3" stroke="#9E4E5D" stroke-width="1.2" fill="none"/>
+      
+      <!-- Rosinhas menores laterais -->
+      <circle cx="-13" cy="4" r="5" fill="#F2B7BE"/>
+      <circle cx="13" cy="4" r="5" fill="#F2B7BE"/>
+
+      <!-- Folhinhas verdes sálvia -->
+      <path d="M -7 -4 C -12 -10, -18 -6, -14 -2 Z" fill="#8CA88D"/>
+      <path d="M 7 -4 C 12 -10, 18 -6, 14 -2 Z" fill="#8CA88D"/>
+      <path d="M -20 8 C -26 6, -24 14, -18 12 Z" fill="#8CA88D"/>
+      <path d="M 20 8 C 26 6, 24 14, 18 12 Z" fill="#8CA88D"/>
+    </g>
+  </g>
+</svg>

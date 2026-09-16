@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 40" fill="none">
+  <defs>
+    <linearGradient id="divGoldGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stopColor="#D97706" stop-opacity="0"/>
+      <stop offset="50%" stopColor="#F59E0B"/>
+      <stop offset="100%" stopColor="#D97706" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Linha fina com arabescos e coroa nobre central -->
+  <line x1="20" y1="20" x2="140" y2="20" stroke="url(#divGoldGrad)" stroke-width="1.8"/>
+  <line x1="220" y1="20" x2="340" y2="20" stroke="url(#divGoldGrad)" stroke-width="1.8"/>
+
+  <!-- Arabesco e tiara dourada central -->
+  <g transform="translate(180, 20)">
+    <!-- Arabescos laterais -->
+    <path d="M -30 0 C -22 -8, -12 -8, -4 0" stroke="#D97706" stroke-width="1.5" fill="none"/>
+    <path d="M 30 0 C 22 -8, 12 -8, 4 0" stroke="#D97706" stroke-width="1.5" fill="none"/>
+    <circle cx="-30" cy="0" r="2" fill="#F59E0B"/>
+    <circle cx="30" cy="0" r="2" fill="#F59E0B"/>
+
+    <!-- Tiara real nobre -->
+    <path d="M -10 6 L -8 -6 L -3 0 L 0 -10 L 3 0 L 8 -6 L 10 6 Z" fill="#FBBF24" stroke="#B45309" stroke-width="1"/>
+    <circle cx="0" cy="-10" r="1.5" fill="#DB2777"/>
+  </g>
+</svg>

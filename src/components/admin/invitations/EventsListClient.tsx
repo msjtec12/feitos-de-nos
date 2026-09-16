@@ -92,6 +92,14 @@ export function EventsListClient({ initialEvents }: EventsListClientProps) {
 
         <div className="flex items-center gap-3">
           <Link
+            href="/admin/convites/comparar-temas"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#713C48]/10 text-[#713C48] hover:bg-[#713C48]/20 border border-[#713C48]/20 text-xs sm:text-sm font-semibold transition-all shadow-xs"
+            title="Comparar os 13 temas autorais aplicados sobre o evento demo"
+          >
+            <Sparkles className="w-4 h-4 text-[#C96E5A]" />
+            <span>Comparar 13 Temas</span>
+          </Link>
+          <Link
             href="/admin/convites/novo"
             className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#713C48] text-white text-xs sm:text-sm font-semibold hover:bg-[#5a2e39] transition-all shadow-sm"
           >

@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 140" fill="none">
+  <defs>
+    <linearGradient id="partyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stopColor="#7C3AED"/>
+      <stop offset="50%" stopColor="#6D28D9"/>
+      <stop offset="100%" stopColor="#4C1D95"/>
+    </linearGradient>
+    <radialGradient id="partyGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stopColor="#FDE047" stop-opacity="0.9"/>
+      <stop offset="60%" stopColor="#F59E0B" stop-opacity="0.4"/>
+      <stop offset="100%" stopColor="#F59E0B" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="partyBurstShadow" x="-20%" y="-20%" width="140%" height="140%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#7C3AED" flood-opacity="0.45"/>
+    </filter>
+  </defs>
+
+  <!-- Brilho dourado festivo -->
+  <circle cx="60" cy="74" r="50" fill="url(#partyGlow)"/>
+
+  <!-- Card festivo com borda dourada cintilante e confetes -->
+  <g filter="url(#partyBurstShadow)">
+    <rect x="14" y="24" width="92" height="100" rx="20" fill="url(#partyGrad)" stroke="#FDE047" stroke-width="2.5"/>
+    
+    <!-- Confetes coloridos nos cantos -->
+    <circle cx="28" cy="38" r="3" fill="#F472B6"/>
+    <circle cx="92" cy="40" r="3" fill="#38BDF8"/>
+    <rect x="24" y="105" width="5" height="5" rx="1" fill="#FACC15" transform="rotate(25 24 105)"/>
+    <rect x="88" y="108" width="5" height="5" rx="1" fill="#4ADE80" transform="rotate(-30 88 108)"/>
+
+    <!-- Estrela brilhante no topo -->
+    <polygon points="60,12 63,22 73,22 65,28 68,38 60,32 52,38 55,28 47,22 57,22" 
+             fill="#FACC15" 
+             stroke="#FFFFFF" 
+             stroke-width="1"/>
+  </g>
+</svg>

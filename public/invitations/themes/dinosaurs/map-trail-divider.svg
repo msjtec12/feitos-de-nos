@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 90" fill="none">
+  <defs>
+    <linearGradient id="parchmentGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stopColor="#FFF8E8"/>
+      <stop offset="60%" stopColor="#F5E8C9"/>
+      <stop offset="100%" stopColor="#E4D1A6"/>
+    </linearGradient>
+    <linearGradient id="mountainGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stopColor="#9C9588"/>
+      <stop offset="100%" stopColor="#696256"/>
+    </linearGradient>
+    <filter id="parchmentShadow" x="-5%" y="-10%" width="110%" height="130%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="4" stdDeviation="3.5" flood-color="#3D2912" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+
+  <!-- Banner de pergaminho de expedição -->
+  <g filter="url(#parchmentShadow)">
+    <path d="M 18 10 
+             C 40 7, 190 9, 362 10 
+             C 370 12, 374 22, 372 45 
+             C 374 68, 370 78, 362 80 
+             C 190 81, 40 83, 18 80 
+             C 10 78, 6 68, 8 45 
+             C 6 22, 10 12, 18 10 Z" 
+          fill="url(#parchmentGrad)" 
+          stroke="#C8B282" 
+          stroke-width="2" 
+          stroke-linejoin="round"/>
+    
+    <!-- Linha pontilhada de rota de expedição -->
+    <path d="M 68 55 Q 115 35 155 58 T 245 42 Q 285 30 335 52" 
+          stroke="#945828" 
+          stroke-width="2.5" 
+          stroke-linecap="round" 
+          stroke-dasharray="5 7"/>
+  </g>
+
+  <!-- Palmeira e montanhas no início da rota (lado esquerdo) -->
+  <g transform="translate(26, 32) scale(0.75)">
+    <!-- Montanhas -->
+    <polygon points="26,10 12,38 40,38" fill="url(#mountainGrad)"/>
+    <polygon points="26,10 18,22 34,22" fill="#EAE5D9"/>
+    <polygon points="42,16 30,38 54,38" fill="#7C7569"/>
+    <!-- Pequena palmeira -->
+    <path d="M 8 38 Q 12 24 10 16" stroke="#6C451E" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M 10 16 C 5 13, 2 15, 0 19 M 10 16 C 7 10, 5 11, 2 13 M 10 16 C 14 9, 16 10, 18 14 M 10 16 C 16 14, 18 17, 19 21" 
+          stroke="#2F6D1F" stroke-width="2" stroke-linecap="round"/>
+  </g>
+
+  <!-- Ícone de bússola / bússola explorador no centro -->
+  <g transform="translate(132, 28) scale(0.85)">
+    <rect x="0" y="2" width="26" height="24" rx="4" fill="#E0CE9E" stroke="#8D6C3E" stroke-width="1.5"/>
+    <path d="M 6 14 L 20 14 M 13 7 L 13 21" stroke="#8D6C3E" stroke-width="1.2" stroke-linecap="round"/>
+    <circle cx="13" cy="14" r="7" fill="#FFFDF8" stroke="#8D6C3E" stroke-width="1.2"/>
+    <polygon points="13,9 15,14 13,13 11,14" fill="#C4411C"/>
+    <polygon points="13,19 15,14 13,15 11,14" fill="#3D5A80"/>
+  </g>
+
+  <!-- Pegadas ao longo do caminho (lado direito) -->
+  <g fill="#945828" opacity="0.85" transform="translate(264, 42) scale(0.55)">
+    <ellipse cx="12" cy="16" rx="6" ry="8"/>
+    <ellipse cx="6" cy="6" rx="2.8" ry="4.5" transform="rotate(-20 6 6)"/>
+    <ellipse cx="12" cy="4" rx="2.8" ry="4.5"/>
+    <ellipse cx="18" cy="6" rx="2.8" ry="4.5" transform="rotate(20 18 6)"/>
+  </g>
+  <g fill="#945828" opacity="0.65" transform="translate(294, 34) scale(0.48)">
+    <ellipse cx="12" cy="16" rx="6" ry="8"/>
+    <ellipse cx="6" cy="6" rx="2.8" ry="4.5" transform="rotate(-20 6 6)"/>
+    <ellipse cx="12" cy="4" rx="2.8" ry="4.5"/>
+    <ellipse cx="18" cy="6" rx="2.8" ry="4.5" transform="rotate(20 18 6)"/>
+  </g>
+</svg>

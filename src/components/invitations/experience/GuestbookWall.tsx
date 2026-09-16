@@ -2,30 +2,37 @@
 
 import React, { useState } from 'react';
 import { EventGuestbookMessageRow, EventThemeConfig } from '@/types/invitation';
-import { Heart, MessageSquare, Send, Sparkles, CheckCircle2 } from 'lucide-react';
+import { MessageSquare, Send, CheckCircle2 } from 'lucide-react';
+import { useOptionalInvitationTheme } from './InvitationExperience';
+import { getInvitationTheme } from '@/data/invitation-themes';
 
 interface GuestbookWallProps {
-  eventId: string;
-  slug: string;
-  messages: EventGuestbookMessageRow[];
-  themeConfig: EventThemeConfig;
+  eventId?: string;
+  slug?: string;
+  messages?: EventGuestbookMessageRow[];
+  themeConfig?: EventThemeConfig;
 }
 
-export function GuestbookWall({
-  eventId,
-  slug,
-  messages,
-  themeConfig,
-}: GuestbookWallProps) {
+export function GuestbookWall(props: GuestbookWallProps) {
+  const contextValues = useOptionalInvitationTheme();
+
+  const activeTheme = contextValues?.theme || getInvitationTheme(props.themeConfig?.theme_key || props.themeConfig?.themeId || props.themeConfig?.slug);
+  const themeConfig = contextValues?.themeConfig || props.themeConfig || activeTheme.config;
+  const eventId = contextValues?.event.id || props.eventId || '';
+  const slug = contextValues?.event.slug || props.slug || '';
+  const messages = props.messages || [];
+
   const [guestName, setGuestName] = useState('');
   const [message, setMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const primaryColor = themeConfig.primaryColor || '#713C48';
-  const accentColor = themeConfig.accentColor || '#C96E5A';
-  const themeSlug = themeConfig.slug || '';
+  const primaryColor = themeConfig.primaryColor || activeTheme.previewColors.primary;
+  const accentColor = themeConfig.accentColor || activeTheme.previewColors.accent;
+  const isDino = activeTheme.assetFolder === 'dinosaurs';
+  const isHero = activeTheme.assetFolder === 'heroes';
+  const isBlocos = activeTheme.assetFolder === 'blocks';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -65,24 +72,23 @@ export function GuestbookWall({
     }
   };
 
-  // Themed card classes
-  let cardClasses = 'bg-[#FFF8F0]/70 p-4 rounded-2xl border border-black/5';
-  if (themeSlug.includes('heroi')) {
-    cardClasses = 'bg-white p-4 rounded-xl border-2 border-slate-900 shadow-[3px_3px_0px_rgba(0,0,0,1)]';
-  } else if (themeSlug.includes('bloco')) {
-    cardClasses = 'bg-emerald-50/80 p-4 rounded-none border-2 border-emerald-700 shadow-[2px_2px_0px_#15803D]';
-  } else if (themeSlug.includes('reino')) {
-    cardClasses = 'bg-pink-50/70 p-4 rounded-3xl border border-pink-200 shadow-xs';
+  let wallCardClass = 'bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-black/5 space-y-6';
+  if (isDino) {
+    wallCardClass = 'bg-[#FAF5E6] rounded-[28px] p-6 sm:p-8 shadow-md border-2 border-[#D4C29D] space-y-6';
+  } else if (isHero) {
+    wallCardClass = 'bg-white rounded-2xl p-6 sm:p-8 border-3 border-slate-900 shadow-[5px_5px_0px_#1E3A8A] space-y-6';
+  } else if (isBlocos) {
+    wallCardClass = 'bg-[#F0FDF4] rounded-none p-6 sm:p-8 border-3 border-emerald-950 shadow-[5px_5px_0px_#15803D] space-y-6 font-mono';
   }
 
   return (
-    <section className="max-w-xl mx-auto px-4 py-8 space-y-6">
-      <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-black/5 space-y-6">
+    <section className="max-w-xl mx-auto px-4 py-4 space-y-4">
+      <div className={wallCardClass}>
         {/* Header */}
         <div className="text-center space-y-1">
           <span
-            className="text-[11px] uppercase tracking-widest font-extrabold"
-            style={{ color: accentColor }}
+            className="text-[11px] uppercase tracking-widest font-extrabold block"
+            style={{ color: isDino ? '#15803D' : accentColor }}
           >
             Mural de Recados
           </span>
@@ -92,87 +98,82 @@ export function GuestbookWall({
           >
             Mensagens de Carinho
           </h3>
-          <p className="text-xs text-[#302B2D]/70">
+          <p className="text-xs text-slate-500">
             Deixe seus votos especiais para tornar este dia ainda mais inesquecível
           </p>
         </div>
 
-        {/* Send message form */}
-        <form onSubmit={handleSubmit} className="space-y-3 pt-2">
+        {/* Formulário de envio */}
+        <form onSubmit={handleSubmit} className="space-y-3">
+          <div>
+            <label className="block text-xs font-bold text-slate-700 mb-1">Seu Nome</label>
+            <input
+              type="text"
+              required
+              value={guestName}
+              onChange={(e) => setGuestName(e.target.value)}
+              placeholder="Ex: Titia Cecília"
+              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold text-slate-700 mb-1">Sua Mensagem</label>
+            <textarea
+              required
+              rows={3}
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              placeholder="Escreva seus votos para este dia tão aguardado..."
+              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 resize-none bg-white"
+            />
+          </div>
+
           {errorMessage && (
-            <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs">
-              {errorMessage}
-            </div>
+            <p className="text-xs text-rose-600 font-semibold text-center">{errorMessage}</p>
           )}
 
           {isSuccess && (
-            <div className="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-              <span>
-                Mensagem enviada com carinho! Os anfitriões ficarão radiantes ao ler.
-              </span>
+            <div className="p-3 rounded-xl bg-emerald-50 text-emerald-800 text-xs font-bold text-center flex items-center justify-center gap-1.5 border border-emerald-200">
+              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+              <span>Recado enviado com sucesso!</span>
             </div>
           )}
-
-          <input
-            type="text"
-            required
-            value={guestName}
-            onChange={(e) => setGuestName(e.target.value)}
-            placeholder="Seu nome"
-            className="w-full px-4 py-2.5 rounded-xl border border-black/10 bg-[#FFF8F0]/40 text-sm focus:outline-none focus:ring-2 focus:ring-[#713C48]/30 transition-all"
-          />
-
-          <textarea
-            rows={3}
-            required
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            placeholder="Escreva sua mensagem com carinho..."
-            className="w-full px-4 py-2.5 rounded-xl border border-black/10 bg-[#FFF8F0]/40 text-sm focus:outline-none focus:ring-2 focus:ring-[#713C48]/30 transition-all resize-none"
-          />
 
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full py-3 rounded-xl font-bold text-white text-xs sm:text-sm shadow-sm transition-all hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2 disabled:opacity-50"
+            className="w-full py-3 rounded-xl text-xs font-bold text-white flex items-center justify-center gap-2 shadow-xs transition-transform hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50"
             style={{ backgroundColor: primaryColor }}
           >
             <Send className="w-3.5 h-3.5" />
-            <span>{isSubmitting ? 'Enviando...' : 'Publicar no Mural'}</span>
+            <span>{isSubmitting ? 'Enviando recado...' : 'Publicar no Mural'}</span>
           </button>
         </form>
 
-        {/* Existing Messages list */}
+        {/* Lista de Recados */}
         {messages && messages.length > 0 && (
-          <div className="space-y-3 pt-4 border-t border-black/5">
-            <h4 className="text-xs uppercase font-bold tracking-wider text-[#302B2D]/60 text-center">
-              Recados Recebidos ({messages.length})
+          <div className="space-y-3 pt-3 border-t border-black/5">
+            <h4 className="text-xs font-black uppercase tracking-wider text-slate-600">
+              Recados de Amigos & Família ({messages.length})
             </h4>
-
-            <div className="space-y-3 max-h-80 overflow-y-auto pr-1">
-              {messages.map((item) => (
-                <div key={item.id} className={cardClasses}>
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="font-bold text-xs" style={{ color: primaryColor }}>
-                      {item.guest_name}
-                    </span>
-                    <span className="text-[10px] text-[#302B2D]/50">
-                      {new Date(item.created_at).toLocaleDateString('pt-BR')}
+            <div className="space-y-2.5 max-h-72 overflow-y-auto pr-1">
+              {messages.map((m) => (
+                <div key={m.id} className="p-3 rounded-2xl bg-white border border-slate-200 shadow-2xs space-y-1">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-slate-800">{m.guest_name}</span>
+                    <span className="text-[10px] text-slate-400">
+                      {new Date(m.created_at).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })}
                     </span>
                   </div>
-                  <p className="text-xs sm:text-sm text-[#302B2D]/85 italic">
-                    “{item.message}”
+                  <p className="text-xs text-slate-600 leading-relaxed italic">
+                    &ldquo;{m.message}&rdquo;
                   </p>
                 </div>
               ))}
             </div>
           </div>
         )}
-
-        <p className="text-[10px] text-center text-[#302B2D]/50">
-          * As mensagens passam por moderação dos anfitriões para preservar o carinho do evento.
-        </p>
       </div>
     </section>
   );

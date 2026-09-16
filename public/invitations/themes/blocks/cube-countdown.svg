@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 140" fill="none">
+  <defs>
+    <filter id="blockShadow" x="-10%" y="-10%" width="125%" height="125%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="4" dy="6" stdDeviation="0" flood-color="#052E16" flood-opacity="0.6"/>
+    </filter>
+  </defs>
+
+  <!-- Cubo isométrico tridimensional com topo de grama e faces de terra/rocha -->
+  <g filter="url(#blockShadow)">
+    <!-- Face Superior (Grama Verde Brilhante) -->
+    <polygon points="60,15 106,40 60,65 14,40" 
+             fill="#22C55E" 
+             stroke="#14532D" 
+             stroke-width="3" 
+             stroke-linejoin="round"/>
+    <!-- Detalhes de pixels no topo da grama -->
+    <polygon points="60,25 76,34 60,43 44,34" fill="#4ADE80" opacity="0.6"/>
+    <polygon points="35,32 45,37 35,42 25,37" fill="#86EFAC" opacity="0.7"/>
+
+    <!-- Face Esquerda (Terra / Rocha Sombreada) -->
+    <polygon points="14,40 60,65 60,118 14,93" 
+             fill="#854D0E" 
+             stroke="#14532D" 
+             stroke-width="3" 
+             stroke-linejoin="round"/>
+    <!-- Grama pendendo na face esquerda -->
+    <polygon points="14,40 60,65 60,78 48,72 44,80 30,73 24,79 14,72" fill="#16A34A"/>
+    <!-- Pixels de rocha e terra -->
+    <rect x="25" y="86" width="10" height="10" fill="#713F12"/>
+    <rect x="42" y="94" width="8" height="8" fill="#A16207"/>
+
+    <!-- Face Direita (Terra / Rocha mais clara) -->
+    <polygon points="60,65 106,40 106,93 60,118" 
+             fill="#A16207" 
+             stroke="#14532D" 
+             stroke-width="3" 
+             stroke-linejoin="round"/>
+    <!-- Grama pendendo na face direita -->
+    <polygon points="60,65 106,40 106,72 96,78 90,72 76,80 70,73 60,78" fill="#15803D"/>
+    <!-- Pixels de minério ou gema na face direita -->
+    <rect x="75" y="86" width="10" height="10" fill="#38BDF8"/>
+    <rect x="88" y="98" width="8" height="8" fill="#0284C7"/>
+  </g>
+</svg>
