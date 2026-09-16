@@ -71,10 +71,20 @@ export function InvitationPublicClientView({
   const isBlocos = themeIdentifier.includes('bloco') || themeIdentifier.includes('pixel');
   const isPop = themeIdentifier.includes('pop') || themeIdentifier.includes('musica');
 
+  // Scroll to top whenever envelope is closed or reopened so card is immediately at the top
+  React.useEffect(() => {
+    if (!envelopeOpened && typeof window !== 'undefined') {
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    }
+  }, [envelopeOpened]);
+
   const handleOpenInvitation = (withAudioGesture: boolean) => {
     setEnvelopeOpened(true);
     if (withAudioGesture) {
       setAudioGestureTriggered(true);
+    }
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 0, behavior: 'instant' });
     }
   };
 
@@ -97,9 +107,13 @@ export function InvitationPublicClientView({
   return (
     <div
       ref={invitationRootRef}
-      className={`invitation-experience-root min-h-screen relative flex flex-col font-sans selection:bg-[#D9A4A0]/40 transition-colors duration-500 overflow-x-hidden ${
-        effectiveReducedMotion ? 'reduced-motion' : ''
-      }`}
+      className={`invitation-experience-root relative flex flex-col font-sans selection:bg-[#D9A4A0]/40 transition-colors duration-500 ${
+        !envelopeOpened
+          ? isSimulator
+            ? 'h-full max-h-full overflow-hidden'
+            : 'h-screen max-h-screen overflow-hidden'
+          : 'min-h-screen overflow-x-hidden'
+      } ${effectiveReducedMotion ? 'reduced-motion' : ''}`}
       data-invitation-theme={themeConfig.themeId || themeConfig.slug || 'infantil-monstrinhos-elementais'}
       style={{
         '--invitation-primary': themeConfig.primaryColor || '#713C48',
@@ -158,8 +172,8 @@ export function InvitationPublicClientView({
         />
       )}
 
-      {/* Main Public Invitation Content */}
-      <main className="flex-1 pb-16 relative z-10 pt-4">
+      {/* Main Public Invitation Content (hidden while envelope is closed to avoid 3000px height pushing card down) */}
+      <main className={!envelopeOpened ? 'hidden' : 'flex-1 pb-16 relative z-10 pt-4'}>
         {/* Hero Header with Honoree & Main Cover Artwork */}
         <InvitationHeader
           title={event.title}

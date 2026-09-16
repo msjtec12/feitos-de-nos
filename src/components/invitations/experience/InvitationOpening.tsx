@@ -79,20 +79,20 @@ export function InvitationOpening({
     handleOpen(false);
   };
 
-  // Card container styling based on theme
-  let cardClass = 'relative bg-[#FFF8F0] rounded-3xl p-7 sm:p-9 shadow-2xl border-2 border-white/60 text-center flex flex-col items-center justify-between min-h-[460px] overflow-hidden';
+  // Card container styling based on theme (otimizado para caber 100% no viewport sem rolagem)
+  let cardClass = 'relative bg-[#FFF8F0] rounded-3xl p-5 sm:p-7 shadow-2xl border-2 border-white/60 text-center flex flex-col items-center justify-between min-h-[380px] max-h-[85vh] overflow-hidden';
   if (isHero) {
-    cardClass = 'relative bg-amber-50 rounded-3xl p-7 sm:p-9 border-4 border-slate-900 shadow-[10px_10px_0px_#DC2626] text-center flex flex-col items-center justify-between min-h-[460px] overflow-hidden';
+    cardClass = 'relative bg-amber-50 rounded-3xl p-5 sm:p-7 border-4 border-slate-900 shadow-[8px_8px_0px_#DC2626] text-center flex flex-col items-center justify-between min-h-[380px] max-h-[85vh] overflow-hidden';
   } else if (isBlocos) {
-    cardClass = 'relative bg-emerald-50 rounded-none p-7 sm:p-9 border-4 border-emerald-950 shadow-[10px_10px_0px_#15803D] text-center flex flex-col items-center justify-between min-h-[460px] overflow-hidden font-mono';
+    cardClass = 'relative bg-emerald-50 rounded-none p-5 sm:p-7 border-4 border-emerald-950 shadow-[8px_8px_0px_#15803D] text-center flex flex-col items-center justify-between min-h-[380px] max-h-[85vh] overflow-hidden font-mono';
   } else if (isPop) {
-    cardClass = 'relative bg-purple-950 rounded-3xl p-7 sm:p-9 border-2 border-pink-400 shadow-[0_0_30px_rgba(236,72,153,0.6)] text-center flex flex-col items-center justify-between min-h-[460px] overflow-hidden text-white';
+    cardClass = 'relative bg-purple-950 rounded-3xl p-5 sm:p-7 border-2 border-pink-400 shadow-[0_0_30px_rgba(236,72,153,0.6)] text-center flex flex-col items-center justify-between min-h-[380px] max-h-[85vh] overflow-hidden text-white';
   }
 
   return (
     <div
       className={
-        'absolute inset-0 z-50 flex items-center justify-center p-4 bg-gradient-to-b from-[#1E1B1D]/90 via-[#0F0D0E]/95 to-[#0F0D0E] backdrop-blur-md transition-all duration-700 ' +
+        'absolute inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-gradient-to-b from-[#1E1B1D]/90 via-[#0F0D0E]/95 to-[#0F0D0E] backdrop-blur-md transition-all duration-700 ' +
         (isOpening ? 'opacity-0 pointer-events-none scale-105' : 'opacity-100 scale-100')
       }
     >
