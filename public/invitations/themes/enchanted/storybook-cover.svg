@@ -1,15 +1,15 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 440" fill="none">
   <defs>
     <linearGradient id="bookCoverGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stopColor="#BE185D"/>
-      <stop offset="50%" stopColor="#831843"/>
-      <stop offset="100%" stopColor="#500724"/>
+      <stop offset="0%" stop-color="#BE185D"/>
+      <stop offset="50%" stop-color="#831843"/>
+      <stop offset="100%" stop-color="#500724"/>
     </linearGradient>
     <linearGradient id="bookGoldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stopColor="#FFFBEB"/>
-      <stop offset="30%" stopColor="#FDE68A"/>
-      <stop offset="70%" stopColor="#D97706"/>
-      <stop offset="100%" stopColor="#92400E"/>
+      <stop offset="0%" stop-color="#FFFBEB"/>
+      <stop offset="30%" stop-color="#FDE68A"/>
+      <stop offset="70%" stop-color="#D97706"/>
+      <stop offset="100%" stop-color="#92400E"/>
     </linearGradient>
     <filter id="bookShadow" x="-10%" y="-10%" width="125%" height="125%" filterUnits="userSpaceOnUse">
       <feDropShadow dx="0" dy="12" stdDeviation="12" flood-color="#500724" flood-opacity="0.45"/>

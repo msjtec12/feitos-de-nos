@@ -1,14 +1,14 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 140" fill="none">
   <defs>
     <linearGradient id="sacredGold" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stopColor="#FFFBEB"/>
-      <stop offset="40%" stopColor="#FEF08A"/>
-      <stop offset="100%" stopColor="#CA8A04"/>
+      <stop offset="0%" stop-color="#FFFBEB"/>
+      <stop offset="40%" stop-color="#FEF08A"/>
+      <stop offset="100%" stop-color="#CA8A04"/>
     </linearGradient>
     <radialGradient id="haloGlow" cx="50%" cy="30%" r="60%">
-      <stop offset="0%" stopColor="#FFFFFF"/>
-      <stop offset="60%" stopColor="#F0FDF4"/>
-      <stop offset="100%" stopColor="#DCFCE7"/>
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="60%" stop-color="#F0FDF4"/>
+      <stop offset="100%" stop-color="#DCFCE7"/>
     </radialGradient>
     <filter id="sacredGlow" x="-10%" y="-10%" width="125%" height="125%" filterUnits="userSpaceOnUse">
       <feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="#059669" flood-opacity="0.2"/>

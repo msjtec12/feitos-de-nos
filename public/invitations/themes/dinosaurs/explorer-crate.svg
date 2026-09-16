@@ -2,15 +2,15 @@
   <defs>
     <!-- Gradiente da caixa de expedição de madeira rústica -->
     <linearGradient id="crateWood" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stopColor="#C4803E"/>
-      <stop offset="30%" stopColor="#9C5A20"/>
-      <stop offset="70%" stopColor="#784013"/>
-      <stop offset="100%" stopColor="#502809"/>
+      <stop offset="0%" stop-color="#C4803E"/>
+      <stop offset="30%" stop-color="#9C5A20"/>
+      <stop offset="70%" stop-color="#784013"/>
+      <stop offset="100%" stop-color="#502809"/>
     </linearGradient>
     <linearGradient id="ironBand" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" stopColor="#2E3440"/>
-      <stop offset="50%" stopColor="#4C566A"/>
-      <stop offset="100%" stopColor="#1E222A"/>
+      <stop offset="0%" stop-color="#2E3440"/>
+      <stop offset="50%" stop-color="#4C566A"/>
+      <stop offset="100%" stop-color="#1E222A"/>
     </linearGradient>
     <filter id="crateShadow" x="-10%" y="-10%" width="125%" height="135%" filterUnits="userSpaceOnUse">
       <feDropShadow dx="0" dy="12" stdDeviation="10" flood-color="#000" flood-opacity="0.5"/>

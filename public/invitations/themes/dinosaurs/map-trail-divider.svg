@@ -1,13 +1,13 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 90" fill="none">
   <defs>
     <linearGradient id="parchmentGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stopColor="#FFF8E8"/>
-      <stop offset="60%" stopColor="#F5E8C9"/>
-      <stop offset="100%" stopColor="#E4D1A6"/>
+      <stop offset="0%" stop-color="#FFF8E8"/>
+      <stop offset="60%" stop-color="#F5E8C9"/>
+      <stop offset="100%" stop-color="#E4D1A6"/>
     </linearGradient>
     <linearGradient id="mountainGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stopColor="#9C9588"/>
-      <stop offset="100%" stopColor="#696256"/>
+      <stop offset="0%" stop-color="#9C9588"/>
+      <stop offset="100%" stop-color="#696256"/>
     </linearGradient>
     <filter id="parchmentShadow" x="-5%" y="-10%" width="110%" height="130%" filterUnits="userSpaceOnUse">
       <feDropShadow dx="0" dy="4" stdDeviation="3.5" flood-color="#3D2912" flood-opacity="0.25"/>

@@ -2,14 +2,14 @@
   <defs>
     <!-- Gradiente suave de estrela pastel e nuvem macia -->
     <linearGradient id="starPastel" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stopColor="#FFFBEB"/>
-      <stop offset="40%" stopColor="#FEF08A"/>
-      <stop offset="100%" stopColor="#FDE68A"/>
+      <stop offset="0%" stop-color="#FFFBEB"/>
+      <stop offset="40%" stop-color="#FEF08A"/>
+      <stop offset="100%" stop-color="#FDE68A"/>
     </linearGradient>
     <radialGradient id="cloudBase" cx="50%" cy="50%" r="50%">
-      <stop offset="0%" stopColor="#FFFFFF"/>
-      <stop offset="70%" stopColor="#F1F5F9"/>
-      <stop offset="100%" stopColor="#E2E8F0"/>
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="70%" stop-color="#F1F5F9"/>
+      <stop offset="100%" stop-color="#E2E8F0"/>
     </radialGradient>
     <filter id="babyShadow" x="-10%" y="-10%" width="125%" height="125%" filterUnits="userSpaceOnUse">
       <feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="#93C5FD" flood-opacity="0.35"/>

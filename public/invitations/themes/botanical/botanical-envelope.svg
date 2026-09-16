@@ -2,9 +2,9 @@
   <defs>
     <!-- Papel Kraft natural / botânico -->
     <linearGradient id="kraftPaper" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stopColor="#F5EBE1"/>
-      <stop offset="60%" stopColor="#EAD8C7"/>
-      <stop offset="100%" stopColor="#DFC6B1"/>
+      <stop offset="0%" stop-color="#F5EBE1"/>
+      <stop offset="60%" stop-color="#EAD8C7"/>
+      <stop offset="100%" stop-color="#DFC6B1"/>
     </linearGradient>
     <filter id="botanicalEnvShadow" x="-10%" y="-10%" width="125%" height="125%" filterUnits="userSpaceOnUse">
       <feDropShadow dx="0" dy="12" stdDeviation="12" flood-color="#4C2882" flood-opacity="0.2"/>
@@ -50,7 +50,7 @@
       CONVITE BOTÂNICO
     </text>
     <text x="160" y="318" text-anchor="middle" fill="#2E1065" font-size="12" font-family="Playfair Display, serif" font-style="italic">
-      Flores, afeto & celebração
+      Flores, afeto &amp; celebração
     </text>
 
     <!-- Botão rústico de desatar o nó -->

@@ -1,14 +1,14 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 440" fill="none">
   <defs>
     <linearGradient id="sacredBookGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stopColor="#FFFFFF"/>
-      <stop offset="60%" stopColor="#F0FDF4"/>
-      <stop offset="100%" stopColor="#DCFCE7"/>
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="60%" stop-color="#F0FDF4"/>
+      <stop offset="100%" stop-color="#DCFCE7"/>
     </linearGradient>
     <linearGradient id="sacredGoldSoft" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stopColor="#FFFBEB"/>
-      <stop offset="50%" stopColor="#FDE68A"/>
-      <stop offset="100%" stopColor="#D97706"/>
+      <stop offset="0%" stop-color="#FFFBEB"/>
+      <stop offset="50%" stop-color="#FDE68A"/>
+      <stop offset="100%" stop-color="#D97706"/>
     </linearGradient>
     <filter id="sacredShadow" x="-10%" y="-10%" width="125%" height="125%" filterUnits="userSpaceOnUse">
       <feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#065F46" flood-opacity="0.2"/>
@@ -54,7 +54,7 @@
       CELEBRAÇÃO CERIMONIAL
     </text>
     <text x="160" y="305" text-anchor="middle" fill="#064E3B" font-size="20" font-family="Playfair Display, serif">
-      Paz, Bênção & Afeto
+      Paz, Bênção &amp; Afeto
     </text>
 
     <!-- Botão cerimonial delicado -->

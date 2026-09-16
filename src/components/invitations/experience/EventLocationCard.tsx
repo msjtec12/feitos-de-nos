@@ -92,19 +92,19 @@ export function EventLocationCard(props: EventLocationCardProps) {
   };
 
   // Estilização do card com base no material do tema
-  const cardClass = `invitation-themed-card ${getThemeCardClass(activeTheme, 'p-5 sm:p-6')} space-y-4`;
+  const cardClass = `invitation-themed-card ${getThemeCardClass(activeTheme, 'p-3.5 sm:p-6')} space-y-3`;
   const buttonClass = getThemeButtonClass(activeTheme);
   const themeCopy = getInvitationThemeCopy(activeTheme);
 
   return (
-    <section className="max-w-xl mx-auto px-4 py-4 space-y-4">
+    <section className="mx-auto max-w-2xl space-y-4 px-4 py-4 sm:px-8">
       {/* Cards de Data e Local */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+      <div className="grid grid-cols-2 gap-2.5 sm:gap-4">
         {/* Card 1: Data e Horário */}
         <div className={cardClass}>
-          <div className="flex items-start gap-3">
+          <div className="flex flex-col items-start gap-2 sm:flex-row sm:gap-3">
             <div
-              className={`w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 ${
+              className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl sm:h-11 sm:w-11 ${
                 isDino
                   ? 'bg-[#E07A28] text-white shadow-xs'
                   : 'bg-slate-100 text-slate-800'
@@ -136,9 +136,9 @@ export function EventLocationCard(props: EventLocationCardProps) {
 
         {/* Card 2: Local e Endereço */}
         <div className={cardClass}>
-          <div className="flex items-start gap-3">
+          <div className="flex flex-col items-start gap-2 sm:flex-row sm:gap-3">
             <div
-              className={`w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 ${
+              className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl sm:h-11 sm:w-11 ${
                 isDino
                   ? 'bg-[#E07A28] text-white shadow-xs'
                   : 'bg-slate-100 text-slate-800'
@@ -193,12 +193,12 @@ export function EventLocationCard(props: EventLocationCardProps) {
           </div>
         </a>
       ) : (
-        <div className="flex flex-wrap items-center justify-center gap-2 pt-1">
+        <div className="mx-auto flex max-w-lg flex-col items-stretch justify-center gap-2 pt-1 sm:flex-row">
           <a
             href={resolvedMapsUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className={`inline-flex items-center gap-1.5 px-4 py-2 text-xs font-bold transition-transform hover:scale-105 active:scale-95 ${buttonClass}`}
+            className={`inline-flex flex-1 items-center justify-center gap-2 px-5 py-3 text-xs font-bold transition-transform hover:scale-[1.02] active:scale-[.98] ${buttonClass}`}
           >
             <Navigation className="w-3.5 h-3.5" />
               <span>{themeCopy.map}</span>
@@ -207,7 +207,7 @@ export function EventLocationCard(props: EventLocationCardProps) {
           <button
             type="button"
             onClick={downloadIcsFile}
-            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-300 bg-white/90 px-4 py-2 text-xs font-bold text-slate-800 shadow-sm transition-all hover:bg-white active:scale-95"
+            className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white/90 px-4 py-3 text-xs font-bold text-slate-800 shadow-sm transition-all hover:bg-white active:scale-95"
           >
             <Download className="w-3.5 h-3.5 text-slate-500" />
             <span>Salvar no Calendário</span>

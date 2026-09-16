@@ -1,10 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 440" fill="none">
   <defs>
     <linearGradient id="luxGold" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stopColor="#FFFBEB"/>
-      <stop offset="35%" stopColor="#FDE68A"/>
-      <stop offset="70%" stopColor="#D97706"/>
-      <stop offset="100%" stopColor="#78350F"/>
+      <stop offset="0%" stop-color="#FFFBEB"/>
+      <stop offset="35%" stop-color="#FDE68A"/>
+      <stop offset="70%" stop-color="#D97706"/>
+      <stop offset="100%" stop-color="#78350F"/>
     </linearGradient>
     <filter id="luxShadow" x="-10%" y="-10%" width="125%" height="125%" filterUnits="userSpaceOnUse">
       <feDropShadow dx="0" dy="14" stdDeviation="14" flood-color="#000" flood-opacity="0.35"/>
@@ -36,7 +36,7 @@
       CONVITE EXCLUSIVO
     </text>
     <text x="160" y="315" text-anchor="middle" fill="#FAFAF9" font-size="20" font-family="Playfair Display, serif">
-      Gala & Celebração
+      Gala &amp; Celebração
     </text>
 
     <!-- Botão fino minimalista -->

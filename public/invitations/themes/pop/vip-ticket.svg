@@ -1,9 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 70" fill="none">
   <defs>
     <linearGradient id="ticketGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" stopColor="#831843"/>
-      <stop offset="50%" stopColor="#BE185D"/>
-      <stop offset="100%" stopColor="#6B21A8"/>
+      <stop offset="0%" stop-color="#831843"/>
+      <stop offset="50%" stop-color="#BE185D"/>
+      <stop offset="100%" stop-color="#6B21A8"/>
     </linearGradient>
     <filter id="ticketShadow" x="-5%" y="-10%" width="110%" height="130%" filterUnits="userSpaceOnUse">
       <feDropShadow dx="0" dy="5" stdDeviation="6" flood-color="#EC4899" flood-opacity="0.4"/>

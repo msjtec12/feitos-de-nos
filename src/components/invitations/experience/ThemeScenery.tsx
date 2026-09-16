@@ -97,9 +97,8 @@ export function ThemeHeroBadge() {
 export function ThemeSectionDivider() {
   const { theme } = useInvitationTheme();
   return (
-    <div className="relative z-10 mx-auto h-8 w-full max-w-[260px] px-6 opacity-80" aria-hidden="true">
+    <div className="relative z-10 mx-auto h-10 w-full max-w-[340px] px-6 opacity-90 sm:h-12" aria-hidden="true">
       <Image src={theme.assets.dividerSvg} alt="" fill className="object-contain" />
     </div>
   );
 }
-

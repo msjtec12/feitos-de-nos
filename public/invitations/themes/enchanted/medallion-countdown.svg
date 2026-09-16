@@ -2,15 +2,15 @@
   <defs>
     <!-- Ouro nobre facetado e brilhante -->
     <linearGradient id="royalGold" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stopColor="#FFFBEB"/>
-      <stop offset="25%" stopColor="#FDE68A"/>
-      <stop offset="60%" stopColor="#D97706"/>
-      <stop offset="100%" stopColor="#92400E"/>
+      <stop offset="0%" stop-color="#FFFBEB"/>
+      <stop offset="25%" stop-color="#FDE68A"/>
+      <stop offset="60%" stop-color="#D97706"/>
+      <stop offset="100%" stop-color="#92400E"/>
     </linearGradient>
     <radialGradient id="medallionBack" cx="50%" cy="50%" r="50%">
-      <stop offset="0%" stopColor="#FDF2F8"/>
-      <stop offset="70%" stopColor="#FCE7F3"/>
-      <stop offset="100%" stopColor="#FBCFE8"/>
+      <stop offset="0%" stop-color="#FDF2F8"/>
+      <stop offset="70%" stop-color="#FCE7F3"/>
+      <stop offset="100%" stop-color="#FBCFE8"/>
     </radialGradient>
     <filter id="goldGlow" x="-10%" y="-10%" width="125%" height="125%" filterUnits="userSpaceOnUse">
       <feDropShadow dx="0" dy="5" stdDeviation="5" flood-color="#B45309" flood-opacity="0.35"/>
