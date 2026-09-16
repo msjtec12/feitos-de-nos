@@ -894,3 +894,32 @@ export function getThemeDefaultHeroImage(themeIdOrSlug?: string): string {
   const theme = getInvitationTheme(themeIdOrSlug);
   return theme.defaultHeroImage || 'https://images.unsplash.com/photo-1519689680058-324335c77eba?auto=format&fit=crop&w=1200&q=85';
 }
+
+/**
+ * Mescla personalizações apenas quando elas pertencem ao mesmo tema ativo.
+ * Isso impede que cores e estilos de um tema anterior "vazem" depois que
+ * theme_key é alterado no registro principal.
+ */
+export function mergeInvitationThemeConfig(
+  theme: AuthorialThemeDefinition,
+  storedConfig?: EventThemeConfig | null
+): EventThemeConfig {
+  const storedKey =
+    storedConfig?.theme_key ||
+    storedConfig?.themeId ||
+    storedConfig?.slug;
+  const storedBelongsToTheme = !storedKey || getInvitationTheme(storedKey).id === theme.id;
+  const safeOverrides = storedBelongsToTheme ? storedConfig || {} : {};
+
+  return {
+    ...theme.config,
+    ...safeOverrides,
+    theme_key: theme.id,
+    themeId: theme.id,
+    slug: theme.id,
+    themeName: theme.name,
+    heroBadge: storedBelongsToTheme && storedConfig?.heroBadge
+      ? storedConfig.heroBadge
+      : theme.heroBadge,
+  };
+}

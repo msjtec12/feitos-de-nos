@@ -9,7 +9,7 @@ import {
   MATHEUS_OFFICIAL_UUID,
   MATHEUS_DEMO_LEGACY_ID,
 } from '@/data/matheus-invitation-demo';
-import { getInvitationTheme } from '@/data/invitation-themes';
+import { getInvitationTheme, mergeInvitationThemeConfig } from '@/data/invitation-themes';
 import { EventDetailWithMedia, EventRow, EventMediaRow } from '@/types/invitation';
 
 export const dynamic = 'force-dynamic';
@@ -122,14 +122,7 @@ export default async function AdminEditarConvitePage({ params }: EditorPageProps
     dbEvent.theme_config?.slug ||
     'infantil-monstrinhos-elementais';
   const themePreset = getInvitationTheme(rawThemeKey);
-  const normalizedThemeConfig = {
-    ...themePreset.config,
-    ...(dbEvent.theme_config || {}),
-    theme_key: themePreset.id,
-    themeId: themePreset.id,
-    slug: themePreset.id,
-    heroBadge: dbEvent.theme_config?.heroBadge || themePreset.heroBadge,
-  };
+  const normalizedThemeConfig = mergeInvitationThemeConfig(themePreset, dbEvent.theme_config);
 
   const eventWithMedia: EventDetailWithMedia = {
     ...dbEvent,

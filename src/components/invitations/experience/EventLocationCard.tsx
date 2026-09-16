@@ -6,6 +6,8 @@ import { EventThemeConfig } from '@/types/invitation';
 import { Calendar, Clock, MapPin, Copy, Check, Navigation, Download } from 'lucide-react';
 import { useOptionalInvitationTheme } from './InvitationExperience';
 import { getInvitationTheme } from '@/data/invitation-themes';
+import { getThemeButtonClass, getThemeCardClass } from '@/lib/invitations/theme-ui';
+import { getInvitationThemeCopy } from '@/lib/invitations/theme-copy';
 
 interface EventLocationCardProps {
   title?: string;
@@ -48,10 +50,6 @@ export function EventLocationCard(props: EventLocationCardProps) {
   const primaryColor = themeConfig.primaryColor || activeTheme.previewColors.primary;
   const accentColor = themeConfig.accentColor || activeTheme.previewColors.accent;
   const isDino = activeTheme.assetFolder === 'dinosaurs';
-  const isHero = activeTheme.assetFolder === 'heroes';
-  const isBlocos = activeTheme.assetFolder === 'blocks';
-  const isMinimal = activeTheme.assetFolder === 'minimal';
-  const isPop = activeTheme.assetFolder === 'pop';
 
   const handleCopyAddress = () => {
     if (!address) return;
@@ -94,18 +92,9 @@ export function EventLocationCard(props: EventLocationCardProps) {
   };
 
   // Estilização do card com base no material do tema
-  let cardClass = 'bg-white rounded-3xl p-5 sm:p-6 shadow-sm border border-black/5 space-y-4';
-  if (isDino) {
-    cardClass = 'bg-[#FAF5E6] rounded-[28px] p-5 sm:p-6 shadow-md border-2 border-[#D4C29D] space-y-4';
-  } else if (isHero) {
-    cardClass = 'bg-white rounded-2xl p-5 sm:p-6 border-3 border-slate-900 shadow-[5px_5px_0px_#1E3A8A] space-y-4';
-  } else if (isBlocos) {
-    cardClass = 'bg-[#F0FDF4] rounded-none p-5 sm:p-6 border-3 border-emerald-950 shadow-[5px_5px_0px_#15803D] space-y-4 font-mono';
-  } else if (isMinimal) {
-    cardClass = 'bg-white rounded-none p-5 sm:p-6 border border-zinc-300 space-y-4';
-  } else if (isPop) {
-    cardClass = 'bg-purple-950/80 rounded-2xl p-5 sm:p-6 border-2 border-pink-500 shadow-[0_0_18px_rgba(236,72,153,0.3)] space-y-4 text-white';
-  }
+  const cardClass = `invitation-themed-card ${getThemeCardClass(activeTheme, 'p-5 sm:p-6')} space-y-4`;
+  const buttonClass = getThemeButtonClass(activeTheme);
+  const themeCopy = getInvitationThemeCopy(activeTheme);
 
   return (
     <section className="max-w-xl mx-auto px-4 py-4 space-y-4">
@@ -133,7 +122,7 @@ export function EventLocationCard(props: EventLocationCardProps) {
                 className="text-[10px] uppercase font-black tracking-wider block"
                 style={{ color: isDino ? '#15803D' : primaryColor }}
               >
-                {isDino ? 'Data da expedição' : 'Quando'}
+                {themeCopy.date}
               </span>
               <p className="text-sm font-bold leading-tight">
                 {formattedDate}
@@ -167,7 +156,7 @@ export function EventLocationCard(props: EventLocationCardProps) {
                 className="text-[10px] uppercase font-black tracking-wider block"
                 style={{ color: isDino ? '#15803D' : primaryColor }}
               >
-                {isDino ? 'Local da aventura' : 'Onde'}
+                {themeCopy.location}
               </span>
               <p className="text-sm font-bold truncate leading-tight">
                 {venueName || 'Endereço da comemoração'}
@@ -199,7 +188,7 @@ export function EventLocationCard(props: EventLocationCardProps) {
           {/* Texto interativo dentro do banner de pergaminho */}
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none pl-6">
             <span className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-black text-[#15803D] uppercase tracking-wide">
-              <span>Ver localização no mapa &gt;</span>
+              <span>{themeCopy.map} &gt;</span>
             </span>
           </div>
         </a>
@@ -209,17 +198,16 @@ export function EventLocationCard(props: EventLocationCardProps) {
             href={resolvedMapsUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold text-white shadow-xs transition-transform hover:scale-105 active:scale-95"
-            style={{ backgroundColor: primaryColor }}
+            className={`inline-flex items-center gap-1.5 px-4 py-2 text-xs font-bold transition-transform hover:scale-105 active:scale-95 ${buttonClass}`}
           >
             <Navigation className="w-3.5 h-3.5" />
-            <span>Abrir no Google Maps</span>
+              <span>{themeCopy.map}</span>
           </a>
 
           <button
             type="button"
             onClick={downloadIcsFile}
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold bg-white text-slate-800 border border-slate-200 shadow-2xs hover:bg-slate-50 transition-all active:scale-95"
+            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-300 bg-white/90 px-4 py-2 text-xs font-bold text-slate-800 shadow-sm transition-all hover:bg-white active:scale-95"
           >
             <Download className="w-3.5 h-3.5 text-slate-500" />
             <span>Salvar no Calendário</span>

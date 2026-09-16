@@ -5,6 +5,8 @@ import { EventThemeConfig } from '@/types/invitation';
 import { Gift, Copy, Check } from 'lucide-react';
 import { useOptionalInvitationTheme } from '../experience/InvitationExperience';
 import { getInvitationTheme } from '@/data/invitation-themes';
+import { getThemeButtonClass, getThemeCardClass } from '@/lib/invitations/theme-ui';
+import { getInvitationThemeCopy } from '@/lib/invitations/theme-copy';
 
 interface InvitationGiftRegistryProps {
   giftInformation?: string | null;
@@ -25,8 +27,6 @@ export function InvitationGiftRegistry(props: InvitationGiftRegistryProps) {
   const primaryColor = themeConfig.primaryColor || activeTheme.previewColors.primary;
   const accentColor = themeConfig.accentColor || activeTheme.previewColors.accent;
   const isDino = activeTheme.assetFolder === 'dinosaurs';
-  const isHero = activeTheme.assetFolder === 'heroes';
-  const isBlocos = activeTheme.assetFolder === 'blocks';
 
   // Identificar chave Pix se houver
   const pixMatch = giftInformation.match(/(?:pix|chave)\s*(?::|é)?\s*([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}|\d{11}|\d{14}|[a-zA-Z0-9-]{20,})/i);
@@ -42,14 +42,9 @@ export function InvitationGiftRegistry(props: InvitationGiftRegistryProps) {
     }
   };
 
-  let cardContainerClass = 'bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-black/5 text-center space-y-4';
-  if (isDino) {
-    cardContainerClass = 'bg-[#FAF5E6] rounded-[28px] p-6 sm:p-8 shadow-md border-2 border-[#D4C29D] text-center space-y-4';
-  } else if (isHero) {
-    cardContainerClass = 'bg-white rounded-2xl p-6 sm:p-8 border-3 border-slate-900 shadow-[5px_5px_0px_#DC2626] text-center space-y-4';
-  } else if (isBlocos) {
-    cardContainerClass = 'bg-[#F0FDF4] rounded-none p-6 sm:p-8 border-3 border-emerald-950 shadow-[5px_5px_0px_#15803D] text-center space-y-4 font-mono';
-  }
+  const cardContainerClass = `invitation-themed-card ${getThemeCardClass(activeTheme, 'p-6 sm:p-8')} text-center space-y-4`;
+  const buttonClass = getThemeButtonClass(activeTheme);
+  const themeCopy = getInvitationThemeCopy(activeTheme);
 
   return (
     <section className="max-w-xl mx-auto px-4 py-4 space-y-4">
@@ -69,13 +64,13 @@ export function InvitationGiftRegistry(props: InvitationGiftRegistryProps) {
             className="text-[11px] uppercase tracking-widest font-extrabold block"
             style={{ color: isDino ? '#15803D' : accentColor }}
           >
-            Mimo & Sugestão
+            {themeCopy.giftKicker}
           </span>
           <h3
             className="font-serif text-2xl sm:text-3xl font-bold"
             style={{ color: primaryColor }}
           >
-            Lista de Presentes
+            {themeCopy.giftTitle}
           </h3>
         </div>
 
@@ -99,8 +94,7 @@ export function InvitationGiftRegistry(props: InvitationGiftRegistryProps) {
               <button
                 type="button"
                 onClick={() => handleCopyPix(detectedPixKey)}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-white transition-all hover:opacity-90 active:scale-95 shrink-0"
-                style={{ backgroundColor: primaryColor }}
+                className={`inline-flex shrink-0 items-center gap-1.5 px-3 py-1.5 text-xs font-semibold transition-all hover:opacity-90 active:scale-95 ${buttonClass}`}
               >
                 {copied ? (
                   <>

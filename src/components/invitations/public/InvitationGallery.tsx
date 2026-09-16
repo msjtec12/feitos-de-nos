@@ -6,6 +6,8 @@ import { EventMediaRow, EventThemeConfig } from '@/types/invitation';
 import { ChevronLeft, ChevronRight, X, ZoomIn } from 'lucide-react';
 import { useOptionalInvitationTheme } from '../experience/InvitationExperience';
 import { getInvitationTheme } from '@/data/invitation-themes';
+import { getThemeGalleryFrameClass } from '@/lib/invitations/theme-ui';
+import { getInvitationThemeCopy } from '@/lib/invitations/theme-copy';
 
 interface InvitationGalleryProps {
   media?: EventMediaRow[];
@@ -26,11 +28,8 @@ export function InvitationGallery(props: InvitationGalleryProps) {
 
   const primaryColor = themeConfig.primaryColor || activeTheme.previewColors.primary;
   const accentColor = themeConfig.accentColor || activeTheme.previewColors.accent;
-  const isPop = activeTheme.assetFolder === 'pop';
-  const isHero = activeTheme.assetFolder === 'heroes';
   const isDino = activeTheme.assetFolder === 'dinosaurs';
-  const isMinimal = activeTheme.assetFolder === 'minimal';
-  const isBlocos = activeTheme.assetFolder === 'blocks';
+  const themeCopy = getInvitationThemeCopy(activeTheme);
 
   const openLightbox = (index: number) => setLightboxIndex(index);
   const closeLightbox = () => setLightboxIndex(null);
@@ -58,18 +57,7 @@ export function InvitationGallery(props: InvitationGalleryProps) {
   };
 
   // Moldura do card de foto conforme o tema
-  let itemFrameClass = 'group relative aspect-[4/5] rounded-2xl overflow-hidden shadow-sm cursor-pointer bg-slate-100 hover:shadow-md transition-all';
-  if (isPop) {
-    itemFrameClass = 'group relative aspect-[4/5] bg-white p-2 pb-7 rounded-xl shadow-lg border-2 border-pink-400 cursor-pointer transition-all hover:scale-[1.02]';
-  } else if (isHero) {
-    itemFrameClass = 'group relative aspect-[4/5] rounded-xl overflow-hidden border-3 border-slate-900 shadow-[4px_4px_0px_#DC2626] cursor-pointer transition-all hover:translate-x-0.5 hover:translate-y-0.5';
-  } else if (isDino) {
-    itemFrameClass = 'group relative aspect-[4/5] rounded-[22px] overflow-hidden border-3 border-[#C48243] shadow-md cursor-pointer transition-all hover:scale-[1.02]';
-  } else if (isBlocos) {
-    itemFrameClass = 'group relative aspect-[4/5] rounded-none overflow-hidden border-3 border-emerald-950 shadow-[3px_3px_0px_#15803D] cursor-pointer';
-  } else if (isMinimal) {
-    itemFrameClass = 'group relative aspect-[4/5] rounded-none overflow-hidden border border-zinc-200 cursor-pointer';
-  }
+  const itemFrameClass = `group relative aspect-[4/5] overflow-hidden cursor-pointer bg-slate-100 transition-all hover:scale-[1.02] ${getThemeGalleryFrameClass(activeTheme)}`;
 
   return (
     <section className="max-w-xl mx-auto px-4 py-6 space-y-4">
@@ -78,13 +66,13 @@ export function InvitationGallery(props: InvitationGalleryProps) {
           className="text-[11px] uppercase tracking-widest font-extrabold block"
           style={{ color: isDino ? '#15803D' : accentColor }}
         >
-          Nossas Memórias
+          {themeCopy.galleryKicker}
         </span>
         <h3
           className="text-2xl sm:text-3xl font-bold font-serif"
           style={{ color: primaryColor }}
         >
-          Galeria de Momentos
+          {themeCopy.galleryTitle}
         </h3>
         <p className="text-xs text-slate-500">
           Toque nas fotos para ver em tela cheia

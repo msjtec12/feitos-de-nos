@@ -11,7 +11,7 @@ import {
   MATHEUS_INVITATION_DEMO,
   MATHEUS_DEMO_GUESTS,
 } from '@/data/matheus-invitation-demo';
-import { getInvitationTheme } from '@/data/invitation-themes';
+import { getInvitationTheme, mergeInvitationThemeConfig } from '@/data/invitation-themes';
 
 export async function getPublicEventBySlug(
   slug: string
@@ -67,14 +67,7 @@ export async function getPublicEventBySlug(
         event.theme_config?.slug ||
         'infantil-monstrinhos-elementais';
       const themePreset = getInvitationTheme(rawThemeKey);
-      const normalizedThemeConfig = {
-        ...themePreset.config,
-        ...(event.theme_config || {}),
-        theme_key: themePreset.id,
-        themeId: themePreset.id,
-        slug: themePreset.id,
-        heroBadge: event.theme_config?.heroBadge || themePreset.heroBadge,
-      };
+      const normalizedThemeConfig = mergeInvitationThemeConfig(themePreset, event.theme_config);
 
       return {
         ...event,

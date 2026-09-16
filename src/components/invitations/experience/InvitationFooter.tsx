@@ -7,6 +7,7 @@ import { BrandLogo } from '@/components/brand/BrandLogo';
 import { Sparkles } from 'lucide-react';
 import { useOptionalInvitationTheme } from './InvitationExperience';
 import { getInvitationTheme } from '@/data/invitation-themes';
+import { getInvitationThemeCopy } from '@/lib/invitations/theme-copy';
 
 interface InvitationFooterProps {
   themeKey?: string;
@@ -19,6 +20,7 @@ export function InvitationFooter({ themeKey }: InvitationFooterProps) {
   const isDino = activeTheme.assetFolder === 'dinosaurs';
   const primaryColor = activeTheme.previewColors.primary;
   const dividerSvg = activeTheme.assets.dividerSvg;
+  const themeCopy = getInvitationThemeCopy(activeTheme);
 
   return (
     <footer className="pt-6 pb-12 text-center space-y-4 relative z-10 overflow-hidden">
@@ -28,7 +30,7 @@ export function InvitationFooter({ themeKey }: InvitationFooterProps) {
           <div className="space-y-3">
             {/* Mensagem de encerramento afetuosa */}
             <p className="font-serif italic text-sm text-[#5C3A21] font-semibold">
-              Vamos viver juntos essa grande aventura!
+              {themeCopy.closing}
             </p>
             <div className="flex items-center justify-center gap-2 text-[#C48243]">
               <span className="h-[1px] w-8 bg-[#C48243]/40" />
@@ -59,7 +61,7 @@ export function InvitationFooter({ themeKey }: InvitationFooterProps) {
               </div>
             )}
             <p className="text-xs font-semibold" style={{ color: primaryColor }}>
-              {activeTheme.scenery.footerMessage}
+              {themeCopy.closing}
             </p>
             {activeTheme.scenery.footerThemeNote && (
               <p className="text-[11px] text-slate-500">
