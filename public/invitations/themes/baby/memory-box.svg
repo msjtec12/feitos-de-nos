@@ -1,14 +1,14 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 440" fill="none">
   <defs>
     <linearGradient id="boxGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stopColor="#FFFFFF"/>
-      <stop offset="60%" stopColor="#F8FAFC"/>
-      <stop offset="100%" stopColor="#EFF6FF"/>
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="60%" stop-color="#F8FAFC"/>
+      <stop offset="100%" stop-color="#EFF6FF"/>
     </linearGradient>
     <linearGradient id="ribbonPastel" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" stopColor="#93C5FD"/>
-      <stop offset="50%" stopColor="#BFDBFE"/>
-      <stop offset="100%" stopColor="#60A5FA"/>
+      <stop offset="0%" stop-color="#93C5FD"/>
+      <stop offset="50%" stop-color="#BFDBFE"/>
+      <stop offset="100%" stop-color="#60A5FA"/>
     </linearGradient>
     <filter id="babyBoxShadow" x="-10%" y="-10%" width="125%" height="125%" filterUnits="userSpaceOnUse">
       <feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#93C5FD" flood-opacity="0.35"/>

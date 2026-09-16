@@ -2,9 +2,9 @@
   <defs>
     <!-- Gradiente do vórtice de portal de blocos -->
     <radialGradient id="portalVortex" cx="50%" cy="50%" r="50%">
-      <stop offset="0%" stopColor="#A855F7"/>
-      <stop offset="50%" stopColor="#6B21A8"/>
-      <stop offset="100%" stopColor="#1E1B4B"/>
+      <stop offset="0%" stop-color="#A855F7"/>
+      <stop offset="50%" stop-color="#6B21A8"/>
+      <stop offset="100%" stop-color="#1E1B4B"/>
     </radialGradient>
     <filter id="portalShadow" x="-10%" y="-10%" width="125%" height="125%" filterUnits="userSpaceOnUse">
       <feDropShadow dx="8" dy="8" stdDeviation="0" flood-color="#052E16" flood-opacity="0.8"/>

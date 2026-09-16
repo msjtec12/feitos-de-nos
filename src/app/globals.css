@@ -181,6 +181,251 @@
   text-shadow: 0 2px 0 rgb(255 255 255 / 0.55);
 }
 
+/* Composição premium: o convite passa a funcionar como uma peça gráfica
+   contínua, preservando leitura e proporção tanto no celular quanto no desktop. */
+.invitation-premium-stage {
+  background:
+    radial-gradient(circle at 50% 5%, color-mix(in srgb, var(--invitation-accent) 12%, transparent), transparent 34%),
+    linear-gradient(180deg, transparent, rgb(255 255 255 / 0.12));
+}
+
+.invitation-premium-shell {
+  border: 1px solid color-mix(in srgb, var(--invitation-primary) 28%, transparent);
+  border-radius: 2.4rem;
+  background-color: color-mix(in srgb, var(--invitation-background) 90%, white 10%);
+  box-shadow:
+    0 42px 110px rgb(35 25 20 / 0.18),
+    0 8px 30px rgb(35 25 20 / 0.1),
+    inset 0 0 0 7px rgb(255 255 255 / 0.32);
+  isolation: isolate;
+}
+
+.invitation-premium-shell::before {
+  position: absolute;
+  inset: 12px;
+  z-index: 0;
+  border: 1px solid color-mix(in srgb, var(--invitation-accent) 26%, transparent);
+  border-radius: 1.85rem;
+  content: "";
+  pointer-events: none;
+}
+
+.invitation-premium-shell::after {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  opacity: 0.38;
+  content: "";
+  pointer-events: none;
+}
+
+.invitation-premium-inner {
+  padding: 0.4rem;
+}
+
+/* 1. Monstrinhos: energia dos quatro elementos, sem imitar franquias. */
+[data-invitation-theme="infantil-monstrinhos-elementais"] .invitation-premium-shell {
+  border: 3px solid #d97706;
+  background:
+    radial-gradient(circle at 2% 8%, rgb(220 38 38 / 0.13), transparent 22%),
+    radial-gradient(circle at 98% 20%, rgb(2 132 199 / 0.14), transparent 23%),
+    radial-gradient(circle at 7% 87%, rgb(21 128 61 / 0.13), transparent 24%),
+    radial-gradient(circle at 94% 92%, rgb(202 138 4 / 0.14), transparent 24%),
+    #fffbed;
+  box-shadow: 0 42px 110px rgb(180 83 9 / 0.2), inset 0 0 0 7px rgb(254 240 138 / 0.38);
+}
+
+[data-invitation-theme="infantil-monstrinhos-elementais"] .invitation-premium-shell::after {
+  background-image:
+    radial-gradient(circle, rgb(220 38 38 / 0.18) 0 2px, transparent 3px),
+    radial-gradient(circle, rgb(2 132 199 / 0.16) 0 2px, transparent 3px);
+  background-position: 20px 30px, 60px 70px;
+  background-size: 90px 90px;
+}
+
+[data-invitation-theme="infantil-monstrinhos-elementais"] .invitation-display-title {
+  color: transparent !important;
+  background: linear-gradient(92deg, #dc2626 0 24%, #0284c7 35% 52%, #15803d 62% 76%, #ca8a04 86%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  filter: drop-shadow(0 3px 0 rgb(255 255 255 / 0.9));
+}
+
+/* 2. Heróis: linguagem editorial de quadrinhos. */
+[data-invitation-theme="infantil-herois-originais"] .invitation-premium-shell {
+  border: 4px solid #0f172a;
+  border-radius: 1.2rem;
+  background-color: #eff6ff;
+  background-image: radial-gradient(#93c5fd 1.4px, transparent 1.4px);
+  background-size: 15px 15px;
+  box-shadow: 12px 12px 0 #1e3a8a, 18px 18px 0 #dc2626;
+}
+
+[data-invitation-theme="infantil-herois-originais"] .invitation-premium-shell::before,
+[data-invitation-theme="infantil-aventura-blocos"] .invitation-premium-shell::before,
+[data-invitation-theme="minimalista"] .invitation-premium-shell::before {
+  border-radius: 0.45rem;
+}
+
+/* 3. Reino encantado: papel real, rosa e dourado. */
+[data-invitation-theme="infantil-reino-encantado"] .invitation-premium-shell {
+  border: 3px solid #f1c75b;
+  background:
+    radial-gradient(circle at 12% 8%, rgb(244 114 182 / 0.13), transparent 22%),
+    radial-gradient(circle at 88% 12%, rgb(192 132 252 / 0.13), transparent 24%),
+    linear-gradient(145deg, #fffdf8, #fff1f7 55%, #fff9df);
+  box-shadow: 0 42px 110px rgb(190 24 93 / 0.18), inset 0 0 0 8px rgb(255 255 255 / 0.42);
+}
+
+/* 4. Pop: palco noturno e luz neon. */
+[data-invitation-theme="infantil-pop"] .invitation-premium-shell {
+  border: 2px solid #f472b6;
+  background:
+    radial-gradient(circle at 50% 0%, rgb(236 72 153 / 0.34), transparent 30%),
+    linear-gradient(160deg, #170b2c, #2e1065 48%, #111827);
+  box-shadow: 0 0 50px rgb(236 72 153 / 0.32), 0 42px 110px rgb(46 16 101 / 0.35);
+}
+
+[data-invitation-theme="infantil-pop"] .invitation-display-title {
+  color: #fdf2f8 !important;
+  text-shadow: 0 0 12px #ec4899, 0 0 30px rgb(139 92 246 / 0.8);
+}
+
+/* 5. Blocos: painel de jogo com leitura limpa. */
+[data-invitation-theme="infantil-aventura-blocos"] .invitation-premium-shell {
+  border: 4px solid #052e16;
+  border-radius: 0.5rem;
+  background-color: #ecfdf5;
+  background-image:
+    linear-gradient(90deg, rgb(22 163 74 / 0.08) 1px, transparent 1px),
+    linear-gradient(rgb(22 163 74 / 0.08) 1px, transparent 1px);
+  background-size: 28px 28px;
+  box-shadow: 12px 12px 0 #15803d, 0 38px 90px rgb(5 46 22 / 0.22);
+}
+
+/* 6. Dinossauros: pergaminho de expedição e selva. */
+[data-invitation-theme="infantil-dinossauros"] .invitation-premium-shell {
+  border: 3px solid #b98748;
+  background:
+    radial-gradient(circle at 16% 5%, rgb(21 128 61 / 0.12), transparent 23%),
+    radial-gradient(circle at 88% 28%, rgb(194 65 12 / 0.1), transparent 22%),
+    linear-gradient(145deg, #fffdf0, #fff6d8 60%, #f7e8c1);
+  box-shadow: 0 42px 110px rgb(69 43 20 / 0.23), inset 0 0 0 8px rgb(255 255 255 / 0.42);
+}
+
+[data-invitation-theme="infantil-dinossauros"] .invitation-premium-shell::after {
+  background:
+    radial-gradient(ellipse at 0 12%, rgb(21 128 61 / 0.16), transparent 18%),
+    radial-gradient(ellipse at 100% 36%, rgb(21 128 61 / 0.13), transparent 20%),
+    radial-gradient(ellipse at 4% 83%, rgb(21 128 61 / 0.14), transparent 20%),
+    radial-gradient(ellipse at 97% 95%, rgb(194 65 12 / 0.1), transparent 18%);
+}
+
+[data-invitation-theme="infantil-dinossauros"] .invitation-display-title {
+  color: transparent !important;
+  background: linear-gradient(90deg, #15803d 0 52%, #c2410c 58%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  filter: drop-shadow(0 3px 0 rgb(255 255 255 / 0.85));
+}
+
+/* 7. Bebê delicado. */
+[data-invitation-theme="infantil-delicado"] .invitation-premium-shell {
+  border: 2px solid #bfdbfe;
+  background:
+    radial-gradient(circle at 10% 9%, rgb(253 230 138 / 0.28), transparent 22%),
+    radial-gradient(circle at 92% 15%, rgb(191 219 254 / 0.42), transparent 25%),
+    linear-gradient(155deg, #fffdf8, #eff6ff 62%, #fff7ed);
+  box-shadow: 0 42px 110px rgb(59 130 246 / 0.16), inset 0 0 0 8px rgb(255 255 255 / 0.48);
+}
+
+/* 8. Romântico: papel rosé e luz suave. */
+[data-invitation-theme="romantico"] .invitation-premium-shell {
+  border: 2px solid #e9b6ad;
+  background:
+    radial-gradient(circle at 15% 8%, rgb(190 24 93 / 0.1), transparent 24%),
+    radial-gradient(circle at 87% 22%, rgb(217 119 6 / 0.08), transparent 22%),
+    linear-gradient(155deg, #fffaf7, #fff0ed 65%, #fffaf7);
+  box-shadow: 0 42px 110px rgb(159 18 57 / 0.17), inset 0 0 0 8px rgb(255 255 255 / 0.42);
+}
+
+/* 9. Elegante: marfim, grafite e ouro. */
+[data-invitation-theme="elegante"] .invitation-premium-shell {
+  border: 1px solid #d97706;
+  border-radius: 0.4rem;
+  background: linear-gradient(145deg, #fffdf5, #f7f1e6);
+  box-shadow: 0 42px 110px rgb(28 25 23 / 0.24), inset 0 0 0 10px rgb(217 119 6 / 0.06);
+}
+
+/* 10. Sagrado: luminosidade serena. */
+[data-invitation-theme="religioso"] .invitation-premium-shell {
+  border: 2px solid #a7d7c7;
+  background:
+    radial-gradient(circle at 50% 0%, rgb(253 230 138 / 0.35), transparent 28%),
+    linear-gradient(155deg, #fffffb, #f0fdf4 68%, #fffbeb);
+  box-shadow: 0 42px 110px rgb(6 95 70 / 0.14), inset 0 0 0 8px rgb(255 255 255 / 0.48);
+}
+
+/* 11. Botânico: linho natural e lavanda. */
+[data-invitation-theme="floral"] .invitation-premium-shell {
+  border: 2px solid #7b9b78;
+  background:
+    radial-gradient(circle at 9% 7%, rgb(139 92 246 / 0.11), transparent 23%),
+    radial-gradient(circle at 93% 18%, rgb(5 150 105 / 0.12), transparent 24%),
+    linear-gradient(145deg, #fbf8ef, #f0fdf4 64%, #faf5ff);
+  box-shadow: 0 42px 110px rgb(6 78 59 / 0.16), inset 0 0 0 8px rgb(255 255 255 / 0.4);
+}
+
+/* 12. Minimalista editorial. */
+[data-invitation-theme="minimalista"] .invitation-premium-shell {
+  border: 1px solid #09090b;
+  border-radius: 0;
+  background: #fff;
+  box-shadow: 18px 18px 0 rgb(0 0 0 / 0.08);
+}
+
+[data-invitation-theme="minimalista"] .invitation-premium-shell::before {
+  inset: 18px;
+  border-color: #09090b;
+}
+
+/* 13. Celebração: brilho sofisticado, sem poluição. */
+[data-invitation-theme="festivo"] .invitation-premium-shell {
+  border: 2px solid #fcd34d;
+  background:
+    radial-gradient(circle at 15% 8%, rgb(217 70 239 / 0.25), transparent 24%),
+    radial-gradient(circle at 88% 20%, rgb(249 115 22 / 0.22), transparent 22%),
+    linear-gradient(155deg, #2e1065, #581c87 58%, #831843);
+  box-shadow: 0 0 50px rgb(217 70 239 / 0.28), 0 42px 110px rgb(88 28 135 / 0.32);
+}
+
+[data-invitation-theme="festivo"] .invitation-display-title {
+  color: #fff !important;
+  text-shadow: 0 0 14px rgb(250 204 21 / 0.7), 0 5px 0 rgb(88 28 135 / 0.8);
+}
+
+@media (max-width: 640px) {
+  .invitation-premium-stage {
+    padding-inline: 0;
+    padding-block: 0;
+  }
+
+  .invitation-premium-shell {
+    border-radius: 0;
+    border-inline-width: 0;
+    box-shadow: none;
+  }
+
+  .invitation-premium-shell::before {
+    inset: 7px;
+    border-radius: 0.9rem;
+  }
+
+  .invitation-premium-inner {
+    padding: 0.15rem;
+  }
+}
+
 [data-invitation-theme="infantil-herois-originais"] .invitation-theme-badge,
 [data-invitation-theme="infantil-aventura-blocos"] .invitation-theme-badge,
 [data-invitation-theme="minimalista"] .invitation-theme-badge {

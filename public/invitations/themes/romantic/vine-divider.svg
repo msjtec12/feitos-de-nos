@@ -1,9 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 36" fill="none">
   <defs>
     <linearGradient id="vineGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" stopColor="#C96E5A" stop-opacity="0"/>
-      <stop offset="50%" stopColor="#C96E5A"/>
-      <stop offset="100%" stopColor="#C96E5A" stop-opacity="0"/>
+      <stop offset="0%" stop-color="#C96E5A" stop-opacity="0"/>
+      <stop offset="50%" stop-color="#C96E5A"/>
+      <stop offset="100%" stop-color="#C96E5A" stop-opacity="0"/>
     </linearGradient>
   </defs>
 

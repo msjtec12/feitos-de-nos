@@ -1,13 +1,13 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 440" fill="none">
   <defs>
     <linearGradient id="popStageBgGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stopColor="#1E1B4B"/>
-      <stop offset="40%" stopColor="#4A0E4E"/>
-      <stop offset="100%" stopColor="#0F172A"/>
+      <stop offset="0%" stop-color="#1E1B4B"/>
+      <stop offset="40%" stop-color="#4A0E4E"/>
+      <stop offset="100%" stop-color="#0F172A"/>
     </linearGradient>
     <linearGradient id="neonPink" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" stopColor="#EC4899"/>
-      <stop offset="100%" stopColor="#F43F5E"/>
+      <stop offset="0%" stop-color="#EC4899"/>
+      <stop offset="100%" stop-color="#F43F5E"/>
     </linearGradient>
     <filter id="popGlow" x="-10%" y="-10%" width="125%" height="125%" filterUnits="userSpaceOnUse">
       <feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#EC4899" flood-opacity="0.5"/>

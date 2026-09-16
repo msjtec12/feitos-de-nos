@@ -1,9 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 440" fill="none">
   <defs>
     <linearGradient id="partyBgGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stopColor="#3B0764"/>
-      <stop offset="50%" stopColor="#581C87"/>
-      <stop offset="100%" stopColor="#1E1B4B"/>
+      <stop offset="0%" stop-color="#3B0764"/>
+      <stop offset="50%" stop-color="#581C87"/>
+      <stop offset="100%" stop-color="#1E1B4B"/>
     </linearGradient>
     <filter id="curtainGlow" x="-10%" y="-10%" width="125%" height="125%" filterUnits="userSpaceOnUse">
       <feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#A855F7" flood-opacity="0.4"/>

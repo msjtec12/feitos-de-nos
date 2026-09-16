@@ -2,15 +2,15 @@
   <defs>
     <!-- Papel artesanal feito à mão com textura e bordas suaves -->
     <linearGradient id="handmadePaper" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stopColor="#FFFDFB"/>
-      <stop offset="60%" stopColor="#FFF7F2"/>
-      <stop offset="100%" stopColor="#F8EDE5"/>
+      <stop offset="0%" stop-color="#FFFDFB"/>
+      <stop offset="60%" stop-color="#FFF7F2"/>
+      <stop offset="100%" stop-color="#F8EDE5"/>
     </linearGradient>
     <radialGradient id="waxSealGrad" cx="40%" cy="40%" r="60%">
-      <stop offset="0%" stopColor="#B94D62"/>
-      <stop offset="40%" stopColor="#963246"/>
-      <stop offset="85%" stopColor="#711C2C"/>
-      <stop offset="100%" stopColor="#4D0E1A"/>
+      <stop offset="0%" stop-color="#B94D62"/>
+      <stop offset="40%" stop-color="#963246"/>
+      <stop offset="85%" stop-color="#711C2C"/>
+      <stop offset="100%" stop-color="#4D0E1A"/>
     </radialGradient>
     <filter id="envelopeShadow" x="-10%" y="-10%" width="125%" height="125%" filterUnits="userSpaceOnUse">
       <feDropShadow dx="0" dy="12" stdDeviation="12" flood-color="#50242D" flood-opacity="0.25"/>

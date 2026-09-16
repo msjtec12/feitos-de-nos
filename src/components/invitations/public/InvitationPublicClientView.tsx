@@ -33,7 +33,7 @@ function InvitationContentSection({
   const { event, guest, envelopeOpened, themeConfig } = useInvitationTheme();
 
   return (
-    <main className={!envelopeOpened ? 'hidden' : 'flex-1 pb-16 relative z-10 pt-2'}>
+    <main className={!envelopeOpened ? 'hidden' : 'relative z-10 flex-1 pb-8 pt-2'}>
       {/* 1. Hero do Convite (Cenário, Moldura da Foto e Título com Tipografia Temática) */}
       <InvitationHero />
 
@@ -77,6 +77,29 @@ function InvitationContentSection({
   );
 }
 
+function InvitationOpenedCanvas({
+  guestbookMessages,
+  themeKey,
+}: {
+  guestbookMessages: EventGuestbookMessageRow[];
+  themeKey: string;
+}) {
+  const { envelopeOpened } = useInvitationTheme();
+
+  if (!envelopeOpened) return null;
+
+  return (
+    <div className="invitation-premium-stage relative z-10 px-2 py-5 sm:px-5 sm:py-10">
+      <div className="invitation-premium-shell relative mx-auto w-full max-w-[820px] overflow-hidden">
+        <div className="invitation-premium-inner relative z-10">
+          <InvitationContentSection guestbookMessages={guestbookMessages} />
+          <InvitationFooter themeKey={themeKey} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function InvitationPublicClientView({
   event,
   guest,
@@ -108,11 +131,11 @@ export function InvitationPublicClientView({
       {/* Tela de Abertura Interativa com estilo próprio por tema */}
       <InvitationOpening />
 
-      {/* Conteúdo Principal do Convite */}
-      <InvitationContentSection guestbookMessages={guestbookMessages} />
-
-      {/* Rodapé Ilustrado com Cenário e Divisores Exclusivos por Tema */}
-      <InvitationFooter themeKey={themePreset.id} />
+      {/* Composição contínua do convite: capa, conteúdo e rodapé no mesmo cenário */}
+      <InvitationOpenedCanvas
+        guestbookMessages={guestbookMessages}
+        themeKey={themePreset.id}
+      />
     </InvitationExperience>
   );
 }

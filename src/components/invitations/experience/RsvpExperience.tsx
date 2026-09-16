@@ -50,6 +50,7 @@ export function RsvpExperience(props: RsvpExperienceProps) {
     guest ? guest.attendance_status !== 'pending' : false
   );
   const [showCelebration, setShowCelebration] = useState(false);
+  const [showForm, setShowForm] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const primaryColor = themeConfig.primaryColor || activeTheme.previewColors.primary;
@@ -127,8 +128,50 @@ export function RsvpExperience(props: RsvpExperienceProps) {
         </div>
       )}
 
-      {/* Botão de Destaque RSVP ou Formulário Completo */}
-      {!isSuccess ? (
+      {/* Primeiro contato: um CTA forte como na peça gráfica. O formulário
+          só aparece depois do toque para manter o convite elegante e leve. */}
+      {!isSuccess && !showForm ? (
+        <div className="mx-auto max-w-lg space-y-3 text-center">
+          <span
+            className="block text-[10px] font-black uppercase tracking-[.18em]"
+            style={{ color: isDino ? '#15803D' : accentColor }}
+          >
+            {themeCopy.rsvpKicker}
+          </span>
+
+          {isDino ? (
+            <button
+              type="button"
+              onClick={() => setShowForm(true)}
+              disabled={isDeadlinePassed}
+              className="relative mx-auto flex h-[76px] w-full max-w-md items-center justify-center transition-transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
+            >
+              <Image
+                src="/invitations/themes/dinosaurs/wood-button.svg"
+                alt=""
+                fill
+                className="object-contain drop-shadow-[0_12px_18px_rgba(69,43,20,.28)]"
+              />
+              <span className="relative z-10 text-xl font-black tracking-wide text-white drop-shadow-[0_2px_4px_rgba(0,0,0,.65)] sm:text-2xl">
+                Confirmar presença ›
+              </span>
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setShowForm(true)}
+              disabled={isDeadlinePassed}
+              className={`w-full px-6 py-4 text-base font-black uppercase tracking-[.08em] transition-transform hover:scale-[1.015] active:scale-[.985] disabled:opacity-50 sm:text-lg ${buttonClass}`}
+            >
+              Confirmar presença ›
+            </button>
+          )}
+
+          {isDeadlinePassed && (
+            <p className="text-xs font-semibold text-slate-500">O prazo de confirmação foi encerrado.</p>
+          )}
+        </div>
+      ) : !isSuccess ? (
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className={cardClass}>
             <div className="text-center space-y-1">

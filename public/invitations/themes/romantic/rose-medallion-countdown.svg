@@ -2,15 +2,15 @@
   <defs>
     <!-- Gradiente ouro rosê / champagne -->
     <linearGradient id="roseGold" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stopColor="#FFF8F5"/>
-      <stop offset="30%" stopColor="#F9D7D7"/>
-      <stop offset="70%" stopColor="#D98A95"/>
-      <stop offset="100%" stopColor="#9E4E5D"/>
+      <stop offset="0%" stop-color="#FFF8F5"/>
+      <stop offset="30%" stop-color="#F9D7D7"/>
+      <stop offset="70%" stop-color="#D98A95"/>
+      <stop offset="100%" stop-color="#9E4E5D"/>
     </linearGradient>
     <radialGradient id="roseMedallionBack" cx="50%" cy="50%" r="50%">
-      <stop offset="0%" stopColor="#FFFFFF"/>
-      <stop offset="80%" stopColor="#FFF5F5"/>
-      <stop offset="100%" stopColor="#FDE8E8"/>
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="80%" stop-color="#FFF5F5"/>
+      <stop offset="100%" stop-color="#FDE8E8"/>
     </radialGradient>
     <filter id="romanticGlow" x="-10%" y="-10%" width="125%" height="125%" filterUnits="userSpaceOnUse">
       <feDropShadow dx="0" dy="5" stdDeviation="6" flood-color="#713C48" flood-opacity="0.25"/>
