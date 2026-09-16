@@ -137,7 +137,49 @@
   animation: comicActionWiggle 2.5s ease-in-out infinite;
 }
 
-/* Respeito à preferência manual de redução de movimento */
+/* Isolamento estrutural estrito para a experiência dos convites */
+.invitation-experience-root {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  contain: layout paint style;
+}
+
+.invitation-experience-root .invitation-particle {
+  position: absolute;
+  pointer-events: none;
+}
+
+/* Moldura e tela do simulador mobile no painel administrativo */
+.phone-frame {
+  position: relative;
+}
+
+.phone-screen {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  contain: layout paint style;
+}
+
+/* Escopo temático por atributos de dados */
+[data-invitation-theme] {
+  --invitation-primary: #713C48;
+  --invitation-accent: #C96E5A;
+  --invitation-background: #FFF8F0;
+}
+
+/* Respeito à preferência de redução de movimento (sistema e manual) */
+@media (prefers-reduced-motion: reduce) {
+  .invitation-experience-root *,
+  .invitation-experience-root *::before,
+  .invitation-experience-root *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 .reduced-motion *,
 .reduced-motion *::before,
 .reduced-motion *::after {

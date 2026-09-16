@@ -34,7 +34,7 @@ export function InvitationEnvelopeOpening({
 
   return (
     <div
-      className={`fixed inset-0 z-50 flex items-center justify-center p-4 bg-gradient-to-b from-[#2B2325]/90 via-[#1A1416]/95 to-[#1A1416] backdrop-blur-md transition-all duration-700 ${
+      className={`absolute inset-0 z-50 flex items-center justify-center p-4 bg-gradient-to-b from-[#2B2325]/90 via-[#1A1416]/95 to-[#1A1416] backdrop-blur-md transition-all duration-700 ${
         isOpening ? 'opacity-0 pointer-events-none scale-105' : 'opacity-100 scale-100'
       }`}
     >

@@ -68,7 +68,7 @@ export function MusicController({
         onEnded={() => setIsPlaying(false)}
       />
 
-      <div className="fixed bottom-5 right-5 z-40 flex items-center gap-2">
+      <div className="absolute bottom-5 right-5 z-20 flex items-center gap-2">
         {/* Play/Pause Pill Button */}
         <button
           type="button"

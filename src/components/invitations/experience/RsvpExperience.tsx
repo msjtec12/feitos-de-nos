@@ -100,7 +100,7 @@ export function RsvpExperience({ event, guest, themeConfig }: RsvpExperienceProp
     <section id="rsvp" className="max-w-xl mx-auto px-4 py-8 space-y-6 relative">
       {/* Celebration Overlay Effect */}
       {showCelebration && (
-        <div className="fixed inset-0 z-50 pointer-events-none flex items-center justify-center overflow-hidden">
+        <div className="absolute inset-0 z-40 pointer-events-none flex items-center justify-center overflow-hidden">
           <div className="text-center animate-in zoom-in-50 duration-500 p-6 rounded-3xl bg-white/90 shadow-2xl border-2 border-emerald-400 backdrop-blur-md">
             <div className="w-16 h-16 mx-auto rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mb-3">
               <PartyPopper className="w-9 h-9 animate-bounce" />

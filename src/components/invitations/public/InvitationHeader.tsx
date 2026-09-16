@@ -1,9 +1,9 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { EventThemeConfig } from '@/types/invitation';
-import { Sparkles, Calendar, MapPin } from 'lucide-react';
+import { Sparkles, Calendar, MapPin, Camera } from 'lucide-react';
 import {
   ThematicHeaderBanner,
   HeroActionBurst,
@@ -26,6 +26,7 @@ interface InvitationHeaderProps {
   coverUrl?: string | null;
   eventDate: string;
   themeConfig: EventThemeConfig;
+  isEditor?: boolean;
 }
 
 export function InvitationHeader({
@@ -35,15 +36,45 @@ export function InvitationHeader({
   headline,
   coverUrl,
   themeConfig,
+  isEditor = false,
 }: InvitationHeaderProps) {
   const primaryColor = themeConfig.primaryColor || '#713C48';
   const accentColor = themeConfig.accentColor || '#C96E5A';
   const photoStyle = themeConfig.photoStyle || 'rounded';
   const themeSlug = (themeConfig.themeId || themeConfig.slug || '').toLowerCase();
 
-  // Resolve cover photo: custom uploaded photo OR high-resolution professional theme artwork
-  const heroImage = coverUrl || getThemeDefaultHeroImage(themeSlug);
-  const isDefaultArtwork = !coverUrl;
+  const defaultArtwork = getThemeDefaultHeroImage(themeSlug);
+
+  // Safe image state with loading, error resilience, and graceful fallback
+  const [imageSrc, setImageSrc] = useState<string>(() => {
+    const trimmed = coverUrl?.trim();
+    return trimmed || defaultArtwork;
+  });
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
+
+  const isDefaultArtwork = !coverUrl || hasError;
+
+  useEffect(() => {
+    const trimmed = coverUrl?.trim();
+    if (trimmed) {
+      setImageSrc(trimmed);
+      setHasError(false);
+      setIsLoading(true);
+    } else {
+      setImageSrc(defaultArtwork);
+      setHasError(false);
+      setIsLoading(false);
+    }
+  }, [coverUrl, themeSlug, defaultArtwork]);
+
+  const handleImageError = () => {
+    if (imageSrc !== defaultArtwork) {
+      setImageSrc(defaultArtwork);
+      setHasError(true);
+    }
+    setIsLoading(false);
+  };
 
   // Frame styling based on photoStyle
   let frameClasses = 'rounded-3xl shadow-2xl';
@@ -165,13 +196,31 @@ export function InvitationHeader({
 
         {/* The Photo Container */}
         <div className={'relative aspect-[4/5] overflow-hidden bg-slate-100 ' + frameClasses}>
+          {/* Skeleton Shimmer while loading */}
+          {isLoading && (
+            <div className="absolute inset-0 z-10 bg-gradient-to-r from-slate-200 via-slate-100 to-slate-200 animate-pulse" />
+          )}
+
+          {/* Discreet badge for editor when no custom photo is added */}
+          {isEditor && !coverUrl && (
+            <div className="absolute top-3 left-3 z-20 inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-900/80 text-white text-[10px] font-medium backdrop-blur-xs shadow-xs pointer-events-none">
+              <Camera className="w-3 h-3 text-amber-300" />
+              <span>Adicione uma foto de capa</span>
+            </div>
+          )}
+
           <Image
-            src={heroImage}
+            src={imageSrc}
             alt={honoreeName || title}
             fill
-            className="object-cover transition-transform duration-500 hover:scale-105"
+            className={`object-cover transition-all duration-500 hover:scale-105 ${
+              isLoading ? 'opacity-0' : 'opacity-100'
+            }`}
             sizes="(max-width: 640px) 320px, 400px"
             priority
+            unoptimized={imageSrc.startsWith('http') || imageSrc.startsWith('data:')}
+            onLoad={() => setIsLoading(false)}
+            onError={handleImageError}
           />
 
           {/* Polaroid Name Label */}
@@ -182,7 +231,7 @@ export function InvitationHeader({
           )}
 
           {/* If using default artwork, add subtle thematic banner tag */}
-          {isDefaultArtwork && (
+          {isDefaultArtwork && !isEditor && (
             <div className="absolute bottom-3 inset-x-3 bg-white/90 backdrop-blur-md rounded-xl p-2 text-center text-[11px] font-bold shadow-md border border-white/50" style={{ color: primaryColor }}>
               ✦ Celebração Inesquecível ✦
             </div>

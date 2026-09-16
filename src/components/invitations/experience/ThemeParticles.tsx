@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { EventThemeConfig } from '@/types/invitation';
 
 interface ThemeParticlesProps {
@@ -24,15 +24,31 @@ export function ThemeParticles({ themeConfig, reducedMotion = false }: ThemePart
   const intensity = themeConfig.animationIntensity || 'festive';
   const primaryColor = themeConfig.primaryColor || '#713C48';
   const accentColor = themeConfig.accentColor || '#C96E5A';
+  const themeSlug = (themeConfig.themeId || themeConfig.slug || '').toLowerCase();
 
-  const count = intensity === 'none' ? 0 : intensity === 'soft' ? 14 : 26;
+  // Pausa automática quando a aba perde o foco (economia de recursos e bateria)
+  const [isTabVisible, setIsTabVisible] = useState(true);
+
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      setIsTabVisible(!document.hidden);
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, []);
+
+  // Limite otimizado de partículas por dispositivo e intensidade
+  const count = intensity === 'none' ? 0 : intensity === 'soft' ? 10 : 20;
 
   const particles: Particle[] = useMemo(() => {
-    if (intensity === 'none' || reducedMotion) {
+    if (intensity === 'none' || reducedMotion || !isTabVisible) {
       return [];
     }
 
-    const slug = (themeConfig.themeId || themeConfig.slug || '').toLowerCase();
+    const slug = themeSlug;
     const items: Particle[] = [];
 
     let defaultShape: Particle['shape'] = 'sparkle';
@@ -62,30 +78,31 @@ export function ThemeParticles({ themeConfig, reducedMotion = false }: ThemePart
         id: i,
         left: (i * (96 / count) + (i % 3) * 4) % 96,
         top: Math.random() * 95,
-        size: 14 + Math.floor(Math.random() * 16), // 14px to 30px (visivelmente chamativo)
-        duration: 5 + Math.random() * 6,
-        delay: (i * 0.4) % 4,
-        opacity: 0.6 + Math.random() * 0.35, // 0.6 to 0.95 (bem visível)
+        size: 14 + Math.floor(Math.random() * 14), // 14px to 28px
+        duration: 5 + Math.random() * 5,
+        delay: (i * 0.3) % 3,
+        opacity: 0.65 + Math.random() * 0.3, // 0.65 to 0.95
         color: colors[i % colors.length],
         shape: defaultShape,
       });
     }
     return items;
-  }, [themeConfig.themeId, themeConfig.slug, count, accentColor, primaryColor, intensity, reducedMotion]);
+  }, [themeSlug, count, accentColor, primaryColor, intensity, reducedMotion, isTabVisible]);
 
-  if (particles.length === 0) {
+  if (particles.length === 0 || !isTabVisible) {
     return null;
   }
 
   return (
     <div
+      key={themeSlug}
       aria-hidden="true"
-      className="fixed inset-0 pointer-events-none overflow-hidden z-10 select-none"
+      className="absolute inset-0 pointer-events-none overflow-hidden z-10 select-none"
     >
       {particles.map((p) => (
         <div
           key={p.id}
-          className="absolute animate-party-float"
+          className="invitation-particle absolute animate-party-float pointer-events-none"
           style={{
             left: p.left + '%',
             top: p.top + '%',

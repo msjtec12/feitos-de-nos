@@ -23,6 +23,8 @@ interface InvitationPublicClientViewProps {
   guest?: EventGuestRow | null;
   guestbookMessages?: EventGuestbookMessageRow[];
   initialEnvelopeOpened?: boolean;
+  isSimulator?: boolean;
+  simulatorReducedMotion?: boolean;
 }
 
 export function InvitationPublicClientView({
@@ -30,10 +32,20 @@ export function InvitationPublicClientView({
   guest,
   guestbookMessages = [],
   initialEnvelopeOpened = false,
+  isSimulator = false,
+  simulatorReducedMotion = false,
 }: InvitationPublicClientViewProps) {
+  const invitationRootRef = React.useRef<HTMLDivElement>(null);
   const [envelopeOpened, setEnvelopeOpened] = useState(initialEnvelopeOpened);
   const [audioGestureTriggered, setAudioGestureTriggered] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
+
+  // Sync envelopeOpened when simulator toggles
+  React.useEffect(() => {
+    setEnvelopeOpened(initialEnvelopeOpened);
+  }, [initialEnvelopeOpened]);
+
+  const effectiveReducedMotion = isSimulator ? Boolean(simulatorReducedMotion) : reducedMotion;
 
   // Normalize theme config to guarantee themeId and slug are always defined
   const rawConfig = event.theme_config || {
@@ -84,35 +96,50 @@ export function InvitationPublicClientView({
 
   return (
     <div
-      className="min-h-screen relative flex flex-col font-sans selection:bg-[#D9A4A0]/40 transition-colors duration-500 overflow-x-hidden"
-      style={bgPatternStyle}
+      ref={invitationRootRef}
+      className={`invitation-experience-root min-h-screen relative flex flex-col font-sans selection:bg-[#D9A4A0]/40 transition-colors duration-500 overflow-x-hidden ${
+        effectiveReducedMotion ? 'reduced-motion' : ''
+      }`}
+      data-invitation-theme={themeConfig.themeId || themeConfig.slug || 'infantil-monstrinhos-elementais'}
+      style={{
+        '--invitation-primary': themeConfig.primaryColor || '#713C48',
+        '--invitation-accent': themeConfig.accentColor || '#C96E5A',
+        '--invitation-background': backgroundColor,
+        ...bgPatternStyle,
+      } as React.CSSProperties}
     >
-      {/* Background Ambient Particles */}
-      <ThemeParticles themeConfig={themeConfig} reducedMotion={reducedMotion} />
+      {/* Background Ambient Particles (estritamente absolutas e contidas na raiz do convite) */}
+      <ThemeParticles themeConfig={themeConfig} reducedMotion={effectiveReducedMotion} />
 
-      {/* Reduced Motion Toggle Control */}
-      <MotionPreferenceControl
-        reducedMotion={reducedMotion}
-        onToggle={() => setReducedMotion(!reducedMotion)}
-        accentColor={themeConfig.accentColor}
-      />
+      {/* Reduced Motion Toggle Control (apenas na página pública; no simulador é controlado na barra de ferramentas) */}
+      {!isSimulator && (
+        <MotionPreferenceControl
+          reducedMotion={effectiveReducedMotion}
+          onToggle={() => setReducedMotion(!reducedMotion)}
+          accentColor={themeConfig.accentColor}
+        />
+      )}
 
-      {/* Floating Audio Soundtrack Controller (only triggers audio on/after user gesture) */}
+      {/* Soundtrack Controller */}
       <MusicController
         musicUrl={resolvedMusicUrl}
         autoPlayTriggered={audioGestureTriggered}
         themeConfig={themeConfig}
       />
 
-      {/* Floating Re-Open Envelope Button (Allows visitors and hosts to re-experience opening anytime) */}
+      {/* Re-Open Envelope Button (Contido estritamente de forma absoluta dentro da experiência do convite) */}
       {envelopeOpened && (
         <button
           type="button"
           onClick={() => setEnvelopeOpened(false)}
-          className="fixed bottom-5 left-5 z-40 inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full text-xs font-bold bg-white/95 text-[#302B2D] backdrop-blur-md shadow-lg border border-black/10 transition-all hover:scale-105 active:scale-95 hover:bg-white"
+          className={
+            isSimulator
+              ? 'absolute bottom-3 left-3 z-20 inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-white/95 text-[#302B2D] backdrop-blur-md shadow-md border border-black/10 transition-all hover:scale-105 active:scale-95'
+              : 'absolute bottom-5 left-5 z-20 inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full text-xs font-bold bg-white/95 text-[#302B2D] backdrop-blur-md shadow-lg border border-black/10 transition-all hover:scale-105 active:scale-95 hover:bg-white'
+          }
           title="Ver animação de abertura novamente"
         >
-          <MailOpen className="w-3.5 h-3.5 text-red-500" />
+          <MailOpen className={isSimulator ? 'w-3 h-3 text-red-500' : 'w-3.5 h-3.5 text-red-500'} />
           <span>Rever Abertura</span>
         </button>
       )}
@@ -142,6 +169,7 @@ export function InvitationPublicClientView({
           coverUrl={event.cover_url}
           eventDate={event.event_date}
           themeConfig={themeConfig}
+          isEditor={isSimulator}
         />
 
         {/* Interactive Flip Countdown Timer */}

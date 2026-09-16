@@ -92,7 +92,7 @@ export function InvitationOpening({
   return (
     <div
       className={
-        'fixed inset-0 z-50 flex items-center justify-center p-4 bg-gradient-to-b from-[#1E1B1D]/90 via-[#0F0D0E]/95 to-[#0F0D0E] backdrop-blur-md transition-all duration-700 ' +
+        'absolute inset-0 z-50 flex items-center justify-center p-4 bg-gradient-to-b from-[#1E1B1D]/90 via-[#0F0D0E]/95 to-[#0F0D0E] backdrop-blur-md transition-all duration-700 ' +
         (isOpening ? 'opacity-0 pointer-events-none scale-105' : 'opacity-100 scale-100')
       }
     >

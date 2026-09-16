@@ -40,6 +40,8 @@ import {
   Upload,
   Link2,
   Check,
+  Play,
+  EyeOff,
 } from 'lucide-react';
 
 interface InvitationEditorProps {
@@ -57,6 +59,7 @@ export function InvitationEditorClientView({ event: initialEvent }: InvitationEd
   const [viewMode, setViewMode] = useState<ViewMode>('split');
   const [simulatorKey, setSimulatorKey] = useState(0);
   const [testOpeningInSimulator, setTestOpeningInSimulator] = useState(false);
+  const [simulatorReducedMotion, setSimulatorReducedMotion] = useState(false);
 
   // Form Fields
   const [title, setTitle] = useState(initialEvent.title);
@@ -758,40 +761,54 @@ export function InvitationEditorClientView({ event: initialEvent }: InvitationEd
 
                 {/* Preset Themes Grid */}
                 <div className="space-y-2">
-                  <label className="block text-xs font-semibold text-slate-700">
-                    Paletas Pré-configuradas
-                  </label>
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                    {INVITATION_AUTHORIAL_THEMES.map((t) => (
-                      <button
-                        key={t.id}
-                        type="button"
-                        onClick={() => handleApplyThemePreset(t.id)}
-                        className={`p-3 rounded-2xl border text-left transition-all ${
-                          themeConfig.themeId === t.id
-                            ? 'border-[#713C48] bg-[#713C48]/5 ring-2 ring-[#713C48]'
-                            : 'border-slate-200 hover:border-slate-300'
-                        }`}
-                      >
-                        <div className="flex items-center gap-1.5 mb-2">
-                          <div
-                            className="w-4 h-4 rounded-full border border-black/10"
-                            style={{ backgroundColor: t.previewColors.primary }}
-                          />
-                          <div
-                            className="w-4 h-4 rounded-full border border-black/10"
-                            style={{ backgroundColor: t.previewColors.accent }}
-                          />
-                          <div
-                            className="w-4 h-4 rounded-full border border-black/10"
-                            style={{ backgroundColor: t.previewColors.background }}
-                          />
-                        </div>
-                        <span className="text-xs font-bold text-slate-800 block truncate">
-                          {t.name}
-                        </span>
-                      </button>
-                    ))}
+                  <div className="flex items-center justify-between">
+                    <label className="block text-xs font-semibold text-slate-700">
+                      Paletas Pré-configuradas (13 Temas Autorais)
+                    </label>
+                    <span className="text-[11px] text-slate-500">13 temas disponíveis</span>
+                  </div>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                    {INVITATION_AUTHORIAL_THEMES.map((t) => {
+                      const isSelected = themeConfig.themeId === t.id;
+                      return (
+                        <button
+                          key={t.id}
+                          type="button"
+                          onClick={() => handleApplyThemePreset(t.id)}
+                          title={t.name}
+                          className={`p-3 rounded-2xl border text-left transition-all relative flex flex-col justify-between min-h-[92px] ${
+                            isSelected
+                              ? 'border-[#713C48] bg-[#713C48]/8 ring-2 ring-[#713C48] shadow-xs'
+                              : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/60 shadow-2xs'
+                          }`}
+                        >
+                          <div className="flex items-center justify-between gap-1 mb-2">
+                            <div className="flex items-center gap-1.5">
+                              <div
+                                className="w-3.5 h-3.5 rounded-full border border-black/10 shrink-0"
+                                style={{ backgroundColor: t.previewColors.primary }}
+                              />
+                              <div
+                                className="w-3.5 h-3.5 rounded-full border border-black/10 shrink-0"
+                                style={{ backgroundColor: t.previewColors.accent }}
+                              />
+                              <div
+                                className="w-3.5 h-3.5 rounded-full border border-black/10 shrink-0"
+                                style={{ backgroundColor: t.previewColors.background }}
+                              />
+                            </div>
+                            {isSelected && (
+                              <div className="w-4 h-4 rounded-full bg-[#713C48] text-white flex items-center justify-center shrink-0">
+                                <Check className="w-2.5 h-2.5 stroke-[3]" />
+                              </div>
+                            )}
+                          </div>
+                          <span className="text-xs font-bold text-slate-800 leading-snug line-clamp-2 break-words">
+                            {t.name}
+                          </span>
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
 
@@ -1310,6 +1327,20 @@ export function InvitationEditorClientView({ event: initialEvent }: InvitationEd
               <div className="flex items-center gap-1.5">
                 <button
                   type="button"
+                  onClick={() => setSimulatorReducedMotion(!simulatorReducedMotion)}
+                  className={
+                    'text-[10px] font-bold px-2 py-0.5 rounded-full transition-all flex items-center gap-1 ' +
+                    (simulatorReducedMotion
+                      ? 'bg-amber-600 text-white shadow-xs'
+                      : 'bg-slate-200 hover:bg-slate-300 text-slate-700')
+                  }
+                  title={simulatorReducedMotion ? 'Ativar animações no simulador' : 'Pausar animações no simulador'}
+                >
+                  {simulatorReducedMotion ? <Play className="w-2.5 h-2.5 text-white" /> : <EyeOff className="w-2.5 h-2.5" />}
+                  <span>{simulatorReducedMotion ? 'Pausado' : 'Reduzir'}</span>
+                </button>
+                <button
+                  type="button"
                   onClick={() => {
                     setTestOpeningInSimulator(!testOpeningInSimulator);
                     setSimulatorKey((k) => k + 1);
@@ -1317,7 +1348,7 @@ export function InvitationEditorClientView({ event: initialEvent }: InvitationEd
                   className={
                     'text-[10px] font-bold px-2 py-0.5 rounded-full transition-all ' +
                     (testOpeningInSimulator
-                      ? 'bg-amber-500 text-white shadow-xs'
+                      ? 'bg-[#713C48] text-white shadow-xs'
                       : 'bg-slate-200 hover:bg-slate-300 text-slate-700')
                   }
                   title="Alternar entre ver o convite aberto ou testar a tela de abertura com o lacre"
@@ -1340,7 +1371,7 @@ export function InvitationEditorClientView({ event: initialEvent }: InvitationEd
             </div>
 
             {/* iPhone Mockup Frame */}
-            <div className="w-full max-w-[340px] h-[720px] bg-slate-900 rounded-[50px] p-3 shadow-2xl border-4 border-slate-800 relative overflow-hidden flex flex-col ring-1 ring-black/20">
+            <div className="phone-frame w-full max-w-[340px] h-[720px] bg-slate-900 rounded-[50px] p-3 shadow-2xl border-4 border-slate-800 relative overflow-hidden flex flex-col ring-1 ring-black/20">
               {/* Dynamic Island Notch */}
               <div className="absolute top-4 left-1/2 -translate-x-1/2 w-28 h-5 bg-slate-900 rounded-full z-30 flex items-center justify-center pointer-events-none">
                 <div className="w-2.5 h-2.5 rounded-full bg-slate-800 ml-auto mr-3" />
@@ -1349,12 +1380,14 @@ export function InvitationEditorClientView({ event: initialEvent }: InvitationEd
               {/* Inner Screen */}
               <div
                 key={simulatorKey}
-                className="w-full h-full rounded-[40px] overflow-y-auto relative scrollbar-none transition-colors duration-300"
+                className="phone-screen w-full h-full rounded-[40px] overflow-y-auto relative scrollbar-none transition-colors duration-300"
                 style={{ backgroundColor: themeConfig.backgroundColor || '#FFF8F0' }}
               >
                 <InvitationPublicClientView
                   event={livePreviewEvent}
                   initialEnvelopeOpened={!testOpeningInSimulator}
+                  isSimulator={true}
+                  simulatorReducedMotion={simulatorReducedMotion}
                 />
               </div>
             </div>
