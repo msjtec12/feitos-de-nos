@@ -14,6 +14,7 @@ import { InvitationGallery } from './InvitationGallery';
 import { InvitationGiftRegistry } from './InvitationGiftRegistry';
 import { InvitationFooter } from '../experience/InvitationFooter';
 import { getInvitationTheme } from '@/data/invitation-themes';
+import { ThemeSectionDivider } from '../experience/ThemeScenery';
 
 interface InvitationPublicClientViewProps {
   event: EventDetailWithMedia;
@@ -36,8 +37,12 @@ function InvitationContentSection({
       {/* 1. Hero do Convite (Cenário, Moldura da Foto e Título com Tipografia Temática) */}
       <InvitationHero />
 
+      <ThemeSectionDivider />
+
       {/* 2. Contagem Regressiva Interativa Adaptada aos 13 Estilos */}
       <InteractiveCountdown />
+
+      <ThemeSectionDivider />
 
       {/* 3. Cards de Data, Horário, Local e Rota do Mapa de Expedição */}
       <EventLocationCard />
@@ -52,18 +57,21 @@ function InvitationContentSection({
 
       {/* 5. Galeria de Fotos */}
       {event.media && event.media.length > 0 && (
-        <InvitationGallery />
+        <><ThemeSectionDivider /><InvitationGallery /></>
       )}
 
       {/* 6. Módulo de Presentes e Chave Pix */}
-      <InvitationGiftRegistry />
+      {event.gift_information && (
+        <><ThemeSectionDivider /><InvitationGiftRegistry /></>
+      )}
 
       {/* 7. Confirmação de Presença (RSVP) com Botão Temático */}
+      <ThemeSectionDivider />
       <RsvpExperience />
 
       {/* 8. Mural de Recados (Incluso no plano 'completo') */}
       {event.plan === 'completo' && (
-        <GuestbookWall messages={guestbookMessages} />
+        <><ThemeSectionDivider /><GuestbookWall messages={guestbookMessages} /></>
       )}
     </main>
   );

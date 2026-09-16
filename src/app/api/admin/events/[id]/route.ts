@@ -8,7 +8,7 @@ import {
   MATHEUS_OFFICIAL_UUID,
   MATHEUS_DEMO_LEGACY_ID,
 } from '@/data/matheus-invitation-demo';
-import { getInvitationTheme } from '@/data/invitation-themes';
+import { getInvitationTheme, mergeInvitationThemeConfig } from '@/data/invitation-themes';
 import { EventRow } from '@/types/invitation';
 
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -115,14 +115,7 @@ export async function PUT(
       'infantil-monstrinhos-elementais';
     const themePreset = getInvitationTheme(canonicalThemeKey);
 
-    const fullThemeConfig = {
-      ...themePreset.config,
-      ...(body.theme_config || {}),
-      theme_key: themePreset.id,
-      themeId: themePreset.id,
-      slug: themePreset.id,
-      heroBadge: body.theme_config?.heroBadge || themePreset.heroBadge,
-    };
+    const fullThemeConfig = mergeInvitationThemeConfig(themePreset, body.theme_config);
 
     const updateData: Record<string, any> = {
       title: body.title,

@@ -169,6 +169,82 @@
   --invitation-background: #FFF8F0;
 }
 
+.invitation-theme-badge {
+  color: var(--invitation-primary);
+  background: color-mix(in srgb, var(--invitation-background) 82%, white 18%);
+  border: 1px solid color-mix(in srgb, var(--invitation-accent) 42%, transparent);
+  border-radius: 999px;
+}
+
+.invitation-display-title {
+  text-wrap: balance;
+  text-shadow: 0 2px 0 rgb(255 255 255 / 0.55);
+}
+
+[data-invitation-theme="infantil-herois-originais"] .invitation-theme-badge,
+[data-invitation-theme="infantil-aventura-blocos"] .invitation-theme-badge,
+[data-invitation-theme="minimalista"] .invitation-theme-badge {
+  border-radius: 0.35rem;
+}
+
+[data-invitation-theme="infantil-herois-originais"] .invitation-theme-badge {
+  border: 3px solid #0f172a;
+  background: #fde047;
+  color: #b91c1c;
+  box-shadow: 4px 4px 0 #1e3a8a;
+}
+
+[data-invitation-theme="infantil-pop"] .invitation-theme-badge {
+  border: 2px solid #ec4899;
+  background: #2e1065;
+  color: #fbcfe8;
+  box-shadow: 0 0 18px rgb(236 72 153 / 0.38);
+}
+
+[data-invitation-theme="infantil-aventura-blocos"] .invitation-theme-badge {
+  border: 3px solid #052e16;
+  background: #15803d;
+  color: white;
+  box-shadow: 4px 4px 0 #052e16;
+}
+
+[data-invitation-theme="elegante"] .invitation-theme-badge {
+  border: 1px solid #d97706;
+  border-radius: 0;
+  background: #1c1917;
+  color: #fef3c7;
+  letter-spacing: 0.22em;
+}
+
+[data-invitation-theme="minimalista"] .invitation-theme-badge {
+  border-width: 0 0 1px;
+  background: transparent;
+  color: #09090b;
+  letter-spacing: 0.28em;
+  box-shadow: none;
+}
+
+[data-invitation-theme="festivo"] .invitation-theme-badge {
+  border: 2px solid #fcd34d;
+  background: linear-gradient(90deg, #6d28d9, #c026d3, #f97316);
+  color: white;
+  box-shadow: 0 0 24px rgb(192 38 211 / 0.32);
+}
+
+[data-invitation-theme="infantil-pop"] .invitation-themed-card,
+[data-invitation-theme="festivo"] .invitation-themed-card {
+  color: #fff;
+}
+
+[data-invitation-theme="infantil-pop"] .invitation-themed-card .text-slate-700,
+[data-invitation-theme="infantil-pop"] .invitation-themed-card .text-slate-600,
+[data-invitation-theme="infantil-pop"] .invitation-themed-card .text-slate-500,
+[data-invitation-theme="festivo"] .invitation-themed-card .text-slate-700,
+[data-invitation-theme="festivo"] .invitation-themed-card .text-slate-600,
+[data-invitation-theme="festivo"] .invitation-themed-card .text-slate-500 {
+  color: rgb(255 255 255 / 0.76);
+}
+
 /* Respeito à preferência de redução de movimento (sistema e manual) */
 @media (prefers-reduced-motion: reduce) {
   .invitation-experience-root *,

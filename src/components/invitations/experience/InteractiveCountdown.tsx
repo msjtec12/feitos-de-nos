@@ -6,6 +6,7 @@ import { EventThemeConfig } from '@/types/invitation';
 import { PartyPopper } from 'lucide-react';
 import { useOptionalInvitationTheme } from './InvitationExperience';
 import { getInvitationTheme } from '@/data/invitation-themes';
+import { getInvitationThemeCopy } from '@/lib/invitations/theme-copy';
 
 interface InteractiveCountdownProps {
   eventDate?: string;
@@ -50,6 +51,7 @@ export function InteractiveCountdown(props: InteractiveCountdownProps) {
   const themeConfig = contextValues?.themeConfig || props.themeConfig || activeTheme.config;
   const eventDate = contextValues?.event.event_date || props.eventDate || new Date().toISOString();
   const countdownStyle = activeTheme.countdownStyle;
+  const themeCopy = getInvitationThemeCopy(activeTheme);
 
   const [time, setTime] = useState<TimeRemaining>({
     days: 0,
@@ -120,7 +122,7 @@ export function InteractiveCountdown(props: InteractiveCountdownProps) {
           <div className="inline-flex items-center gap-2 text-[#15803D] font-black uppercase text-xs tracking-wider">
             <span>🌿</span>
             <span className="bg-[#FEFCE8] px-3 py-1 rounded-full border border-[#15803D]/20 shadow-2xs">
-              CONTAGEM REGRESSIVA
+              {themeCopy.countdown}
             </span>
             <span>🌿</span>
           </div>
@@ -134,14 +136,14 @@ export function InteractiveCountdown(props: InteractiveCountdownProps) {
               className="text-xs font-black uppercase tracking-widest px-3 py-1 rounded-full shadow-2xs border border-black/5 bg-white/90"
               style={{ color: primaryColor }}
             >
-              ⏳ Contagem Regressiva
+              {themeCopy.countdown}
             </span>
           </div>
         )}
       </div>
 
       {/* Grid com os 4 itens estilizados de acordo com o tema */}
-      <div className="grid grid-cols-4 gap-2 sm:gap-3">
+      <div className="grid grid-cols-2 gap-3 px-5 sm:grid-cols-4 sm:gap-3 sm:px-0">
         {units.map((u, i) => {
           const isSeconds = i === 3;
           const formattedVal = String(u.value).padStart(2, '0');

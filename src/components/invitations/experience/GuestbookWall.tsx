@@ -5,6 +5,8 @@ import { EventGuestbookMessageRow, EventThemeConfig } from '@/types/invitation';
 import { MessageSquare, Send, CheckCircle2 } from 'lucide-react';
 import { useOptionalInvitationTheme } from './InvitationExperience';
 import { getInvitationTheme } from '@/data/invitation-themes';
+import { getThemeButtonClass, getThemeCardClass } from '@/lib/invitations/theme-ui';
+import { getInvitationThemeCopy } from '@/lib/invitations/theme-copy';
 
 interface GuestbookWallProps {
   eventId?: string;
@@ -31,8 +33,6 @@ export function GuestbookWall(props: GuestbookWallProps) {
   const primaryColor = themeConfig.primaryColor || activeTheme.previewColors.primary;
   const accentColor = themeConfig.accentColor || activeTheme.previewColors.accent;
   const isDino = activeTheme.assetFolder === 'dinosaurs';
-  const isHero = activeTheme.assetFolder === 'heroes';
-  const isBlocos = activeTheme.assetFolder === 'blocks';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -72,14 +72,9 @@ export function GuestbookWall(props: GuestbookWallProps) {
     }
   };
 
-  let wallCardClass = 'bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-black/5 space-y-6';
-  if (isDino) {
-    wallCardClass = 'bg-[#FAF5E6] rounded-[28px] p-6 sm:p-8 shadow-md border-2 border-[#D4C29D] space-y-6';
-  } else if (isHero) {
-    wallCardClass = 'bg-white rounded-2xl p-6 sm:p-8 border-3 border-slate-900 shadow-[5px_5px_0px_#1E3A8A] space-y-6';
-  } else if (isBlocos) {
-    wallCardClass = 'bg-[#F0FDF4] rounded-none p-6 sm:p-8 border-3 border-emerald-950 shadow-[5px_5px_0px_#15803D] space-y-6 font-mono';
-  }
+  const wallCardClass = `invitation-themed-card ${getThemeCardClass(activeTheme, 'p-6 sm:p-8')} space-y-6`;
+  const buttonClass = getThemeButtonClass(activeTheme);
+  const themeCopy = getInvitationThemeCopy(activeTheme);
 
   return (
     <section className="max-w-xl mx-auto px-4 py-4 space-y-4">
@@ -90,13 +85,13 @@ export function GuestbookWall(props: GuestbookWallProps) {
             className="text-[11px] uppercase tracking-widest font-extrabold block"
             style={{ color: isDino ? '#15803D' : accentColor }}
           >
-            Mural de Recados
+            {themeCopy.guestbookKicker}
           </span>
           <h3
             className="font-serif text-2xl sm:text-3xl font-bold"
             style={{ color: primaryColor }}
           >
-            Mensagens de Carinho
+            {themeCopy.guestbookTitle}
           </h3>
           <p className="text-xs text-slate-500">
             Deixe seus votos especiais para tornar este dia ainda mais inesquecível
@@ -143,8 +138,7 @@ export function GuestbookWall(props: GuestbookWallProps) {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full py-3 rounded-xl text-xs font-bold text-white flex items-center justify-center gap-2 shadow-xs transition-transform hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50"
-            style={{ backgroundColor: primaryColor }}
+            className={`flex w-full items-center justify-center gap-2 py-3 text-xs font-bold transition-transform hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 ${buttonClass}`}
           >
             <Send className="w-3.5 h-3.5" />
             <span>{isSubmitting ? 'Enviando recado...' : 'Publicar no Mural'}</span>

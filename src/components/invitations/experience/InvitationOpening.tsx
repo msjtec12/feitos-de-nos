@@ -87,9 +87,12 @@ export function InvitationOpening(props: InvitationOpeningProps) {
 
   return (
     <div
-      className={`absolute inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-gradient-to-b from-[#181517]/92 via-[#0F0D0E]/96 to-[#0F0D0E] backdrop-blur-md transition-all duration-700 select-none ${
+      className={`absolute inset-0 z-50 flex items-center justify-center p-3 sm:p-4 backdrop-blur-md transition-all duration-700 select-none ${
         isOpening ? 'opacity-0 pointer-events-none scale-105' : 'opacity-100 scale-100'
       }`}
+      style={{
+        background: `radial-gradient(circle at 50% 22%, ${accentColor}55 0%, ${primaryColor}33 25%, rgba(15,13,14,.97) 68%)`,
+      }}
     >
       {/* Botão de pular animação */}
       <button
@@ -103,6 +106,19 @@ export function InvitationOpening(props: InvitationOpeningProps) {
       </button>
 
       <div className="relative w-full max-w-sm cursor-pointer" onClick={() => handleTriggerOpen(true)}>
+        <div className="relative z-10 mb-2 space-y-1 text-center text-white">
+          <span className="text-[10px] font-bold uppercase tracking-[.24em] text-white/70">
+            {activeTheme.name}
+          </span>
+          <h2
+            className="text-2xl font-black leading-tight drop-shadow-lg sm:text-3xl"
+            style={{ fontFamily: themeConfig.headingFont || activeTheme.config.headingFont }}
+          >
+            {honoreeName || title}
+          </h2>
+          <p className="text-xs font-medium text-white/75">Um convite preparado especialmente para você</p>
+        </div>
+
         {/* Brilho pulsante atrás do invólucro do tema */}
         <div
           className="absolute -inset-4 rounded-3xl opacity-35 blur-2xl animate-party-pulse pointer-events-none"

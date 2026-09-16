@@ -2,11 +2,12 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { EventDetailWithMedia, EventGuestRow, EventThemeConfig } from '@/types/invitation';
-import { AuthorialThemeDefinition, getInvitationTheme } from '@/data/invitation-themes';
+import { AuthorialThemeDefinition, getInvitationTheme, mergeInvitationThemeConfig } from '@/data/invitation-themes';
 import { ThemeParticles } from './ThemeParticles';
 import { MusicController } from './MusicController';
 import { MotionPreferenceControl } from './MotionPreferenceControl';
 import { MailOpen } from 'lucide-react';
+import { ThemeScenery } from './ThemeScenery';
 
 interface InvitationThemeContextType {
   theme: AuthorialThemeDefinition;
@@ -76,20 +77,7 @@ export function InvitationExperience({
 
   const activeTheme = providedTheme || getInvitationTheme(rawThemeKey);
 
-  const themeConfig: EventThemeConfig = {
-    ...activeTheme.config,
-    ...(event.theme_config || {}),
-    theme_key: activeTheme.id,
-    themeId: activeTheme.id,
-    slug: activeTheme.id,
-    heroBadge: event.theme_config?.heroBadge || activeTheme.heroBadge,
-    countdownStyle: activeTheme.countdownStyle,
-    cardMaterial: activeTheme.cardMaterial,
-    photoStyle: activeTheme.photoFrameStyle,
-    buttonStyle: activeTheme.buttonStyle,
-    openingStyle: activeTheme.openingStyle,
-    particlePreset: activeTheme.particlePreset,
-  };
+  const themeConfig: EventThemeConfig = mergeInvitationThemeConfig(activeTheme, event.theme_config);
 
   const handleOpenInvitation = (withAudioGesture: boolean) => {
     setEnvelopeOpened(true);
@@ -137,9 +125,11 @@ export function InvitationExperience({
           '--invitation-background': backgroundColor,
           '--invitation-text': textColor,
           color: textColor,
+          fontFamily: themeConfig.bodyFont || activeTheme.config.bodyFont,
           ...activeTheme.scenery.backgroundStyle,
         } as React.CSSProperties}
       >
+        <ThemeScenery />
         {/* Partículas Temáticas Ambientais exclusivas por tema */}
         <ThemeParticles themeConfig={themeConfig} reducedMotion={effectiveReducedMotion} />
 

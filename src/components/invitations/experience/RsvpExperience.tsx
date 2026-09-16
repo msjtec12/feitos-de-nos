@@ -15,6 +15,8 @@ import {
 } from 'lucide-react';
 import { useOptionalInvitationTheme } from './InvitationExperience';
 import { getInvitationTheme } from '@/data/invitation-themes';
+import { getThemeButtonClass, getThemeCardClass } from '@/lib/invitations/theme-ui';
+import { getInvitationThemeCopy } from '@/lib/invitations/theme-copy';
 
 interface RsvpExperienceProps {
   event?: EventRow;
@@ -53,10 +55,9 @@ export function RsvpExperience(props: RsvpExperienceProps) {
   const primaryColor = themeConfig.primaryColor || activeTheme.previewColors.primary;
   const accentColor = themeConfig.accentColor || activeTheme.previewColors.accent;
   const isDino = activeTheme.assetFolder === 'dinosaurs';
-  const isHero = activeTheme.assetFolder === 'heroes';
-  const isBlocos = activeTheme.assetFolder === 'blocks';
-  const isMinimal = activeTheme.assetFolder === 'minimal';
-  const isPop = activeTheme.assetFolder === 'pop';
+  const cardClass = `invitation-themed-card ${getThemeCardClass(activeTheme, 'p-5 sm:p-7')} space-y-4`;
+  const buttonClass = getThemeButtonClass(activeTheme);
+  const themeCopy = getInvitationThemeCopy(activeTheme);
 
   if (!event) return null;
 
@@ -129,19 +130,19 @@ export function RsvpExperience(props: RsvpExperienceProps) {
       {/* Botão de Destaque RSVP ou Formulário Completo */}
       {!isSuccess ? (
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="bg-white/95 backdrop-blur-xs rounded-3xl p-5 sm:p-7 shadow-md border border-black/5 space-y-4">
+          <div className={cardClass}>
             <div className="text-center space-y-1">
               <span
                 className="text-[11px] uppercase tracking-widest font-extrabold block"
                 style={{ color: isDino ? '#15803D' : accentColor }}
               >
-                Confirmação de Presença
+                {themeCopy.rsvpKicker}
               </span>
               <h3
                 className="text-2xl sm:text-3xl font-bold font-serif"
                 style={{ color: primaryColor }}
               >
-                Você vai comemorar conosco?
+                {themeCopy.rsvpTitle}
               </h3>
               {event.rsvp_deadline && (
                 <p className="text-xs text-slate-500">
@@ -251,36 +252,11 @@ export function RsvpExperience(props: RsvpExperienceProps) {
                     </span>
                   </div>
                 </button>
-              ) : isHero ? (
-                <button
-                  type="submit"
-                  disabled={isSubmitting || isDeadlinePassed}
-                  className="w-full py-4 rounded-xl font-black uppercase tracking-wider text-white text-base bg-red-600 border-3 border-slate-900 shadow-[4px_4px_0px_#1E3A8A] hover:bg-red-700 active:translate-x-1 active:translate-y-1 transition-all disabled:opacity-50"
-                >
-                  {isSubmitting ? 'CONFIRMANDO...' : 'CONFIRMAR PRESENÇA ⚡'}
-                </button>
-              ) : isBlocos ? (
-                <button
-                  type="submit"
-                  disabled={isSubmitting || isDeadlinePassed}
-                  className="w-full py-3.5 rounded-none font-mono font-black uppercase text-white text-sm bg-emerald-700 border-3 border-emerald-950 shadow-[4px_4px_0px_#052E16] hover:bg-emerald-800 transition-all disabled:opacity-50"
-                >
-                  {isSubmitting ? 'SALVANDO...' : '[ CONFIRMAR PRESENÇA ]'}
-                </button>
-              ) : isMinimal ? (
-                <button
-                  type="submit"
-                  disabled={isSubmitting || isDeadlinePassed}
-                  className="w-full py-3.5 rounded-none font-sans font-bold uppercase tracking-[2px] text-white text-xs bg-black hover:bg-zinc-800 transition-all disabled:opacity-50"
-                >
-                  {isSubmitting ? 'ENVIANDO...' : 'CONFIRMAR PRESENÇA —'}
-                </button>
               ) : (
                 <button
                   type="submit"
                   disabled={isSubmitting || isDeadlinePassed}
-                  className="w-full py-3.5 rounded-full font-bold text-white text-sm shadow-md hover:opacity-90 active:scale-95 transition-all disabled:opacity-50"
-                  style={{ backgroundColor: primaryColor }}
+                  className={`w-full py-3.5 font-black uppercase tracking-wide text-sm hover:opacity-95 active:scale-[.98] transition-all disabled:opacity-50 ${buttonClass}`}
                 >
                   {isSubmitting ? 'Enviando...' : 'Confirmar Presença'}
                 </button>
@@ -289,7 +265,7 @@ export function RsvpExperience(props: RsvpExperienceProps) {
           </div>
         </form>
       ) : (
-        <div className="bg-white/95 rounded-3xl p-6 sm:p-8 shadow-sm border border-black/5 text-center space-y-3">
+        <div className={`invitation-themed-card ${getThemeCardClass(activeTheme, 'p-6 sm:p-8')} text-center space-y-3`}>
           <div className="w-12 h-12 mx-auto rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center">
             <CheckCircle2 className="w-7 h-7" />
           </div>
