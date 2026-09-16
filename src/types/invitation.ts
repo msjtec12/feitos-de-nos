@@ -69,9 +69,11 @@ export type ConfirmationEffect =
   | 'action-boom';
 
 export interface EventThemeConfig {
+  theme_key?: string;
   themeId?: string;
   themeName?: string;
   slug?: string;
+  heroBadge?: string;
   primaryColor: string;
   secondaryColor?: string;
   accentColor: string;
@@ -98,6 +100,7 @@ export interface EventRow {
   order_id: string | null;
   title: string;
   slug: string;
+  theme_key?: string | null;
   event_type: InvitationEventType;
   plan: InvitationPlanId;
   host_names: string;

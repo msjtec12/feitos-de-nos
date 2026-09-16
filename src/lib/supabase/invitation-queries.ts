@@ -11,16 +11,12 @@ import {
   MATHEUS_INVITATION_DEMO,
   MATHEUS_DEMO_GUESTS,
 } from '@/data/matheus-invitation-demo';
+import { getInvitationTheme } from '@/data/invitation-themes';
 
 export async function getPublicEventBySlug(
   slug: string
 ): Promise<EventDetailWithMedia | null> {
   const normalizedSlug = slug.trim().toLowerCase();
-
-  // Se for o slug de demonstração oficial
-  if (normalizedSlug === MATHEUS_DEMO_SLUG) {
-    return MATHEUS_INVITATION_DEMO;
-  }
 
   try {
     const adminClient = createSupabaseAdminClient();
@@ -32,47 +28,74 @@ export async function getPublicEventBySlug(
       .is('archived_at', null)
       .maybeSingle();
 
-    if (eventError || !eventData) {
-      return null;
+    if (!eventError && eventData) {
+      const event = eventData as EventRow;
+
+      // Buscar mídias do evento
+      const { data: mediaData } = await adminClient
+        .from('event_media')
+        .select('*')
+        .eq('event_id', event.id)
+        .order('sort_order', { ascending: true });
+
+      // Buscar estatísticas de convidados
+      const { data: guestsData } = await adminClient
+        .from('event_guests')
+        .select('attendance_status, companions_count')
+        .eq('event_id', event.id);
+
+      const guests = (guestsData || []) as {
+        attendance_status: 'pending' | 'confirmed' | 'declined';
+        companions_count: number;
+      }[];
+
+      const stats = {
+        totalGuests: guests.length,
+        confirmedGuests: guests.filter((g) => g.attendance_status === 'confirmed').length,
+        declinedGuests: guests.filter((g) => g.attendance_status === 'declined').length,
+        pendingGuests: guests.filter((g) => g.attendance_status === 'pending').length,
+        confirmedCompanions: guests
+          .filter((g) => g.attendance_status === 'confirmed')
+          .reduce((sum, g) => sum + (g.companions_count || 0), 0),
+      };
+
+      // Resolver tema canônico com fallback de presets completos
+      const rawThemeKey =
+        event.theme_key ||
+        event.theme_config?.theme_key ||
+        event.theme_config?.themeId ||
+        event.theme_config?.slug ||
+        'infantil-monstrinhos-elementais';
+      const themePreset = getInvitationTheme(rawThemeKey);
+      const normalizedThemeConfig = {
+        ...themePreset.config,
+        ...(event.theme_config || {}),
+        theme_key: themePreset.id,
+        themeId: themePreset.id,
+        slug: themePreset.id,
+        heroBadge: event.theme_config?.heroBadge || themePreset.heroBadge,
+      };
+
+      return {
+        ...event,
+        theme_key: themePreset.id,
+        theme_config: normalizedThemeConfig,
+        media: (mediaData || []) as EventMediaRow[],
+        stats,
+      };
     }
 
-    const event = eventData as EventRow;
+    // Fallback gracioso para demonstração se ainda não houver registro no banco
+    if (normalizedSlug === MATHEUS_DEMO_SLUG) {
+      return MATHEUS_INVITATION_DEMO;
+    }
 
-    // Buscar mídias do evento
-    const { data: mediaData } = await adminClient
-      .from('event_media')
-      .select('*')
-      .eq('event_id', event.id)
-      .order('sort_order', { ascending: true });
-
-    // Buscar estatísticas de convidados
-    const { data: guestsData } = await adminClient
-      .from('event_guests')
-      .select('attendance_status, companions_count')
-      .eq('event_id', event.id);
-
-    const guests = (guestsData || []) as {
-      attendance_status: 'pending' | 'confirmed' | 'declined';
-      companions_count: number;
-    }[];
-
-    const stats = {
-      totalGuests: guests.length,
-      confirmedGuests: guests.filter((g) => g.attendance_status === 'confirmed').length,
-      declinedGuests: guests.filter((g) => g.attendance_status === 'declined').length,
-      pendingGuests: guests.filter((g) => g.attendance_status === 'pending').length,
-      confirmedCompanions: guests
-        .filter((g) => g.attendance_status === 'confirmed')
-        .reduce((sum, g) => sum + (g.companions_count || 0), 0),
-    };
-
-    return {
-      ...event,
-      media: (mediaData || []) as EventMediaRow[],
-      stats,
-    };
+    return null;
   } catch (err) {
     console.error('[getPublicEventBySlug] Error fetching event:', err);
+    if (normalizedSlug === MATHEUS_DEMO_SLUG) {
+      return MATHEUS_INVITATION_DEMO;
+    }
     return null;
   }
 }
@@ -83,16 +106,6 @@ export async function getEventGuestByToken(
 ): Promise<{ event: EventDetailWithMedia; guest: EventGuestRow } | null> {
   const normalizedSlug = slug.trim().toLowerCase();
   const normalizedToken = token.trim();
-
-  // Suporte a demonstração
-  if (normalizedSlug === MATHEUS_DEMO_SLUG) {
-    const demoGuest = MATHEUS_DEMO_GUESTS.find(
-      (g) => g.token.toLowerCase() === normalizedToken.toLowerCase()
-    );
-    if (demoGuest) {
-      return { event: MATHEUS_INVITATION_DEMO, guest: demoGuest };
-    }
-  }
 
   const event = await getPublicEventBySlug(normalizedSlug);
   if (!event) return null;
@@ -106,7 +119,17 @@ export async function getEventGuestByToken(
       .eq('token', normalizedToken)
       .maybeSingle();
 
-    if (error || !guestData) return null;
+    if (error || !guestData) {
+      if (normalizedSlug === MATHEUS_DEMO_SLUG) {
+        const demoGuest = MATHEUS_DEMO_GUESTS.find(
+          (g) => g.token.toLowerCase() === normalizedToken.toLowerCase()
+        );
+        if (demoGuest) {
+          return { event, guest: { ...demoGuest, event_id: event.id } };
+        }
+      }
+      return null;
+    }
 
     return {
       event,
@@ -114,6 +137,14 @@ export async function getEventGuestByToken(
     };
   } catch (err) {
     console.error('[getEventGuestByToken] Error fetching guest:', err);
+    if (normalizedSlug === MATHEUS_DEMO_SLUG) {
+      const demoGuest = MATHEUS_DEMO_GUESTS.find(
+        (g) => g.token.toLowerCase() === normalizedToken.toLowerCase()
+      );
+      if (demoGuest) {
+        return { event, guest: { ...demoGuest, event_id: event.id } };
+      }
+    }
     return null;
   }
 }

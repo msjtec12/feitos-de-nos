@@ -101,6 +101,7 @@ export function InvitationEditorClientView({ event: initialEvent }: InvitationEd
   // Theme
   const [themeConfig, setThemeConfig] = useState<EventThemeConfig>(
     initialEvent.theme_config || {
+      theme_key: initialEvent.theme_key || 'infantil-delicado',
       themeId: 'infantil-delicado',
       primaryColor: '#2563EB',
       accentColor: '#F59E0B',
@@ -276,8 +277,10 @@ export function InvitationEditorClientView({ event: initialEvent }: InvitationEd
     if (found) {
       setThemeConfig({
         ...found.config,
+        theme_key: found.id,
         themeId: found.id,
         slug: found.id,
+        heroBadge: found.heroBadge,
       });
       setIsDirty(true);
       setSimulatorKey((k) => k + 1);
@@ -290,6 +293,11 @@ export function InvitationEditorClientView({ event: initialEvent }: InvitationEd
     setSaveError(null);
 
     const combinedDate = `${eventDate}T${eventTime}:00-03:00`;
+    const canonicalKey =
+      themeConfig.theme_key ||
+      themeConfig.themeId ||
+      themeConfig.slug ||
+      'infantil-monstrinhos-elementais';
 
     try {
       const res = await fetch(`/api/admin/events/${initialEvent.id}`, {
@@ -298,6 +306,7 @@ export function InvitationEditorClientView({ event: initialEvent }: InvitationEd
         body: JSON.stringify({
           title,
           slug,
+          theme_key: canonicalKey,
           event_type: eventType,
           plan,
           status,
@@ -312,7 +321,12 @@ export function InvitationEditorClientView({ event: initialEvent }: InvitationEd
           dress_code: dressCode || null,
           gift_information: giftInformation || null,
           cover_url: coverUrl || null,
-          theme_config: themeConfig,
+          theme_config: {
+            ...themeConfig,
+            theme_key: canonicalKey,
+            themeId: canonicalKey,
+            slug: canonicalKey,
+          },
           rsvp_deadline: rsvpDeadline ? `${rsvpDeadline}T23:59:59-03:00` : null,
         }),
       });
@@ -769,7 +783,8 @@ export function InvitationEditorClientView({ event: initialEvent }: InvitationEd
                   </div>
                   <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
                     {INVITATION_AUTHORIAL_THEMES.map((t) => {
-                      const isSelected = themeConfig.themeId === t.id;
+                      const isSelected =
+                        (themeConfig.theme_key || themeConfig.themeId || themeConfig.slug) === t.id;
                       return (
                         <button
                           key={t.id}

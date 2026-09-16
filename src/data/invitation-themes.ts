@@ -489,18 +489,30 @@ const THEME_ALIASES: Record<string, string> = {
   'herois-originais': 'infantil-herois-originais',
   'monstrinhos-elementais': 'infantil-monstrinhos-elementais',
   'reino-encantado': 'infantil-reino-encantado',
+  'dinossauros': 'infantil-dinossauros',
+  'dinossauros-safari': 'infantil-dinossauros',
+  'safari': 'infantil-dinossauros',
+  'aventura-blocos': 'infantil-aventura-blocos',
+  'bebe-delicado': 'infantil-delicado',
+  'delicado': 'infantil-delicado',
 };
 
-export function getThemeById(themeId?: string): AuthorialThemeDefinition {
-  if (!themeId) return INVITATION_AUTHORIAL_THEMES[0];
-  const normalizedId = THEME_ALIASES[themeId] || themeId;
+export function getInvitationTheme(themeKeyOrId?: string): AuthorialThemeDefinition {
+  if (!themeKeyOrId) return INVITATION_AUTHORIAL_THEMES[0];
+  const cleaned = themeKeyOrId.trim().toLowerCase();
+  const normalizedId = THEME_ALIASES[cleaned] || cleaned;
   return (
     INVITATION_AUTHORIAL_THEMES.find((t) => t.id === normalizedId) ||
+    INVITATION_AUTHORIAL_THEMES.find((t) => t.config.slug === normalizedId) ||
     INVITATION_AUTHORIAL_THEMES[0]
   );
 }
 
+export function getThemeById(themeId?: string): AuthorialThemeDefinition {
+  return getInvitationTheme(themeId);
+}
+
 export function getThemeDefaultHeroImage(themeIdOrSlug?: string): string {
-  const theme = getThemeById(themeIdOrSlug);
+  const theme = getInvitationTheme(themeIdOrSlug);
   return theme.defaultHeroImage || 'https://images.unsplash.com/photo-1519689680058-324335c77eba?auto=format&fit=crop&w=1200&q=85';
 }

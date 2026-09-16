@@ -6,6 +6,10 @@ import {
 } from '@/lib/supabase/invitation-queries';
 import { InvitationPublicClientView } from '@/components/invitations/public/InvitationPublicClientView';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+export const fetchCache = 'force-no-store';
+
 interface GuestInvitationPageProps {
   params: Promise<{ slug: string; token: string }>;
 }

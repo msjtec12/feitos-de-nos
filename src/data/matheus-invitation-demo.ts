@@ -1,12 +1,15 @@
 import { EventDetailWithMedia, EventGuestRow } from '@/types/invitation';
 
 export const MATHEUS_DEMO_SLUG = 'matheus-akira-1-ano';
+export const MATHEUS_OFFICIAL_UUID = 'e0000000-0000-4000-8000-000000000001';
+export const MATHEUS_DEMO_LEGACY_ID = 'demo-event-matheus-akira-1-ano';
 
 export const MATHEUS_INVITATION_DEMO: EventDetailWithMedia = {
-  id: 'demo-event-matheus-akira-1-ano',
+  id: MATHEUS_OFFICIAL_UUID,
   order_id: 'demo-order-001',
   title: 'O Primeiro Aninho do Matheus Akira',
   slug: MATHEUS_DEMO_SLUG,
+  theme_key: 'infantil-monstrinhos-elementais',
   event_type: 'aniversario-infantil',
   plan: 'completo',
   host_names: 'Camila & Lucas',
@@ -26,9 +29,11 @@ export const MATHEUS_INVITATION_DEMO: EventDetailWithMedia = {
     'https://images.unsplash.com/photo-1519689680058-324335c77eba?auto=format&fit=crop&w=1200&q=80',
   music_url: 'https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a73467.mp3?filename=happy-kids-112192.mp3',
   theme_config: {
+    theme_key: 'infantil-monstrinhos-elementais',
     themeId: 'infantil-monstrinhos-elementais',
     themeName: 'Monstrinhos Elementais',
     slug: 'infantil-monstrinhos-elementais',
+    heroBadge: '⚡ Fogo, Água, Terra & Energia',
     primaryColor: '#F97316',
     secondaryColor: '#FFEDD5',
     accentColor: '#0284C7',
@@ -55,7 +60,7 @@ export const MATHEUS_INVITATION_DEMO: EventDetailWithMedia = {
   media: [
     {
       id: 'demo-media-1',
-      event_id: 'demo-event-matheus-akira-1-ano',
+      event_id: MATHEUS_OFFICIAL_UUID,
       media_type: 'image',
       url: 'https://images.unsplash.com/photo-1519689680058-324335c77eba?auto=format&fit=crop&w=1000&q=80',
       caption: 'Nosso primeiro mês de vida e muitas descobertas',
@@ -64,7 +69,7 @@ export const MATHEUS_INVITATION_DEMO: EventDetailWithMedia = {
     },
     {
       id: 'demo-media-2',
-      event_id: 'demo-event-matheus-akira-1-ano',
+      event_id: MATHEUS_OFFICIAL_UUID,
       media_type: 'image',
       url: 'https://images.unsplash.com/photo-1544126592-807ade215a0b?auto=format&fit=crop&w=1000&q=80',
       caption: 'Primeiro banho de sol com o papai e a mamãe',
@@ -73,7 +78,7 @@ export const MATHEUS_INVITATION_DEMO: EventDetailWithMedia = {
     },
     {
       id: 'demo-media-3',
-      event_id: 'demo-event-matheus-akira-1-ano',
+      event_id: MATHEUS_OFFICIAL_UUID,
       media_type: 'image',
       url: 'https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?auto=format&fit=crop&w=1000&q=80',
       caption: 'Aos 6 meses, já aprendendo a gargalhar com a casa inteira',
@@ -82,7 +87,7 @@ export const MATHEUS_INVITATION_DEMO: EventDetailWithMedia = {
     },
     {
       id: 'demo-media-4',
-      event_id: 'demo-event-matheus-akira-1-ano',
+      event_id: MATHEUS_OFFICIAL_UUID,
       media_type: 'image',
       url: 'https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?auto=format&fit=crop&w=1000&q=80',
       caption: '9 meses: engatinhando por tudo e explorando o mundão',
@@ -102,7 +107,7 @@ export const MATHEUS_INVITATION_DEMO: EventDetailWithMedia = {
 export const MATHEUS_DEMO_GUESTS: EventGuestRow[] = [
   {
     id: 'guest-demo-1',
-    event_id: 'demo-event-matheus-akira-1-ano',
+    event_id: MATHEUS_OFFICIAL_UUID,
     name: 'Vovó Ana e Vovô Carlos',
     token: 'vovo-ana',
     phone: '11999887766',
@@ -117,7 +122,7 @@ export const MATHEUS_DEMO_GUESTS: EventGuestRow[] = [
   },
   {
     id: 'guest-demo-2',
-    event_id: 'demo-event-matheus-akira-1-ano',
+    event_id: MATHEUS_OFFICIAL_UUID,
     name: 'Tio Rafael & Família',
     token: 'tio-rafael',
     phone: '11988776655',
@@ -132,7 +137,7 @@ export const MATHEUS_DEMO_GUESTS: EventGuestRow[] = [
   },
   {
     id: 'guest-demo-3',
-    event_id: 'demo-event-matheus-akira-1-ano',
+    event_id: MATHEUS_OFFICIAL_UUID,
     name: 'Madrinha Júlia',
     token: 'madrinha-julia',
     phone: '11977665544',

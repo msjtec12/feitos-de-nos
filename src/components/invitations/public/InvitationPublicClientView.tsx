@@ -17,6 +17,7 @@ import { InvitationGallery } from './InvitationGallery';
 import { InvitationGiftRegistry } from './InvitationGiftRegistry';
 import { BrandLogo } from '@/components/brand/BrandLogo';
 import { Sparkles, MailOpen } from 'lucide-react';
+import { getInvitationTheme } from '@/data/invitation-themes';
 
 interface InvitationPublicClientViewProps {
   event: EventDetailWithMedia;
@@ -47,7 +48,7 @@ export function InvitationPublicClientView({
 
   const effectiveReducedMotion = isSimulator ? Boolean(simulatorReducedMotion) : reducedMotion;
 
-  // Normalize theme config to guarantee themeId and slug are always defined
+  // Normalize theme config to guarantee canonical theme_key, themeId and full preset values
   const rawConfig = event.theme_config || {
     primaryColor: '#713C48',
     accentColor: '#C96E5A',
@@ -56,14 +57,26 @@ export function InvitationPublicClientView({
     textColor: '#302B2D',
   };
 
-  const themeIdentifier = (rawConfig.themeId || rawConfig.slug || event.event_type || 'infantil-monstrinhos-elementais').toLowerCase();
+  const canonicalKey =
+    rawConfig.theme_key ||
+    event.theme_key ||
+    rawConfig.themeId ||
+    rawConfig.slug ||
+    event.event_type ||
+    'infantil-monstrinhos-elementais';
+
+  const themePreset = getInvitationTheme(canonicalKey);
 
   const themeConfig: EventThemeConfig = {
+    ...themePreset.config,
     ...rawConfig,
-    themeId: themeIdentifier,
-    slug: themeIdentifier,
+    theme_key: themePreset.id,
+    themeId: themePreset.id,
+    slug: themePreset.id,
+    heroBadge: rawConfig.heroBadge || themePreset.heroBadge,
   };
 
+  const themeIdentifier = themePreset.id.toLowerCase();
   const backgroundColor = themeConfig.backgroundColor || '#FFF8F0';
   const textColor = themeConfig.textColor || '#302B2D';
 

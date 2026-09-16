@@ -16,7 +16,7 @@ import {
   FriendlyDino,
   DreamyMoon,
 } from '../experience/ThemeDecorations';
-import { getThemeDefaultHeroImage } from '@/data/invitation-themes';
+import { getInvitationTheme, getThemeDefaultHeroImage } from '@/data/invitation-themes';
 
 interface InvitationHeaderProps {
   title: string;
@@ -38,12 +38,15 @@ export function InvitationHeader({
   themeConfig,
   isEditor = false,
 }: InvitationHeaderProps) {
-  const primaryColor = themeConfig.primaryColor || '#713C48';
-  const accentColor = themeConfig.accentColor || '#C96E5A';
-  const photoStyle = themeConfig.photoStyle || 'rounded';
-  const themeSlug = (themeConfig.themeId || themeConfig.slug || '').toLowerCase();
+  const currentTheme = getInvitationTheme(
+    themeConfig.theme_key || themeConfig.themeId || themeConfig.slug
+  );
+  const themeSlug = currentTheme.id.toLowerCase();
+  const primaryColor = themeConfig.primaryColor || currentTheme.config.primaryColor || '#713C48';
+  const accentColor = themeConfig.accentColor || currentTheme.config.accentColor || '#C96E5A';
+  const photoStyle = themeConfig.photoStyle || currentTheme.config.photoStyle || 'rounded';
 
-  const defaultArtwork = getThemeDefaultHeroImage(themeSlug);
+  const defaultArtwork = currentTheme.defaultHeroImage || getThemeDefaultHeroImage(themeSlug);
 
   // Safe image state with loading, error resilience, and graceful fallback
   const [imageSrc, setImageSrc] = useState<string>(() => {
@@ -98,29 +101,23 @@ export function InvitationHeader({
   const isReinoTheme = themeSlug.includes('reino') || themeSlug.includes('princesa');
   const isPopTheme = themeSlug.includes('pop') || themeSlug.includes('musica');
   const isBlocosTheme = themeSlug.includes('bloco') || themeSlug.includes('pixel');
+  const isDinoTheme = themeSlug.includes('dino') || themeSlug.includes('safari');
+
+  const resolvedBadgeText =
+    themeConfig.heroBadge ||
+    currentTheme.heroBadge ||
+    `Convite especial por ${hostNames}`;
 
   return (
     <section className="text-center pt-2 pb-6 px-4 space-y-5 relative">
       {/* 1. Thematic Top Badge Banner */}
       <div className="flex justify-center">
         <ThematicHeaderBanner
-          themeId={themeConfig.themeId}
-          themeSlug={themeConfig.slug}
+          themeId={currentTheme.id}
+          themeSlug={currentTheme.id}
           primaryColor={primaryColor}
           accentColor={accentColor}
-          badgeText={
-            isHeroTheme
-              ? '⚡ CONVITE DE SUPER-HERÓI ⚡'
-              : isElementalTheme
-              ? '✨ CONVITE DOS ELEMENTOS ✨'
-              : isReinoTheme
-              ? '👑 CONVITE REAL DOS CONTOS 👑'
-              : isPopTheme
-              ? '🎵 SHOW & FESTA POP VIP 🎵'
-              : isBlocosTheme
-              ? '🧱 MISSÃO MUNDO DOS BLOCOS 🧱'
-              : `Convite especial por ${hostNames}`
-          }
+          badgeText={resolvedBadgeText}
         />
       </div>
 
@@ -191,6 +188,12 @@ export function InvitationHeader({
         {isBlocosTheme && (
           <div className="absolute -top-3 -right-3 z-20">
             <PixelGrassBlock className="w-14 h-14 drop-shadow-xl" />
+          </div>
+        )}
+
+        {isDinoTheme && (
+          <div className="absolute -top-3 -right-3 z-20 animate-bounce">
+            <FriendlyDino className="w-14 h-14 drop-shadow-xl" />
           </div>
         )}
 

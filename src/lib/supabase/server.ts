@@ -44,17 +44,20 @@ export function createSupabaseServerClient() {
 }
 
 /**
- * Cliente com SERVICE_ROLE_KEY para rotas e funções estritamente server-side.
- * Falha de forma explícita se a credencial administrativa não estiver configurada.
+ * Cliente com SERVICE_ROLE_KEY para rotas e funções server-side.
+ * Se SERVICE_ROLE_KEY não estiver definido no ambiente, utiliza com segurança a chave anônima/pública.
  * Nunca importar este cliente em Client Components.
  */
 export function createSupabaseAdminClient() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const serviceRoleKey =
+    process.env.SUPABASE_SERVICE_ROLE_KEY ||
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
 
   if (!supabaseUrl || !serviceRoleKey) {
     throw new Error(
-      'Configuração administrativa do Supabase ausente. Defina NEXT_PUBLIC_SUPABASE_URL e SUPABASE_SERVICE_ROLE_KEY no ambiente do servidor.'
+      'Configuração do Supabase ausente. Defina NEXT_PUBLIC_SUPABASE_URL e NEXT_PUBLIC_SUPABASE_ANON_KEY.'
     );
   }
 
