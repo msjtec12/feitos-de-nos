@@ -54,7 +54,7 @@ export function ThemeParticles({ themeConfig, reducedMotion = false }: ThemePart
     };
   }, []);
 
-  const count = intensity === 'none' || preset === 'none' ? 0 : intensity === 'soft' ? 10 : 20;
+  const count = intensity === 'none' || preset === 'none' ? 0 : intensity === 'soft' ? 4 : 7;
 
   const particles: Particle[] = useMemo(() => {
     if (count === 0 || reducedMotion || !isTabVisible) {
@@ -92,10 +92,10 @@ export function ThemeParticles({ themeConfig, reducedMotion = false }: ThemePart
         id: i,
         left: (i * (96 / count) + (i % 3) * 4) % 96,
         top: Math.random() * 95,
-        size: 14 + Math.floor(Math.random() * 14),
-        duration: 5 + Math.random() * 5,
-        delay: (i * 0.3) % 3,
-        opacity: 0.65 + Math.random() * 0.3,
+        size: 9 + Math.floor(Math.random() * 8),
+        duration: 12 + Math.random() * 7,
+        delay: (i * 1.1) % 6,
+        opacity: 0.22 + Math.random() * 0.2,
         color: colors[i % colors.length],
         shape,
       });
