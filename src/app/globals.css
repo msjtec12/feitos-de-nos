@@ -81,10 +81,10 @@
 /* Animações festivas e interativas dos convites */
 @keyframes partyFloatSlow {
   0%, 100% {
-    transform: translateY(0px) rotate(0deg) scale(1);
+    transform: translate3d(0, 0, 0) rotate(-2deg);
   }
   50% {
-    transform: translateY(-24px) rotate(180deg) scale(1.1);
+    transform: translate3d(5px, -8px, 0) rotate(2deg);
   }
 }
 
@@ -126,7 +126,7 @@
 }
 
 .animate-party-float {
-  animation: partyFloatSlow 7s ease-in-out infinite;
+  animation: partyFloatSlow 15s ease-in-out infinite;
 }
 
 .animate-party-pulse {
@@ -305,20 +305,41 @@
 
 /* 6. Dinossauros: pergaminho de expedição e selva. */
 [data-invitation-theme="infantil-dinossauros"] .invitation-premium-shell {
-  border: 3px solid #b98748;
-  background:
-    radial-gradient(circle at 16% 5%, rgb(21 128 61 / 0.12), transparent 23%),
-    radial-gradient(circle at 88% 28%, rgb(194 65 12 / 0.1), transparent 22%),
-    linear-gradient(145deg, #fffdf0, #fff6d8 60%, #f7e8c1);
-  box-shadow: 0 42px 110px rgb(69 43 20 / 0.23), inset 0 0 0 8px rgb(255 255 255 / 0.42);
+  overflow: hidden;
+  border: 0;
+  border-radius: 1.75rem;
+  background: #f8edce;
+  box-shadow: 0 42px 110px rgb(46 63 24 / 0.25), 0 10px 35px rgb(69 43 20 / 0.18);
 }
 
+[data-invitation-theme="infantil-dinossauros"] .invitation-premium-shell::before,
 [data-invitation-theme="infantil-dinossauros"] .invitation-premium-shell::after {
-  background:
-    radial-gradient(ellipse at 0 12%, rgb(21 128 61 / 0.16), transparent 18%),
-    radial-gradient(ellipse at 100% 36%, rgb(21 128 61 / 0.13), transparent 20%),
-    radial-gradient(ellipse at 4% 83%, rgb(21 128 61 / 0.14), transparent 20%),
-    radial-gradient(ellipse at 97% 95%, rgb(194 65 12 / 0.1), transparent 18%);
+  display: none;
+}
+
+[data-invitation-theme="infantil-dinossauros"] .invitation-premium-inner {
+  padding: 0;
+}
+
+@keyframes dinoEditorialReveal {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.994);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.dino-premium-poster {
+  animation: dinoEditorialReveal 900ms cubic-bezier(.2, .75, .25, 1) both;
+  background: #f8edce;
+}
+
+.dino-rsvp-form:not(:empty) {
+  padding-block: 1rem 2rem;
+  background: linear-gradient(180deg, #f8edce, #fff8df);
 }
 
 [data-invitation-theme="infantil-dinossauros"] .invitation-display-title {

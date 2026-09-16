@@ -119,9 +119,9 @@ export function InvitationOpening(props: InvitationOpeningProps) {
           <p className="text-xs font-medium text-white/75">Um convite preparado especialmente para você</p>
         </div>
 
-        {/* Brilho pulsante atrás do invólucro do tema */}
+        {/* Halo estático e discreto atrás do invólucro do tema */}
         <div
-          className="absolute -inset-4 rounded-3xl opacity-35 blur-2xl animate-party-pulse pointer-events-none"
+          className="absolute -inset-4 rounded-3xl opacity-25 blur-2xl pointer-events-none"
           style={{ backgroundColor: accentColor }}
         />
 
@@ -140,7 +140,7 @@ export function InvitationOpening(props: InvitationOpeningProps) {
           {/* Dica interativa de toque */}
           <div className="absolute bottom-3 inset-x-0 text-center pointer-events-none">
             <span
-              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-white/90 text-slate-800 shadow-md border border-black/10 backdrop-blur-xs animate-bounce"
+              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-white/90 text-slate-800 shadow-md border border-black/10 backdrop-blur-xs"
             >
               <span>Toque para abrir o convite</span>
             </span>

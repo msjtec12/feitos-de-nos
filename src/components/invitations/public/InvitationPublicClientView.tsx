@@ -15,6 +15,7 @@ import { InvitationGiftRegistry } from './InvitationGiftRegistry';
 import { InvitationFooter } from '../experience/InvitationFooter';
 import { getInvitationTheme } from '@/data/invitation-themes';
 import { ThemeSectionDivider } from '../experience/ThemeScenery';
+import { DinosaurPremiumInvitation } from '../experience/DinosaurPremiumInvitation';
 
 interface InvitationPublicClientViewProps {
   event: EventDetailWithMedia;
@@ -30,7 +31,31 @@ function InvitationContentSection({
 }: {
   guestbookMessages?: EventGuestbookMessageRow[];
 }) {
-  const { event, guest, envelopeOpened, themeConfig } = useInvitationTheme();
+  const { event, guest, envelopeOpened, themeConfig, theme } = useInvitationTheme();
+
+  if (theme.assetFolder === 'dinosaurs') {
+    return (
+      <main className={!envelopeOpened ? 'hidden' : 'relative z-10 flex-1 pb-8'}>
+        <DinosaurPremiumInvitation />
+
+        {event.opening_message && (
+          <SurpriseMessage message={event.opening_message} themeConfig={themeConfig} />
+        )}
+
+        {event.media && event.media.length > 0 && (
+          <><ThemeSectionDivider /><InvitationGallery /></>
+        )}
+
+        {event.gift_information && (
+          <><ThemeSectionDivider /><InvitationGiftRegistry /></>
+        )}
+
+        {event.plan === 'completo' && (
+          <><ThemeSectionDivider /><GuestbookWall messages={guestbookMessages} /></>
+        )}
+      </main>
+    );
+  }
 
   return (
     <main className={!envelopeOpened ? 'hidden' : 'relative z-10 flex-1 pb-8 pt-2'}>

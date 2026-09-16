@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { EventRow, EventGuestRow, EventThemeConfig, ConfirmationEffect } from '@/types/invitation';
 import {
@@ -22,6 +22,9 @@ interface RsvpExperienceProps {
   event?: EventRow;
   guest?: EventGuestRow | null;
   themeConfig?: EventThemeConfig;
+  initiallyExpanded?: boolean;
+  hideCollapsedCta?: boolean;
+  expansionSignal?: number;
 }
 
 export function RsvpExperience(props: RsvpExperienceProps) {
@@ -50,7 +53,7 @@ export function RsvpExperience(props: RsvpExperienceProps) {
     guest ? guest.attendance_status !== 'pending' : false
   );
   const [showCelebration, setShowCelebration] = useState(false);
-  const [showForm, setShowForm] = useState(false);
+  const [showForm, setShowForm] = useState(Boolean(props.initiallyExpanded));
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const primaryColor = themeConfig.primaryColor || activeTheme.previewColors.primary;
@@ -60,11 +63,19 @@ export function RsvpExperience(props: RsvpExperienceProps) {
   const buttonClass = getThemeButtonClass(activeTheme);
   const themeCopy = getInvitationThemeCopy(activeTheme);
 
+  useEffect(() => {
+    if (props.expansionSignal && props.expansionSignal > 0) {
+      setShowForm(true);
+    }
+  }, [props.expansionSignal]);
+
   if (!event) return null;
 
   const isDeadlinePassed = event.rsvp_deadline
     ? new Date(event.rsvp_deadline).getTime() < Date.now()
     : false;
+
+  if (props.hideCollapsedCta && !isSuccess && !showForm) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

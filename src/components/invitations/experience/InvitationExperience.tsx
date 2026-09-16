@@ -131,7 +131,9 @@ export function InvitationExperience({
       >
         <ThemeScenery />
         {/* Partículas Temáticas Ambientais exclusivas por tema */}
-        <ThemeParticles themeConfig={themeConfig} reducedMotion={effectiveReducedMotion} />
+        {activeTheme.assetFolder !== 'dinosaurs' && (
+          <ThemeParticles themeConfig={themeConfig} reducedMotion={effectiveReducedMotion} />
+        )}
 
         {/* Controle de Redução de Movimento (apenas na página pública) */}
         {!isSimulator && (
