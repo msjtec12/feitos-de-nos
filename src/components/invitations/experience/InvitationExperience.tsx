@@ -3,11 +3,9 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { EventDetailWithMedia, EventGuestRow, EventThemeConfig } from '@/types/invitation';
 import { AuthorialThemeDefinition, getInvitationTheme, mergeInvitationThemeConfig } from '@/data/invitation-themes';
-import { ThemeParticles } from './ThemeParticles';
 import { MusicController } from './MusicController';
 import { MotionPreferenceControl } from './MotionPreferenceControl';
 import { MailOpen } from 'lucide-react';
-import { ThemeScenery } from './ThemeScenery';
 
 interface InvitationThemeContextType {
   theme: AuthorialThemeDefinition;
@@ -129,12 +127,6 @@ export function InvitationExperience({
           ...activeTheme.scenery.backgroundStyle,
         } as React.CSSProperties}
       >
-        <ThemeScenery />
-        {/* Partículas Temáticas Ambientais exclusivas por tema */}
-        {activeTheme.assetFolder !== 'dinosaurs' && (
-          <ThemeParticles themeConfig={themeConfig} reducedMotion={effectiveReducedMotion} />
-        )}
-
         {/* Controle de Redução de Movimento (apenas na página pública) */}
         {!isSimulator && (
           <MotionPreferenceControl

@@ -4,10 +4,6 @@ import React from 'react';
 import { EventDetailWithMedia, EventGuestRow, EventGuestbookMessageRow } from '@/types/invitation';
 import { InvitationExperience, useInvitationTheme } from '../experience/InvitationExperience';
 import { InvitationOpening } from '../experience/InvitationOpening';
-import { InvitationHero } from '../experience/InvitationHero';
-import { InteractiveCountdown } from '../experience/InteractiveCountdown';
-import { EventLocationCard } from '../experience/EventLocationCard';
-import { RsvpExperience } from '../experience/RsvpExperience';
 import { GuestbookWall } from '../experience/GuestbookWall';
 import { SurpriseMessage } from '../experience/SurpriseMessage';
 import { InvitationGallery } from './InvitationGallery';
@@ -16,6 +12,7 @@ import { InvitationFooter } from '../experience/InvitationFooter';
 import { getInvitationTheme } from '@/data/invitation-themes';
 import { ThemeSectionDivider } from '../experience/ThemeScenery';
 import { DinosaurPremiumInvitation } from '../experience/DinosaurPremiumInvitation';
+import { PremiumEditorialInvitation } from '../experience/PremiumEditorialInvitation';
 
 interface InvitationPublicClientViewProps {
   event: EventDetailWithMedia;
@@ -31,70 +28,26 @@ function InvitationContentSection({
 }: {
   guestbookMessages?: EventGuestbookMessageRow[];
 }) {
-  const { event, guest, envelopeOpened, themeConfig, theme } = useInvitationTheme();
-
-  if (theme.assetFolder === 'dinosaurs') {
-    return (
-      <main className={!envelopeOpened ? 'hidden' : 'relative z-10 flex-1 pb-8'}>
-        <DinosaurPremiumInvitation />
-
-        {event.opening_message && (
-          <SurpriseMessage message={event.opening_message} themeConfig={themeConfig} />
-        )}
-
-        {event.media && event.media.length > 0 && (
-          <><ThemeSectionDivider /><InvitationGallery /></>
-        )}
-
-        {event.gift_information && (
-          <><ThemeSectionDivider /><InvitationGiftRegistry /></>
-        )}
-
-        {event.plan === 'completo' && (
-          <><ThemeSectionDivider /><GuestbookWall messages={guestbookMessages} /></>
-        )}
-      </main>
-    );
-  }
+  const { event, envelopeOpened, themeConfig, theme } = useInvitationTheme();
 
   return (
-    <main className={!envelopeOpened ? 'hidden' : 'relative z-10 flex-1 pb-8 pt-2'}>
-      {/* 1. Hero do Convite (Cenário, Moldura da Foto e Título com Tipografia Temática) */}
-      <InvitationHero />
+    <main className={!envelopeOpened ? 'hidden' : 'relative z-10 flex-1 pb-8'}>
+      {theme.assetFolder === 'dinosaurs'
+        ? <DinosaurPremiumInvitation />
+        : <PremiumEditorialInvitation />}
 
-      <ThemeSectionDivider />
-
-      {/* 2. Contagem Regressiva Interativa Adaptada aos 13 Estilos */}
-      <InteractiveCountdown />
-
-      <ThemeSectionDivider />
-
-      {/* 3. Cards de Data, Horário, Local e Rota do Mapa de Expedição */}
-      <EventLocationCard />
-
-      {/* 4. Mensagem Surpresa Secreta se cadastrada */}
       {event.opening_message && (
-        <SurpriseMessage
-          message={event.opening_message}
-          themeConfig={themeConfig}
-        />
+        <SurpriseMessage message={event.opening_message} themeConfig={themeConfig} />
       )}
 
-      {/* 5. Galeria de Fotos */}
       {event.media && event.media.length > 0 && (
         <><ThemeSectionDivider /><InvitationGallery /></>
       )}
 
-      {/* 6. Módulo de Presentes e Chave Pix */}
       {event.gift_information && (
         <><ThemeSectionDivider /><InvitationGiftRegistry /></>
       )}
 
-      {/* 7. Confirmação de Presença (RSVP) com Botão Temático */}
-      <ThemeSectionDivider />
-      <RsvpExperience />
-
-      {/* 8. Mural de Recados (Incluso no plano 'completo') */}
       {event.plan === 'completo' && (
         <><ThemeSectionDivider /><GuestbookWall messages={guestbookMessages} /></>
       )}
