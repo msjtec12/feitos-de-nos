@@ -69,6 +69,13 @@ export async function POST(
     let finalUrl = '';
 
     try {
+      // Ensure bucket exists or create it
+      try {
+        await adminClient.storage.createBucket('gift-media', { public: true });
+      } catch {
+        // Bucket may already exist or cannot be created via storage API
+      }
+
       // Try uploading to Supabase Storage bucket 'gift-media'
       const { data: uploadData, error: uploadError } = await adminClient.storage
         .from('gift-media')

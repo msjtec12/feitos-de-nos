@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import Image from 'next/image';
 import { EventMediaRow, EventThemeConfig } from '@/types/invitation';
 import { Camera, ChevronLeft, ChevronRight, X, ZoomIn } from 'lucide-react';
 import { useOptionalInvitationTheme } from '../experience/InvitationExperience';
@@ -26,15 +25,6 @@ function GalleryPhotoView({
   accentColor: string;
 }) {
   const [hasError, setHasError] = useState(false);
-  const [useNativeImg, setUseNativeImg] = useState(false);
-
-  const isUnoptimized =
-    url.startsWith('data:') ||
-    url.startsWith('/api/') ||
-    url.startsWith('blob:') ||
-    url.endsWith('.svg') ||
-    url.includes('.heic') ||
-    url.includes('.heif');
 
   if (hasError) {
     return (
@@ -57,27 +47,15 @@ function GalleryPhotoView({
     );
   }
 
-  if (useNativeImg) {
-    return (
-      // eslint-disable-next-line @next/next/no-img-element
-      <img
-        src={url}
-        alt={alt}
-        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-        onError={() => setHasError(true)}
-      />
-    );
-  }
-
   return (
-    <Image
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
       src={url}
       alt={alt}
-      fill
-      unoptimized={isUnoptimized}
-      className="object-cover transition-transform duration-300 group-hover:scale-105"
-      sizes="(max-width: 640px) 180px, 300px"
-      onError={() => setUseNativeImg(true)}
+      loading="lazy"
+      decoding="async"
+      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+      onError={() => setHasError(true)}
     />
   );
 }
@@ -85,22 +63,12 @@ function GalleryPhotoView({
 function LightboxPhotoView({
   url,
   alt,
-  primaryColor,
 }: {
   url: string;
   alt: string;
-  primaryColor: string;
+  primaryColor?: string;
 }) {
   const [hasError, setHasError] = useState(false);
-  const [useNativeImg, setUseNativeImg] = useState(false);
-
-  const isUnoptimized =
-    url.startsWith('data:') ||
-    url.startsWith('/api/') ||
-    url.startsWith('blob:') ||
-    url.endsWith('.svg') ||
-    url.includes('.heic') ||
-    url.includes('.heif');
 
   if (hasError) {
     return (
@@ -111,28 +79,13 @@ function LightboxPhotoView({
     );
   }
 
-  if (useNativeImg) {
-    return (
-      // eslint-disable-next-line @next/next/no-img-element
-      <img
-        src={url}
-        alt={alt}
-        className="max-w-full max-h-[80vh] object-contain"
-        onError={() => setHasError(true)}
-      />
-    );
-  }
-
   return (
-    <Image
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
       src={url}
       alt={alt}
-      fill
-      unoptimized={isUnoptimized}
-      className="object-contain"
-      sizes="100vw"
-      priority
-      onError={() => setUseNativeImg(true)}
+      className="max-w-full max-h-[80vh] object-contain select-none"
+      onError={() => setHasError(true)}
     />
   );
 }
