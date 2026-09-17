@@ -3,10 +3,10 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { EventThemeConfig } from '@/types/invitation';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, Sparkles } from 'lucide-react';
 import { useOptionalInvitationTheme } from './InvitationExperience';
 import { getInvitationTheme } from '@/data/invitation-themes';
-import { getPremiumThemeVisual } from '@/lib/invitations/premium-theme-visuals';
+import { ThemeParticles } from './ThemeParticles';
 
 interface InvitationOpeningProps {
   title?: string;
@@ -83,86 +83,97 @@ export function InvitationOpening(props: InvitationOpeningProps) {
   };
 
   const openingSvg = activeTheme.assets.openingCoverSvg;
-  const premiumVisual = getPremiumThemeVisual(activeTheme.assetFolder);
   const primaryColor = themeConfig.primaryColor || activeTheme.previewColors.primary;
   const accentColor = themeConfig.accentColor || activeTheme.previewColors.accent;
+  const displayName = honoreeName || title;
 
   return (
     <div
-      className={`absolute inset-0 z-50 flex items-center justify-center p-3 sm:p-4 backdrop-blur-md transition-all duration-700 select-none ${
+      className={`fixed inset-0 z-50 flex flex-col items-center justify-center p-3 sm:p-5 overflow-hidden transition-all duration-700 select-none ${
         isOpening ? 'opacity-0 pointer-events-none scale-105' : 'opacity-100 scale-100'
       }`}
       style={{
-        background: `radial-gradient(circle at 50% 22%, ${accentColor}55 0%, ${primaryColor}33 25%, rgba(15,13,14,.97) 68%)`,
+        background: `radial-gradient(circle at 50% 30%, ${accentColor}44 0%, ${primaryColor}28 35%, rgba(12, 10, 11, 0.98) 75%)`,
       }}
     >
-      {/* Botão de pular animação */}
+      {/* Partículas sutis no fundo da abertura */}
+      <div className="absolute inset-0 pointer-events-none opacity-40">
+        <ThemeParticles themeConfig={themeConfig} />
+      </div>
+
+      {/* Botão discreto de pular animação */}
       <button
         type="button"
         onClick={handleSkip}
-        className="absolute top-4 right-4 z-20 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold text-white/80 hover:text-white bg-white/15 hover:bg-white/25 backdrop-blur-md transition-all active:scale-95 shadow-xs"
+        className="absolute top-4 right-4 z-20 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold text-white/80 hover:text-white bg-white/10 hover:bg-white/20 backdrop-blur-md transition-all active:scale-95 shadow-xs border border-white/10"
         title="Pular animação e ir direto ao convite"
       >
         <span>Pular</span>
         <ChevronRight className="w-3.5 h-3.5" />
       </button>
 
-      <div className={`relative w-full cursor-pointer ${premiumVisual ? 'max-w-[320px]' : 'max-w-sm'}`} onClick={() => handleTriggerOpen(true)}>
-        <div className="relative z-10 mb-2 space-y-1 text-center text-white">
-          <span className="text-[10px] font-bold uppercase tracking-[.24em] text-white/70">
-            {activeTheme.name}
-          </span>
+      {/* Conteúdo Central: Cabeçalho + Cartão Interativo + Indicador de Toque */}
+      <div
+        className="relative z-10 w-full max-w-[360px] sm:max-w-[380px] flex flex-col items-center cursor-pointer group"
+        onClick={() => handleTriggerOpen(true)}
+      >
+        {/* Cabeçalho Elegante */}
+        <div className="mb-3 sm:mb-4 text-center space-y-1.5 px-2">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] sm:text-[11px] font-bold uppercase tracking-widest bg-white/10 text-white/90 border border-white/15 backdrop-blur-md shadow-xs">
+            <Sparkles className="w-3 h-3 text-amber-300" />
+            <span>{activeTheme.heroBadge || activeTheme.name}</span>
+          </div>
+
           <h2
-            className="text-2xl font-black leading-tight drop-shadow-lg sm:text-3xl"
+            className="text-2xl sm:text-3xl font-black text-white leading-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.7)]"
             style={{ fontFamily: themeConfig.headingFont || activeTheme.config.headingFont }}
           >
-            {honoreeName || title}
+            {displayName}
           </h2>
-          <p className="text-xs font-medium text-white/75">Um convite preparado especialmente para você</p>
+
+          {guestName ? (
+            <div className="pt-0.5">
+              <span className="inline-flex items-center gap-1 px-3 py-0.5 rounded-full text-xs font-semibold bg-amber-400/20 text-amber-200 border border-amber-400/30 backdrop-blur-xs">
+                Convite especial para <strong className="text-white font-bold ml-1">{guestName}</strong>
+              </span>
+            </div>
+          ) : (
+            <p className="text-xs font-medium text-white/80 drop-shadow-sm">
+              Um convite preparado especialmente para você
+            </p>
+          )}
         </div>
 
-        {/* Halo estático e discreto atrás do invólucro do tema */}
+        {/* Aura de iluminação pulsante suave atrás do cartão */}
         <div
-          className="absolute -inset-4 rounded-3xl opacity-25 blur-2xl pointer-events-none"
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[400px] rounded-full opacity-35 blur-3xl pointer-events-none group-hover:opacity-50 transition-opacity duration-700"
           style={{ backgroundColor: accentColor }}
         />
 
-        {/* Card interativo de abertura com asset vetorial personalizado por tema */}
-        <div className={`relative max-h-[75vh] w-full mx-auto flex flex-col items-center justify-center transition-transform duration-500 hover:scale-[1.01] active:scale-[0.995] ${premiumVisual ? 'aspect-[9/16] overflow-hidden rounded-[28px] border-[5px] border-white/75 bg-[#f8edce] shadow-[0_28px_80px_rgba(0,0,0,.42)]' : 'aspect-[3/4]'}`}>
+        {/* O Cartão / Envelope Temático */}
+        <div className="relative w-full aspect-[320/440] max-h-[62vh] sm:max-h-[68vh] rounded-[24px] overflow-hidden transition-all duration-500 group-hover:scale-[1.02] group-active:scale-[0.98] drop-shadow-[0_22px_45px_rgba(0,0,0,0.65)]">
+          {/* Ilustração vetorial rica exclusiva do tema */}
           <div className="relative w-full h-full">
             <Image
-              src={premiumVisual?.background || openingSvg}
-              alt={`Abertura temática ${activeTheme.name}`}
+              src={openingSvg}
+              alt={`Cartão do tema ${activeTheme.name}`}
               fill
               priority
-              className={premiumVisual ? 'object-cover' : 'object-contain drop-shadow-2xl'}
+              className="object-contain"
             />
-            {premiumVisual && (
-              <div className="absolute inset-x-[12%] top-[42%] rounded-2xl border border-white/70 bg-[#fffaf0]/94 px-4 py-4 text-center shadow-[0_12px_30px_rgba(20,15,10,.24)] backdrop-blur-sm">
-                <span className="block text-[9px] font-black uppercase tracking-[.2em]" style={{ color: premiumVisual.accent }}>{premiumVisual.openingLabel}</span>
-                <strong className="mt-1 block text-xl" style={{ color: premiumVisual.primary, fontFamily: themeConfig.headingFont || activeTheme.config.headingFont }}>{premiumVisual.openingMessage}</strong>
-              </div>
-            )}
           </div>
 
-          {/* Dica interativa de toque */}
-          <div className="absolute bottom-3 inset-x-0 text-center pointer-events-none">
-            <span
-              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-white/90 text-slate-800 shadow-md border border-black/10 backdrop-blur-xs"
-            >
-              <span>Toque para abrir o convite</span>
-            </span>
-          </div>
+          {/* Efeito de brilho de luz diagonal suave passando sobre o cartão */}
+          <div className="absolute inset-0 pointer-events-none bg-gradient-to-tr from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
         </div>
 
-        {/* Informações do convidado se houver */}
-        {guestName && (
-          <div className="text-center mt-3">
-            <span className="text-xs text-white/90 font-medium px-3 py-1 rounded-full bg-white/10 backdrop-blur-xs border border-white/10">
-              Convite especial para <strong className="text-white font-bold">{guestName}</strong>
-            </span>
-          </div>
-        )}
+        {/* Dica interativa animada de toque */}
+        <div className="mt-3.5 sm:mt-4 text-center">
+          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold bg-white/95 text-slate-900 shadow-lg border border-white/40 backdrop-blur-md transition-all group-hover:bg-amber-400 group-hover:text-slate-950 group-hover:scale-105">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
+            <span>Toque no cartão para abrir</span>
+          </span>
+        </div>
       </div>
     </div>
   );

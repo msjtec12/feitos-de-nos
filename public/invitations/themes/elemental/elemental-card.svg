@@ -1,50 +1,95 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 440" fill="none">
   <defs>
-    <linearGradient id="cardBorder" x1="0%" y1="0%" x2="100%" y2="100%">
+    <!-- Gradiente da borda mística holográfica -->
+    <linearGradient id="elemBorderGrad" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#F59E0B"/>
-      <stop offset="50%" stop-color="#EF4444"/>
-      <stop offset="100%" stop-color="#0284C7"/>
+      <stop offset="35%" stop-color="#EF4444"/>
+      <stop offset="70%" stop-color="#3B82F6"/>
+      <stop offset="100%" stop-color="#10B981"/>
     </linearGradient>
-    <linearGradient id="cardInner" x1="0%" y1="0%" x2="0%" y2="100%">
+    <linearGradient id="elemInnerGrad" x1="0%" y1="0%" x2="0%" y2="100%">
       <stop offset="0%" stop-color="#1E1B4B"/>
-      <stop offset="50%" stop-color="#0F172A"/>
-      <stop offset="100%" stop-color="#18181B"/>
+      <stop offset="40%" stop-color="#0F172A"/>
+      <stop offset="100%" stop-color="#030712"/>
     </linearGradient>
-    <filter id="cardGlow" x="-10%" y="-10%" width="120%" height="120%" filterUnits="userSpaceOnUse">
-      <feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#F59E0B" flood-opacity="0.35"/>
+    <linearGradient id="elemBtnGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#DC2626"/>
+      <stop offset="50%" stop-color="#D97706"/>
+      <stop offset="100%" stop-color="#2563EB"/>
+    </linearGradient>
+    <radialGradient id="elemCoreGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FEF08A" stop-opacity="1"/>
+      <stop offset="45%" stop-color="#F59E0B" stop-opacity="0.8"/>
+      <stop offset="75%" stop-color="#EF4444" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#1E1B4B" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="elemGlowFilter" x="-10%" y="-10%" width="125%" height="125%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="12" stdDeviation="14" flood-color="#F59E0B" flood-opacity="0.38"/>
     </filter>
   </defs>
 
-  <!-- Carta colecionável mística elemental para abertura -->
-  <g filter="url(#cardGlow)">
-    <!-- Borda externa holográfica/dourada -->
-    <rect x="15" y="15" width="290" height="410" rx="24" fill="url(#cardBorder)" stroke="#FDE68A" stroke-width="4"/>
-    <rect x="25" y="25" width="270" height="390" rx="18" fill="url(#cardInner)"/>
+  <g filter="url(#elemGlowFilter)">
+    <!-- Moldura externa chanfrada com borda elemental -->
+    <rect x="15" y="15" width="290" height="410" rx="26" fill="url(#elemBorderGrad)" stroke="#FEF08A" stroke-width="3.5"/>
+    <rect x="23" y="23" width="274" height="394" rx="20" fill="url(#elemInnerGrad)"/>
 
-    <!-- Padrão geométrico cósmico da carta -->
-    <circle cx="160" cy="180" r="85" stroke="#FDE68A" stroke-width="2" stroke-dasharray="6 4" opacity="0.4"/>
-    <circle cx="160" cy="180" r="110" stroke="#F59E0B" stroke-width="1.5" opacity="0.25"/>
+    <!-- 1. Placa de Título Superior -->
+    <rect x="45" y="38" width="230" height="38" rx="12" fill="#1E293B" stroke="#FDE68A" stroke-width="1.8"/>
+    <text x="160" y="62" text-anchor="middle" fill="#FEF08A" font-size="12" font-weight="900" letter-spacing="2.5" font-family="sans-serif">
+      ★ CARTA DOS ELEMENTOS ★
+    </text>
 
-    <!-- Selo central dos 4 elementos -->
-    <g transform="translate(160, 180)">
+    <!-- Cristais e símbolos nos 4 cantos da carta -->
+    <!-- Fogo (topo-esq) -->
+    <circle cx="48" cy="98" r="14" fill="#7F1D1D" stroke="#EF4444" stroke-width="1.5"/>
+    <path d="M 48 88 C 53 96, 44 98, 48 106 C 42 101, 41 94, 48 88 Z" fill="#F87171"/>
+
+    <!-- Água (topo-dir) -->
+    <circle cx="272" cy="98" r="14" fill="#0C4A6E" stroke="#38BDF8" stroke-width="1.5"/>
+    <path d="M 272 88 C 278 96, 276 106, 272 106 C 268 106, 266 96, 272 88 Z" fill="#38BDF8"/>
+
+    <!-- Terra/Natureza (base-esq) -->
+    <circle cx="48" cy="318" r="14" fill="#064E3B" stroke="#34D399" stroke-width="1.5"/>
+    <path d="M 48 308 C 55 314, 52 324, 48 326 C 44 324, 41 314, 48 308 Z" fill="#34D399"/>
+
+    <!-- Trovão/Energia (base-dir) -->
+    <circle cx="272" cy="318" r="14" fill="#78350F" stroke="#FBBF24" stroke-width="1.5"/>
+    <polygon points="272,308 277,316 273,316 275,326 268,318 272,318" fill="#FBBF24"/>
+
+    <!-- Círculos rúnicos e esferas cósmicas no centro -->
+    <circle cx="160" cy="195" r="95" stroke="#FDE68A" stroke-width="1.5" stroke-dasharray="8 5" opacity="0.35"/>
+    <circle cx="160" cy="195" r="75" stroke="#F59E0B" stroke-width="1" stroke-dasharray="4 3" opacity="0.4"/>
+    <circle cx="160" cy="195" r="60" fill="url(#elemCoreGlow)"/>
+
+    <!-- Selo místico dos 4 monstrinhos e elementos -->
+    <g transform="translate(160, 195)">
       <!-- Fogo (Norte) -->
-      <path d="M 0 -20 C 12 -45, -12 -55, 0 -75 C 15 -50, 25 -40, 0 -20 Z" fill="#EF4444"/>
+      <path d="M 0 -18 C 12 -40, -12 -50, 0 -68 C 14 -46, 24 -36, 0 -18 Z" fill="#EF4444"/>
       <!-- Água (Sul) -->
-      <path d="M 0 20 C 15 40, 10 65, 0 75 C -10 65, -15 40, 0 20 Z" fill="#0284C7"/>
-      <!-- Terra / Folha (Oeste) -->
-      <path d="M -20 0 C -45 12, -65 0, -75 0 C -65 -15, -45 -10, -20 0 Z" fill="#10B981"/>
-      <!-- Energia / Trovão (Leste) -->
-      <polygon points="20,-8 45,-18 36,0 68,0 26,18 35,4" fill="#F59E0B"/>
+      <path d="M 0 18 C 14 36, 8 58, 0 68 C -8 58, -14 36, 0 18 Z" fill="#0284C7"/>
+      <!-- Terra (Oeste) -->
+      <path d="M -18 0 C -40 12, -58 0, -68 0 C -58 -14, -40 -8, -18 0 Z" fill="#10B981"/>
+      <!-- Energia (Leste) -->
+      <polygon points="18,-8 42,-18 34,0 68,0 26,18 35,4" fill="#F59E0B"/>
 
-      <!-- Orbe central brilhante -->
-      <circle cx="0" cy="0" r="22" fill="#FEF08A" stroke="#B45309" stroke-width="3"/>
-      <circle cx="0" cy="0" r="16" fill="#FFFFFF" opacity="0.8"/>
+      <!-- Orbe estelar pulsante central -->
+      <circle cx="0" cy="0" r="22" fill="#FFFBEB" stroke="#B45309" stroke-width="3"/>
+      <circle cx="0" cy="0" r="14" fill="#FDE047"/>
+      <circle cx="-3" cy="-3" r="5" fill="#FFFFFF" opacity="0.9"/>
     </g>
 
-    <!-- Banner inferior de carta lendária -->
-    <rect x="45" y="340" width="230" height="45" rx="12" fill="#78350F" stroke="#FDE68A" stroke-width="2"/>
-    <text x="160" y="368" text-anchor="middle" fill="#FEF08A" font-size="14" font-weight="900" letter-spacing="2" font-family="sans-serif">
-      CARTA LENDÁRIA OFICIAL
+    <!-- Legenda mística de convocação -->
+    <text x="160" y="300" text-anchor="middle" fill="#FEF08A" font-size="14" font-weight="900" font-family="sans-serif">
+      A GRANDE JORNADA
+    </text>
+    <text x="160" y="320" text-anchor="middle" fill="#94A3B8" font-size="11" font-weight="600" font-family="sans-serif">
+      Quatro forças, uma celebração inesquecível
+    </text>
+
+    <!-- 3. Botão Místico de Abertura na Base -->
+    <rect x="45" y="352" width="230" height="46" rx="16" fill="url(#elemBtnGrad)" stroke="#FEF08A" stroke-width="2.2"/>
+    <text x="160" y="380" text-anchor="middle" fill="#FFFFFF" font-size="13" font-weight="900" letter-spacing="1.5" font-family="sans-serif">
+      DESPERTAR OS ELEMENTOS ⚡
     </text>
   </g>
 </svg>
