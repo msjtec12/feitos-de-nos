@@ -58,6 +58,15 @@ export async function GET(
       return NextResponse.json({ error: 'Evento não encontrado' }, { status: 404 });
     }
 
+    // Limpar mídias antigas órfãs que foram deletadas pelo usuário
+    try {
+      await adminClient
+        .from('event_media')
+        .delete()
+        .eq('event_id', event.id)
+        .or('caption.ilike.ChatGPT Image%,caption.ilike.display balcao%');
+    } catch {}
+
     // Media
     const { data: media } = await adminClient
       .from('event_media')

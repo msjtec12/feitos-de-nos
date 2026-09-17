@@ -13,50 +13,49 @@ interface InvitationGalleryProps {
   themeConfig?: EventThemeConfig;
 }
 
-function GalleryPhotoView({
-  url,
-  alt,
-  primaryColor,
-  accentColor,
+function GalleryItemCard({
+  item,
+  idx,
+  itemFrameClass,
+  openLightbox,
 }: {
-  url: string;
-  alt: string;
-  primaryColor: string;
-  accentColor: string;
+  item: EventMediaRow;
+  idx: number;
+  itemFrameClass: string;
+  openLightbox: (index: number) => void;
 }) {
   const [hasError, setHasError] = useState(false);
 
-  if (hasError) {
-    return (
-      <div
-        className="w-full h-full flex flex-col items-center justify-center p-3 text-center"
-        style={{
-          background: `linear-gradient(135deg, ${primaryColor}18, ${accentColor}25)`,
-        }}
-      >
-        <div
-          className="w-10 h-10 rounded-full flex items-center justify-center shadow-xs mb-1.5"
-          style={{ backgroundColor: `${accentColor}30`, color: primaryColor }}
-        >
-          <Camera className="w-5 h-5 opacity-80" />
-        </div>
-        <span className="text-[10px] font-bold line-clamp-2 px-1" style={{ color: primaryColor }}>
-          {alt || 'Lembrança Especial'}
-        </span>
-      </div>
-    );
-  }
+  // Se a imagem falhar (arquivo deletado ou URL inválida), oculta o card completamente
+  if (hasError) return null;
 
   return (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
-      src={url}
-      alt={alt}
-      loading="lazy"
-      decoding="async"
-      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-      onError={() => setHasError(true)}
-    />
+    <div
+      onClick={() => openLightbox(idx)}
+      className={itemFrameClass}
+    >
+      <div className="relative w-full h-full">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={item.url}
+          alt={item.caption || `Foto ${idx + 1}`}
+          loading="lazy"
+          decoding="async"
+          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+          onError={() => setHasError(true)}
+        />
+      </div>
+
+      <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
+        <ZoomIn className="w-6 h-6 text-white drop-shadow-md" />
+      </div>
+
+      {item.caption && (
+        <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/75 via-black/35 to-transparent p-2 text-white text-[10px] sm:text-[11px] leading-tight font-medium">
+          {item.caption}
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -158,30 +157,13 @@ export function InvitationGallery(props: InvitationGalleryProps) {
       {/* Grid de fotos com molduras temáticas */}
       <div className="grid grid-cols-2 gap-3 sm:gap-4">
         {media.map((item, idx) => (
-          <div
+          <GalleryItemCard
             key={item.id || idx}
-            onClick={() => openLightbox(idx)}
-            className={itemFrameClass}
-          >
-            <div className="relative w-full h-full">
-              <GalleryPhotoView
-                url={item.url}
-                alt={item.caption || `Foto ${idx + 1}`}
-                primaryColor={primaryColor}
-                accentColor={accentColor}
-              />
-            </div>
-
-            <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
-              <ZoomIn className="w-6 h-6 text-white drop-shadow-md" />
-            </div>
-
-            {item.caption && (
-              <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/75 via-black/35 to-transparent p-2 text-white text-[10px] sm:text-[11px] leading-tight font-medium">
-                {item.caption}
-              </div>
-            )}
-          </div>
+            item={item}
+            idx={idx}
+            itemFrameClass={itemFrameClass}
+            openLightbox={openLightbox}
+          />
         ))}
       </div>
 

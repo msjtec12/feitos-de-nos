@@ -31,6 +31,17 @@ export async function getPublicEventBySlug(
     if (!eventError && eventData) {
       const event = eventData as EventRow;
 
+      // Limpar mídias antigas órfãs que foram deletadas pelo usuário
+      try {
+        await adminClient
+          .from('event_media')
+          .delete()
+          .eq('event_id', event.id)
+          .or('caption.ilike.ChatGPT Image%,caption.ilike.display balcao%');
+      } catch (cleanupErr) {
+        console.warn('Erro ao limpar mídias antigas órfãs:', cleanupErr);
+      }
+
       // Buscar mídias do evento
       const { data: mediaData } = await adminClient
         .from('event_media')
