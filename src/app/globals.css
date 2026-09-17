@@ -305,16 +305,46 @@
 
 /* 6. Dinossauros: pergaminho de expedição e selva. */
 [data-invitation-theme="infantil-dinossauros"] .invitation-premium-shell {
+  position: relative;
   overflow: hidden;
-  border: 0;
-  border-radius: 1.75rem;
-  background: #f8edce;
-  box-shadow: 0 42px 110px rgb(46 63 24 / 0.25), 0 10px 35px rgb(69 43 20 / 0.18);
+  border: 4px solid #b98748;
+  border-radius: 2rem;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgb(194 65 12 / 0.16) 0%, transparent 45%),
+    radial-gradient(circle at 10% 30%, rgb(21 128 61 / 0.12) 0%, transparent 40%),
+    radial-gradient(circle at 90% 65%, rgb(180 83 9 / 0.14) 0%, transparent 40%),
+    linear-gradient(180deg, #fdf8e6 0%, #f6e8c3 100%);
+  box-shadow:
+    0 40px 115px rgb(46 63 24 / 0.35),
+    0 12px 36px rgb(69 43 20 / 0.22),
+    inset 0 0 0 3px #fff9e6,
+    inset 0 0 0 6px rgb(185 135 72 / 0.4);
+  isolation: isolate;
 }
 
-[data-invitation-theme="infantil-dinossauros"] .invitation-premium-shell::before,
+[data-invitation-theme="infantil-dinossauros"] .invitation-premium-shell::before {
+  display: block;
+  position: absolute;
+  inset: 6px;
+  z-index: 1;
+  border: 1.5px solid rgb(185 135 72 / 0.5);
+  border-radius: 1.7rem;
+  content: "";
+  pointer-events: none;
+}
+
 [data-invitation-theme="infantil-dinossauros"] .invitation-premium-shell::after {
-  display: none;
+  display: block;
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  opacity: 0.2;
+  content: "";
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle at 20% 25%, rgb(21 128 61 / 0.2) 0 1.5px, transparent 2px),
+    radial-gradient(circle at 80% 75%, rgb(194 65 12 / 0.18) 0 1.5px, transparent 2px);
+  background-size: 50px 50px, 70px 70px;
 }
 
 [data-invitation-theme="infantil-dinossauros"] .invitation-premium-inner {
@@ -425,19 +455,50 @@
   text-shadow: 0 0 14px rgb(250 204 21 / 0.7), 0 5px 0 rgb(88 28 135 / 0.8);
 }
 
-/* Os 13 convites agora são peças editoriais completas. A ilustração é a
-   moldura principal; bordas e texturas genéricas do shell não competem com ela. */
+/* Continuidade cenográfica: O quadro da imagem abraça o convite por toda a sua extensão,
+   adaptando-se perfeitamente conforme fotos ou blocos forem adicionados ou removidos. */
 [data-invitation-theme] .invitation-premium-shell {
+  position: relative;
   overflow: hidden;
-  border: 0;
-  border-radius: 1.75rem;
-  background: color-mix(in srgb, var(--invitation-background) 86%, white 14%);
-  box-shadow: 0 42px 110px rgb(35 25 20 / 0.2), 0 10px 35px rgb(35 25 20 / 0.12);
+  border: 4px solid color-mix(in srgb, var(--invitation-primary) 70%, #1a1410 30%);
+  border-radius: 2rem;
+  background:
+    radial-gradient(ellipse at 50% 0%, color-mix(in srgb, var(--invitation-accent) 20%, transparent) 0%, transparent 45%),
+    radial-gradient(circle at 8% 28%, color-mix(in srgb, var(--invitation-primary) 12%, transparent) 0%, transparent 40%),
+    radial-gradient(circle at 92% 52%, color-mix(in srgb, var(--invitation-accent) 14%, transparent) 0%, transparent 40%),
+    radial-gradient(circle at 14% 78%, color-mix(in srgb, var(--invitation-primary) 12%, transparent) 0%, transparent 45%),
+    linear-gradient(180deg, color-mix(in srgb, var(--invitation-background) 95%, white 5%) 0%, color-mix(in srgb, var(--invitation-background) 86%, #1a1512 14%) 100%);
+  box-shadow:
+    0 40px 115px rgb(18 12 8 / 0.42),
+    0 12px 36px rgb(18 12 8 / 0.22),
+    inset 0 0 0 3px rgb(255 255 255 / 0.45),
+    inset 0 0 0 6px color-mix(in srgb, var(--invitation-accent) 30%, transparent);
+  isolation: isolate;
 }
 
-[data-invitation-theme] .invitation-premium-shell::before,
+[data-invitation-theme] .invitation-premium-shell::before {
+  display: block;
+  position: absolute;
+  inset: 6px;
+  z-index: 1;
+  border: 1.5px solid color-mix(in srgb, var(--invitation-accent) 45%, transparent);
+  border-radius: 1.7rem;
+  content: "";
+  pointer-events: none;
+}
+
 [data-invitation-theme] .invitation-premium-shell::after {
-  display: none;
+  display: block;
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  opacity: 0.22;
+  content: "";
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle at 25% 25%, color-mix(in srgb, var(--invitation-accent) 25%, transparent) 0 1.5px, transparent 2px),
+    radial-gradient(circle at 75% 75%, color-mix(in srgb, var(--invitation-primary) 20%, transparent) 0 1.5px, transparent 2px);
+  background-size: 50px 50px, 70px 70px;
 }
 
 [data-invitation-theme] .invitation-premium-inner {
@@ -456,23 +517,22 @@
 
 @media (max-width: 640px) {
   .invitation-premium-stage {
-    padding-inline: 0;
-    padding-block: 0;
+    padding-inline: 0.35rem;
+    padding-block: 0.75rem;
   }
 
   .invitation-premium-shell {
-    border-radius: 0;
-    border-inline-width: 0;
-    box-shadow: none;
+    border-radius: 1.35rem;
+    border-width: 3px;
   }
 
   .invitation-premium-shell::before {
-    inset: 7px;
-    border-radius: 0.9rem;
+    inset: 4px;
+    border-radius: 1.1rem;
   }
 
   .invitation-premium-inner {
-    padding: 0.15rem;
+    padding: 0;
   }
 }
 

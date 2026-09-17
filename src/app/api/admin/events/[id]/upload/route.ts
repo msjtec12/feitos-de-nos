@@ -1,14 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createSupabaseAdminClient } from '@/lib/supabase/server';
 
-const MAX_IMAGE_SIZE = 10 * 1024 * 1024; // 10MB
+const MAX_IMAGE_SIZE = 15 * 1024 * 1024; // 15MB
 
 const ALLOWED_MIME_TYPES: Record<string, string> = {
   'image/jpeg': 'jpg',
+  'image/jpg': 'jpg',
   'image/png': 'png',
   'image/webp': 'webp',
   'image/gif': 'gif',
   'image/avif': 'avif',
+  'image/heic': 'heic',
+  'image/heif': 'heif',
+  'image/heic-sequence': 'heic',
+  'image/heif-sequence': 'heif',
+  'image/bmp': 'bmp',
+  'image/x-ms-bmp': 'bmp',
+  'image/tiff': 'tiff',
+  'image/svg+xml': 'svg',
 };
 
 export async function POST(
@@ -28,12 +37,26 @@ export async function POST(
       );
     }
 
-    const mimeType = file.type || 'image/jpeg';
-    const extension = ALLOWED_MIME_TYPES[mimeType] || 'jpg';
+    const rawMime = (file.type || '').toLowerCase();
+    let extension = ALLOWED_MIME_TYPES[rawMime];
+    if (!extension && file.name) {
+      const match = file.name.match(/\.([a-zA-Z0-9]+)$/);
+      if (match) {
+        const ext = match[1].toLowerCase();
+        if (['jpg', 'jpeg', 'png', 'webp', 'gif', 'avif', 'heic', 'heif', 'bmp', 'tiff', 'svg'].includes(ext)) {
+          extension = ext === 'jpeg' ? 'jpg' : ext;
+        }
+      }
+    }
+    if (!extension) {
+      extension = 'jpg';
+    }
+
+    const mimeType = rawMime || (extension === 'jpg' ? 'image/jpeg' : `image/${extension}`);
 
     if (file.size > MAX_IMAGE_SIZE) {
       return NextResponse.json(
-        { success: false, error: 'A imagem deve ter no máximo 10MB.' },
+        { success: false, error: 'A imagem deve ter no máximo 15MB.' },
         { status: 400 }
       );
     }
@@ -55,12 +78,8 @@ export async function POST(
         });
 
       if (!uploadError && uploadData) {
-        // Try getting public URL
-        const { data: publicUrlData } = adminClient.storage
-          .from('gift-media')
-          .getPublicUrl(storagePath);
-
-        finalUrl = publicUrlData?.publicUrl || `/api/media/${storagePath}`;
+        // Use the authenticated proxy route so public/private bucket configuration doesn't break image delivery
+        finalUrl = `/api/media/${storagePath}`;
       } else {
         throw new Error(uploadError?.message || 'Storage upload error');
       }

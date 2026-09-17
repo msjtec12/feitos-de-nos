@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { EventMediaRow, EventThemeConfig } from '@/types/invitation';
-import { ChevronLeft, ChevronRight, X, ZoomIn } from 'lucide-react';
+import { Camera, ChevronLeft, ChevronRight, X, ZoomIn } from 'lucide-react';
 import { useOptionalInvitationTheme } from '../experience/InvitationExperience';
 import { getInvitationTheme } from '@/data/invitation-themes';
 import { getThemeGalleryFrameClass } from '@/lib/invitations/theme-ui';
@@ -12,6 +12,129 @@ import { getInvitationThemeCopy } from '@/lib/invitations/theme-copy';
 interface InvitationGalleryProps {
   media?: EventMediaRow[];
   themeConfig?: EventThemeConfig;
+}
+
+function GalleryPhotoView({
+  url,
+  alt,
+  primaryColor,
+  accentColor,
+}: {
+  url: string;
+  alt: string;
+  primaryColor: string;
+  accentColor: string;
+}) {
+  const [hasError, setHasError] = useState(false);
+  const [useNativeImg, setUseNativeImg] = useState(false);
+
+  const isUnoptimized =
+    url.startsWith('data:') ||
+    url.startsWith('/api/') ||
+    url.startsWith('blob:') ||
+    url.endsWith('.svg') ||
+    url.includes('.heic') ||
+    url.includes('.heif');
+
+  if (hasError) {
+    return (
+      <div
+        className="w-full h-full flex flex-col items-center justify-center p-3 text-center"
+        style={{
+          background: `linear-gradient(135deg, ${primaryColor}18, ${accentColor}25)`,
+        }}
+      >
+        <div
+          className="w-10 h-10 rounded-full flex items-center justify-center shadow-xs mb-1.5"
+          style={{ backgroundColor: `${accentColor}30`, color: primaryColor }}
+        >
+          <Camera className="w-5 h-5 opacity-80" />
+        </div>
+        <span className="text-[10px] font-bold line-clamp-2 px-1" style={{ color: primaryColor }}>
+          {alt || 'Lembrança Especial'}
+        </span>
+      </div>
+    );
+  }
+
+  if (useNativeImg) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img
+        src={url}
+        alt={alt}
+        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+        onError={() => setHasError(true)}
+      />
+    );
+  }
+
+  return (
+    <Image
+      src={url}
+      alt={alt}
+      fill
+      unoptimized={isUnoptimized}
+      className="object-cover transition-transform duration-300 group-hover:scale-105"
+      sizes="(max-width: 640px) 180px, 300px"
+      onError={() => setUseNativeImg(true)}
+    />
+  );
+}
+
+function LightboxPhotoView({
+  url,
+  alt,
+  primaryColor,
+}: {
+  url: string;
+  alt: string;
+  primaryColor: string;
+}) {
+  const [hasError, setHasError] = useState(false);
+  const [useNativeImg, setUseNativeImg] = useState(false);
+
+  const isUnoptimized =
+    url.startsWith('data:') ||
+    url.startsWith('/api/') ||
+    url.startsWith('blob:') ||
+    url.endsWith('.svg') ||
+    url.includes('.heic') ||
+    url.includes('.heif');
+
+  if (hasError) {
+    return (
+      <div className="flex flex-col items-center justify-center p-8 text-center text-white/80">
+        <Camera className="w-12 h-12 mb-3 text-white/50" />
+        <p className="text-sm font-medium max-w-sm">{alt || 'Imagem não pôde ser carregada'}</p>
+      </div>
+    );
+  }
+
+  if (useNativeImg) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img
+        src={url}
+        alt={alt}
+        className="max-w-full max-h-[80vh] object-contain"
+        onError={() => setHasError(true)}
+      />
+    );
+  }
+
+  return (
+    <Image
+      src={url}
+      alt={alt}
+      fill
+      unoptimized={isUnoptimized}
+      className="object-contain"
+      sizes="100vw"
+      priority
+      onError={() => setUseNativeImg(true)}
+    />
+  );
 }
 
 export function InvitationGallery(props: InvitationGalleryProps) {
@@ -88,12 +211,11 @@ export function InvitationGallery(props: InvitationGalleryProps) {
             className={itemFrameClass}
           >
             <div className="relative w-full h-full">
-              <Image
-                src={item.url}
+              <GalleryPhotoView
+                url={item.url}
                 alt={item.caption || `Foto ${idx + 1}`}
-                fill
-                className="object-cover transition-transform duration-300 group-hover:scale-105"
-                sizes="(max-width: 640px) 180px, 300px"
+                primaryColor={primaryColor}
+                accentColor={accentColor}
               />
             </div>
 
@@ -133,13 +255,10 @@ export function InvitationGallery(props: InvitationGalleryProps) {
           </div>
 
           <div className="relative flex-1 flex items-center justify-center my-4 overflow-hidden">
-            <Image
-              src={media[lightboxIndex].url}
+            <LightboxPhotoView
+              url={media[lightboxIndex].url}
               alt={media[lightboxIndex].caption || 'Foto em tela cheia'}
-              fill
-              className="object-contain"
-              sizes="100vw"
-              priority
+              primaryColor={primaryColor}
             />
 
             {media.length > 1 && (

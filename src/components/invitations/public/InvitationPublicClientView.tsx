@@ -10,7 +10,7 @@ import { InvitationGallery } from './InvitationGallery';
 import { InvitationGiftRegistry } from './InvitationGiftRegistry';
 import { InvitationFooter } from '../experience/InvitationFooter';
 import { getInvitationTheme } from '@/data/invitation-themes';
-import { ThemeSectionDivider } from '../experience/ThemeScenery';
+import { ThemeScenery, ThemeSectionDivider } from '../experience/ThemeScenery';
 import { DinosaurPremiumInvitation } from '../experience/DinosaurPremiumInvitation';
 import { PremiumEditorialInvitation } from '../experience/PremiumEditorialInvitation';
 
@@ -67,8 +67,11 @@ function InvitationOpenedCanvas({
   if (!envelopeOpened) return null;
 
   return (
-    <div className="invitation-premium-stage relative z-10 px-2 py-5 sm:px-5 sm:py-10">
-      <div className="invitation-premium-shell relative mx-auto w-full max-w-[820px] overflow-hidden">
+    <div className="invitation-premium-stage relative z-10 px-2 py-4 sm:px-5 sm:py-8">
+      <div className="invitation-premium-shell relative mx-auto w-full max-w-[800px] overflow-hidden">
+        {/* Cenário cenográfico e motivos dinâmicos acompanhando toda a extensão */}
+        <ThemeScenery />
+
         <div className="invitation-premium-inner relative z-10">
           <InvitationContentSection guestbookMessages={guestbookMessages} />
           <InvitationFooter themeKey={themeKey} />

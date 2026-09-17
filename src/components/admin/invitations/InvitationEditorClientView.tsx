@@ -209,12 +209,63 @@ export function InvitationEditorClientView({ event: initialEvent }: InvitationEd
     setIsDirty(true);
   };
 
+  // Helper to optimize large images and convert mobile formats to universal JPEG
+  const optimizeImageForUpload = async (file: File): Promise<File> => {
+    if (typeof window === 'undefined') return file;
+    if (file.type === 'image/svg+xml' || file.type === 'image/gif') return file;
+
+    return new Promise((resolve) => {
+      const objectUrl = URL.createObjectURL(file);
+      const img = new window.Image();
+      img.onload = () => {
+        URL.revokeObjectURL(objectUrl);
+        try {
+          const maxDim = 2048;
+          let { width, height } = img;
+          if (width > maxDim || height > maxDim) {
+            if (width > height) {
+              height = Math.round((height * maxDim) / width);
+              width = maxDim;
+            } else {
+              width = Math.round((width * maxDim) / height);
+              height = maxDim;
+            }
+          }
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          if (!ctx) return resolve(file);
+
+          ctx.drawImage(img, 0, 0, width, height);
+          canvas.toBlob(
+            (blob) => {
+              if (!blob) return resolve(file);
+              const cleanName = file.name.replace(/\.[^/.]+$/, '') + '.jpg';
+              resolve(new File([blob], cleanName, { type: 'image/jpeg' }));
+            },
+            'image/jpeg',
+            0.88
+          );
+        } catch {
+          resolve(file);
+        }
+      };
+      img.onerror = () => {
+        URL.revokeObjectURL(objectUrl);
+        resolve(file);
+      };
+      img.src = objectUrl;
+    });
+  };
+
   // Upload file for Cover Photo
   const handleUploadCoverFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const rawFile = e.target.files?.[0];
+    if (!rawFile) return;
     setIsUploadingCover(true);
     try {
+      const file = await optimizeImageForUpload(rawFile);
       const formData = new FormData();
       formData.append('file', file);
       formData.append('caption', 'Foto de Capa');
@@ -246,7 +297,8 @@ export function InvitationEditorClientView({ event: initialEvent }: InvitationEd
     setIsUploadingGallery(true);
     try {
       for (let i = 0; i < files.length; i++) {
-        const file = files[i];
+        const rawFile = files[i];
+        const file = await optimizeImageForUpload(rawFile);
         const formData = new FormData();
         formData.append('file', file);
         formData.append('caption', newPhotoCaption.trim() || file.name.replace(/\.[^/.]+$/, ''));

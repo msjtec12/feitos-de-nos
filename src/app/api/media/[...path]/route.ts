@@ -5,6 +5,11 @@ import { getAdminSessionAndProfile } from '@/lib/supabase/admin-queries';
 export const dynamic = 'force-dynamic';
 
 async function canAccessMedia(request: NextRequest, storagePath: string) {
+  // Public events media and general invitation uploads are publicly accessible
+  if (storagePath.startsWith('events/') || storagePath.startsWith('uploads/')) {
+    return true;
+  }
+
   const { profile } = await getAdminSessionAndProfile();
   if (profile) return true;
 
@@ -70,13 +75,17 @@ export async function GET(
     const mimeType = data.type || 'application/octet-stream';
     const arrayBuffer = await data.arrayBuffer();
 
+    const isPublicMedia = storagePath.startsWith('events/') || storagePath.startsWith('uploads/');
+
     return new NextResponse(Buffer.from(arrayBuffer), {
       status: 200,
       headers: {
         'Content-Type': mimeType,
-        'Cache-Control': 'private, max-age=3600, must-revalidate',
+        'Cache-Control': isPublicMedia
+          ? 'public, max-age=86400, stale-while-revalidate=604800'
+          : 'private, max-age=3600, must-revalidate',
         'X-Content-Type-Options': 'nosniff',
-        'X-Robots-Tag': 'noindex, nofollow, noarchive, nosnippet',
+        ...(isPublicMedia ? {} : { 'X-Robots-Tag': 'noindex, nofollow, noarchive, nosnippet' }),
       },
     });
   } catch (err) {

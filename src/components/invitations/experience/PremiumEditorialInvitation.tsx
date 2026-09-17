@@ -57,54 +57,118 @@ export function PremiumEditorialInvitation() {
       <section className="editorial-premium-poster relative mx-auto aspect-[9/16] w-full max-w-[760px] overflow-hidden" aria-label={`Convite ${theme.name}`}>
         <Image src={visual.background} alt={`Cenário ilustrado do tema ${theme.name}`} fill priority sizes="(max-width: 760px) 100vw, 760px" className="object-cover" />
 
-        <header className="absolute inset-x-[13%] top-[2.4%] flex h-[9.5%] flex-col items-center justify-center text-center leading-none" style={{ color: visual.plaqueText }}>
-          <span className="mb-[2%] font-black uppercase tracking-[.16em] [font-size:clamp(.36rem,1.3vw,.7rem)]">{theme.name}</span>
-          <h1 className="line-clamp-2 max-w-full font-black leading-[.92] tracking-[-.035em] [font-size:clamp(.95rem,4.6vw,2.6rem)]" style={{ fontFamily: themeConfig.headingFont || theme.config.headingFont }}>
+        {/* 1. Placa Superior de Madeira / Selo de Abertura */}
+        <div className="absolute inset-x-[18%] top-[2.5%] flex h-[5.6%] items-center justify-center text-center leading-none">
+          <span className="font-black uppercase tracking-[.16em] [font-size:clamp(.42rem,1.5vw,.82rem)]" style={{ color: visual.plaqueText }}>
+            {visual.openingLabel || theme.heroBadge || theme.name}
+          </span>
+        </div>
+
+        {/* 2. Área do Homenageado: Nome Grande e Subtítulo na Clareira Acima da Foto */}
+        <header className="absolute inset-x-[11%] top-[8.8%] flex h-[12.2%] flex-col items-center justify-center text-center">
+          <h1
+            className="line-clamp-1 max-w-full font-black leading-[.92] tracking-[-.035em] drop-shadow-[0_2px_4px_rgba(255,255,255,0.75)] [font-size:clamp(1.4rem,6.2vw,3.2rem)]"
+            style={{
+              color: visual.primary,
+              fontFamily: themeConfig.headingFont || theme.config.headingFont,
+            }}
+          >
             {displayName}
           </h1>
+          <p
+            className="mx-auto mt-[1.2%] line-clamp-2 max-w-[90%] font-extrabold leading-tight [font-size:clamp(.48rem,1.75vw,.95rem)]"
+            style={{ color: visual.plaqueText }}
+          >
+            {event.headline || theme.tagline}
+          </p>
         </header>
 
-        <div className="absolute overflow-hidden border-[clamp(3px,.65vw,7px)] border-white/80 shadow-[0_14px_35px_rgba(35,25,18,.24)]" style={{ left: visual.photo.left, top: visual.photo.top, width: visual.photo.width, height: visual.photo.height, borderRadius: visual.photo.radius }}>
-          <Image src={coverUrl} alt={displayName} fill sizes="(max-width: 760px) 60vw, 450px" className="object-cover" />
+        {/* 3. Moldura Central de Foto / Pergaminho */}
+        <div
+          className="absolute overflow-hidden border-[clamp(3px,.65vw,7px)] border-white/85 shadow-[0_14px_35px_rgba(35,25,18,.25)]"
+          style={{
+            left: visual.photo.left,
+            top: visual.photo.top,
+            width: visual.photo.width,
+            height: visual.photo.height,
+            borderRadius: visual.photo.radius,
+          }}
+        >
+          <Image
+            src={coverUrl}
+            alt={displayName}
+            fill
+            unoptimized={coverUrl.startsWith('data:') || coverUrl.startsWith('/api/')}
+            sizes="(max-width: 760px) 60vw, 450px"
+            className="object-cover"
+          />
         </div>
 
-        <div className="absolute inset-x-[13%] flex min-h-[5.4%] items-center justify-center text-center font-extrabold leading-tight [font-size:clamp(.48rem,1.85vw,1rem)]" style={{ top: visual.headlineTop, color: visual.primary }}>
-          <p className="line-clamp-2">{event.headline || theme.tagline}</p>
+        {/* 4. Faixa e Contagem Regressiva dentro dos 4 Ovos/Cristais */}
+        <div className="absolute inset-x-[14%] top-[50.8%] flex h-[3.2%] items-center justify-center text-center font-black uppercase tracking-[.14em] [font-size:clamp(.46rem,1.7vw,.88rem)]" style={{ color: visual.primary }}>
+          <span>Contagem regressiva</span>
         </div>
 
-        <div className="absolute inset-x-[13%] grid grid-cols-4 gap-[2%] text-center" style={{ top: visual.countdownTop }}>
+        <div className="absolute inset-x-[11%] top-[54.6%] grid h-[9.8%] grid-cols-4 gap-[2.5%] text-center">
           {values.map((item) => (
-            <div key={item.label} className="flex flex-col items-center">
-              <strong className="font-black leading-none [font-size:clamp(1.05rem,4.9vw,2.7rem)]" style={{ color: visual.primary }}>{String(item.value).padStart(2, '0')}</strong>
-              <span className="mt-[8%] font-black tracking-[.035em] [font-size:clamp(.32rem,1.25vw,.65rem)]" style={{ color: visual.plaqueText }}>{item.label}</span>
+            <div key={item.label} className="flex flex-col items-center justify-center min-w-0">
+              <strong
+                className="font-black leading-none drop-shadow-sm [font-size:clamp(1.15rem,5.2vw,2.75rem)]"
+                style={{ color: visual.primary }}
+              >
+                {String(item.value).padStart(2, '0')}
+              </strong>
+              <span
+                className="mt-[6%] font-black tracking-[.06em] [font-size:clamp(.34rem,1.35vw,.68rem)]"
+                style={{ color: visual.plaqueText }}
+              >
+                {item.label}
+              </span>
             </div>
           ))}
         </div>
 
-        <div className="absolute inset-x-[7%] grid h-[8.2%] grid-cols-2 gap-[5%]" style={{ top: visual.infoTop }}>
-          <div className="flex min-w-0 items-center gap-[5%] px-[4%]">
-            <CalendarDays className="h-[36%] w-auto shrink-0" style={{ color: visual.accent }} strokeWidth={2.3} />
+        {/* 5. Placas Ilustradas de Pergaminho: Data e Local */}
+        <div className="absolute inset-x-[11.5%] top-[67.2%] grid h-[8.4%] grid-cols-2 gap-[4%]">
+          <div className="flex min-w-0 items-center gap-[6%] px-[6%] py-[2%]">
+            <CalendarDays className="h-[40%] w-auto shrink-0" style={{ color: visual.accent }} strokeWidth={2.4} />
             <div className="min-w-0 text-left leading-tight" style={{ color: visual.plaqueText }}>
               <span className="block font-black [font-size:clamp(.38rem,1.35vw,.72rem)]">Data do evento</span>
-              <strong className="mt-[3%] block [font-size:clamp(.43rem,1.55vw,.83rem)]">{formattedDate}</strong>
-              <span className="block opacity-80 [font-size:clamp(.34rem,1.1vw,.6rem)]">às {formattedTime}</span>
+              <strong className="mt-[2%] block [font-size:clamp(.44rem,1.55vw,.84rem)]">{formattedDate}</strong>
+              <span className="block opacity-85 [font-size:clamp(.34rem,1.15vw,.62rem)]">às {formattedTime}</span>
             </div>
           </div>
-          <div className="flex min-w-0 items-center gap-[5%] px-[4%]">
-            <MapPin className="h-[36%] w-auto shrink-0" style={{ color: visual.accent }} strokeWidth={2.3} />
+          <div className="flex min-w-0 items-center gap-[6%] px-[6%] py-[2%]">
+            <MapPin className="h-[40%] w-auto shrink-0" style={{ color: visual.accent }} strokeWidth={2.4} />
             <div className="min-w-0 text-left leading-tight" style={{ color: visual.plaqueText }}>
               <span className="block font-black [font-size:clamp(.38rem,1.35vw,.72rem)]">Local da celebração</span>
-              <strong className="mt-[3%] block truncate [font-size:clamp(.43rem,1.55vw,.83rem)]">{event.venue_name || 'Local da comemoração'}</strong>
-              <span className="line-clamp-2 opacity-80 [font-size:clamp(.31rem,1vw,.56rem)]">{event.address}</span>
+              <strong className="mt-[2%] block truncate [font-size:clamp(.44rem,1.55vw,.84rem)]">{event.venue_name || 'Local da comemoração'}</strong>
+              <span className="line-clamp-2 opacity-85 [font-size:clamp(.32rem,1.05vw,.58rem)]">{event.address}</span>
             </div>
           </div>
         </div>
 
-        <a href={mapsUrl} target="_blank" rel="noopener noreferrer" className="absolute inset-x-[16%] flex h-[4.8%] items-center justify-center font-black transition-transform duration-300 hover:scale-[1.012] [font-size:clamp(.46rem,1.75vw,.95rem)]" style={{ top: visual.routeTop, color: visual.primary }}>
+        {/* 6. Banner de Trilha / Mapa */}
+        <a
+          href={mapsUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="absolute inset-x-[16%] top-[77.0%] flex h-[4.4%] items-center justify-center font-black transition-transform duration-300 hover:scale-[1.015] active:scale-[.99] [font-size:clamp(.48rem,1.8vw,.95rem)]"
+          style={{ color: visual.primary }}
+        >
           Ver localização no mapa ›
         </a>
 
-        <button type="button" onClick={openRsvp} className="absolute inset-x-[20%] flex h-[5.5%] items-center justify-center font-black drop-shadow-[0_2px_3px_rgba(0,0,0,.45)] transition-transform duration-300 hover:scale-[1.012] active:scale-[.99] [font-size:clamp(.68rem,2.7vw,1.45rem)]" style={{ top: visual.buttonTop, color: visual.buttonText, fontFamily: themeConfig.headingFont || theme.config.headingFont }}>
+        {/* 7. Botão Central de Madeira: Confirmar Presença */}
+        <button
+          type="button"
+          onClick={openRsvp}
+          className="absolute inset-x-[19%] top-[84.4%] flex h-[6.4%] items-center justify-center font-black drop-shadow-[0_2px_4px_rgba(0,0,0,.55)] transition-transform duration-300 hover:scale-[1.015] active:scale-[.985] [font-size:clamp(.72rem,2.85vw,1.55rem)]"
+          style={{
+            color: visual.buttonText,
+            fontFamily: themeConfig.headingFont || theme.config.headingFont,
+          }}
+        >
           Confirmar presença ›
         </button>
       </section>
