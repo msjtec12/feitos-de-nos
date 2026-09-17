@@ -57,26 +57,46 @@ export function PremiumEditorialInvitation() {
       <section className="editorial-premium-poster relative mx-auto aspect-[9/16] w-full max-w-[760px] overflow-hidden" aria-label={`Convite ${theme.name}`}>
         <Image src={visual.background} alt={`Cenário ilustrado do tema ${theme.name}`} fill priority sizes="(max-width: 760px) 100vw, 760px" className="object-cover" />
 
-        {/* 1. Placa Superior de Madeira / Selo de Abertura */}
-        <div className="absolute inset-x-[18%] top-[2.5%] flex h-[5.6%] items-center justify-center text-center leading-none">
-          <span className="font-black uppercase tracking-[.16em] [font-size:clamp(.42rem,1.5vw,.82rem)]" style={{ color: visual.plaqueText }}>
+        {/* 1. Placa Superior / Selo de Abertura */}
+        <div
+          className="absolute flex items-center justify-center text-center leading-none"
+          style={{
+            top: visual.topBadge.top,
+            height: visual.topBadge.height,
+            left: visual.topBadge.insetX || '18%',
+            right: visual.topBadge.insetX || '18%',
+          }}
+        >
+          <span
+            className="font-black uppercase tracking-[.16em] [font-size:clamp(.42rem,1.5vw,.82rem)]"
+            style={{ color: visual.plaqueText }}
+          >
             {visual.openingLabel || theme.heroBadge || theme.name}
           </span>
         </div>
 
-        {/* 2. Área do Homenageado: Nome Grande e Subtítulo na Clareira Acima da Foto */}
-        <header className="absolute inset-x-[11%] top-[8.8%] flex h-[12.2%] flex-col items-center justify-center text-center">
+        {/* 2. Área do Homenageado: Título e Subtítulo */}
+        <header
+          className="absolute flex flex-col items-center justify-center text-center"
+          style={{
+            top: visual.headline.top,
+            height: visual.headline.height,
+            left: visual.headline.insetX || '11%',
+            right: visual.headline.insetX || '11%',
+          }}
+        >
           <h1
-            className="line-clamp-1 max-w-full font-black leading-[.92] tracking-[-.035em] drop-shadow-[0_2px_4px_rgba(255,255,255,0.75)] [font-size:clamp(1.4rem,6.2vw,3.2rem)]"
+            className="line-clamp-1 max-w-full font-black leading-[.95] tracking-[-.035em] drop-shadow-[0_2px_4px_rgba(255,255,255,0.75)]"
             style={{
               color: visual.primary,
               fontFamily: themeConfig.headingFont || theme.config.headingFont,
+              fontSize: visual.headline.sizeClamp || 'clamp(1.3rem,5.8vw,3.1rem)',
             }}
           >
             {displayName}
           </h1>
           <p
-            className="mx-auto mt-[1.2%] line-clamp-2 max-w-[90%] font-extrabold leading-tight [font-size:clamp(.48rem,1.75vw,.95rem)]"
+            className="mx-auto mt-[1.2%] line-clamp-2 max-w-[92%] font-extrabold leading-tight [font-size:clamp(.46rem,1.65vw,.92rem)]"
             style={{ color: visual.plaqueText }}
           >
             {event.headline || theme.tagline}
@@ -104,12 +124,31 @@ export function PremiumEditorialInvitation() {
           />
         </div>
 
-        {/* 4. Faixa e Contagem Regressiva dentro dos 4 Ovos/Cristais */}
-        <div className="absolute inset-x-[14%] top-[50.8%] flex h-[3.2%] items-center justify-center text-center font-black uppercase tracking-[.14em] [font-size:clamp(.46rem,1.7vw,.88rem)]" style={{ color: visual.primary }}>
+        {/* 4. Faixa e Título da Contagem Regressiva */}
+        <div
+          className="absolute flex items-center justify-center text-center font-black uppercase tracking-[.14em] [font-size:clamp(.46rem,1.7vw,.88rem)]"
+          style={{
+            top: visual.countdownTitle.top,
+            height: visual.countdownTitle.height,
+            left: visual.countdownTitle.insetX || '14%',
+            right: visual.countdownTitle.insetX || '14%',
+            color: visual.primary,
+          }}
+        >
           <span>Contagem regressiva</span>
         </div>
 
-        <div className="absolute inset-x-[11%] top-[54.6%] grid h-[9.8%] grid-cols-4 gap-[2.5%] text-center">
+        {/* 5. Os 4 Pods / Círculos da Contagem Regressiva */}
+        <div
+          className="absolute grid grid-cols-4 text-center"
+          style={{
+            top: visual.countdownPods.top,
+            height: visual.countdownPods.height,
+            left: visual.countdownPods.insetX || '11%',
+            right: visual.countdownPods.insetX || '11%',
+            gap: visual.countdownPods.gap || '2.5%',
+          }}
+        >
           {values.map((item) => (
             <div key={item.label} className="flex flex-col items-center justify-center min-w-0">
               <strong
@@ -128,8 +167,17 @@ export function PremiumEditorialInvitation() {
           ))}
         </div>
 
-        {/* 5. Placas Ilustradas de Pergaminho: Data e Local */}
-        <div className="absolute inset-x-[11.5%] top-[67.2%] grid h-[8.4%] grid-cols-2 gap-[4%]">
+        {/* 6. Placas Ilustradas: Data e Local */}
+        <div
+          className="absolute grid grid-cols-2"
+          style={{
+            top: visual.infoPlaques.top,
+            height: visual.infoPlaques.height,
+            left: visual.infoPlaques.insetX || '11.5%',
+            right: visual.infoPlaques.insetX || '11.5%',
+            gap: visual.infoPlaques.gap || '4%',
+          }}
+        >
           <div className="flex min-w-0 items-center gap-[6%] px-[6%] py-[2%]">
             <CalendarDays className="h-[40%] w-auto shrink-0" style={{ color: visual.accent }} strokeWidth={2.4} />
             <div className="min-w-0 text-left leading-tight" style={{ color: visual.plaqueText }}>
@@ -148,23 +196,33 @@ export function PremiumEditorialInvitation() {
           </div>
         </div>
 
-        {/* 6. Banner de Trilha / Mapa */}
+        {/* 7. Banner de Trilha / Mapa */}
         <a
           href={mapsUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="absolute inset-x-[16%] top-[77.0%] flex h-[4.4%] items-center justify-center font-black transition-transform duration-300 hover:scale-[1.015] active:scale-[.99] [font-size:clamp(.48rem,1.8vw,.95rem)]"
-          style={{ color: visual.primary }}
+          className="absolute flex items-center justify-center font-black transition-transform duration-300 hover:scale-[1.015] active:scale-[.99] [font-size:clamp(.48rem,1.8vw,.95rem)]"
+          style={{
+            top: visual.mapBanner.top,
+            height: visual.mapBanner.height,
+            left: visual.mapBanner.insetX || '16%',
+            right: visual.mapBanner.insetX || '16%',
+            color: visual.primary,
+          }}
         >
           Ver localização no mapa ›
         </a>
 
-        {/* 7. Botão Central de Madeira: Confirmar Presença */}
+        {/* 8. Botão Confirmar Presença */}
         <button
           type="button"
           onClick={openRsvp}
-          className="absolute inset-x-[19%] top-[84.4%] flex h-[6.4%] items-center justify-center font-black drop-shadow-[0_2px_4px_rgba(0,0,0,.55)] transition-transform duration-300 hover:scale-[1.015] active:scale-[.985] [font-size:clamp(.72rem,2.85vw,1.55rem)]"
+          className="absolute flex items-center justify-center font-black drop-shadow-[0_2px_4px_rgba(0,0,0,.55)] transition-transform duration-300 hover:scale-[1.015] active:scale-[.985] [font-size:clamp(.72rem,2.85vw,1.55rem)]"
           style={{
+            top: visual.rsvpButton.top,
+            height: visual.rsvpButton.height,
+            left: visual.rsvpButton.insetX || '19%',
+            right: visual.rsvpButton.insetX || '19%',
             color: visual.buttonText,
             fontFamily: themeConfig.headingFont || theme.config.headingFont,
           }}
