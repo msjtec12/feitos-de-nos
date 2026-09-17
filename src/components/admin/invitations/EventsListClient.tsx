@@ -17,6 +17,7 @@ import {
   MapPin,
   Heart,
   Eye,
+  Smartphone,
 } from 'lucide-react';
 
 interface EventsListClientProps {
@@ -256,6 +257,17 @@ export function EventsListClient({ initialEvents }: EventsListClientProps) {
                       </>
                     )}
                   </button>
+
+                  {/* App Anfitrião */}
+                  <Link
+                    href={`/app/convite/${event.slug || event.id}`}
+                    target="_blank"
+                    className="inline-flex items-center gap-1 px-3 py-2 rounded-xl bg-purple-50 text-purple-800 hover:bg-purple-100 text-xs font-semibold transition-colors border border-purple-200"
+                    title="Abrir no App dedicado do Anfitrião (Mobile / PWA)"
+                  >
+                    <Smartphone className="w-3.5 h-3.5 text-purple-600" />
+                    <span>App</span>
+                  </Link>
 
                   {/* Guests */}
                   <Link

@@ -42,24 +42,45 @@ import {
   Check,
   Play,
   EyeOff,
+  Edit,
+  FileText,
 } from 'lucide-react';
 
 interface InvitationEditorProps {
   event: EventDetailWithMedia;
+  apiBasePath?: string;
+  portalMode?: 'admin' | 'app';
+  backHref?: string;
+  guestsHref?: string;
+  checkInHref?: string;
 }
 
 type TabType = 'info' | 'datetime' | 'theme' | 'gallery' | 'gift' | 'rsvp';
 type ViewMode = 'split' | 'editor' | 'simulator';
 
-export function InvitationEditorClientView({ event: initialEvent }: InvitationEditorProps) {
+export function InvitationEditorClientView({
+  event: initialEvent,
+  apiBasePath = '/api/admin/events',
+  portalMode = 'admin',
+  backHref,
+  guestsHref,
+  checkInHref,
+}: InvitationEditorProps) {
   const router = useRouter();
 
   // Active state
   const [activeTab, setActiveTab] = useState<TabType>('info');
-  const [viewMode, setViewMode] = useState<ViewMode>('split');
+  const [viewMode, setViewMode] = useState<ViewMode>('editor');
   const [simulatorKey, setSimulatorKey] = useState(0);
   const [testOpeningInSimulator, setTestOpeningInSimulator] = useState(false);
   const [simulatorReducedMotion, setSimulatorReducedMotion] = useState(false);
+
+  // Responsive default: desktop opens split, mobile opens editor
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.innerWidth >= 1024) {
+      setViewMode('split');
+    }
+  }, []);
 
   // Form Fields
   const [title, setTitle] = useState(initialEvent.title);
@@ -219,7 +240,7 @@ export function InvitationEditorClientView({ event: initialEvent }: InvitationEd
           queryParams.set('url', itemToRemove.url);
         }
         if (queryParams.toString()) {
-          await fetch(`/api/admin/events/${initialEvent.id}/media?${queryParams.toString()}`, {
+          await fetch(`${apiBasePath}/${initialEvent.id}/media?${queryParams.toString()}`, {
             method: 'DELETE',
           });
         }
@@ -290,7 +311,7 @@ export function InvitationEditorClientView({ event: initialEvent }: InvitationEd
       formData.append('file', file);
       formData.append('caption', 'Foto de Capa');
 
-      const res = await fetch(`/api/admin/events/${initialEvent.id}/upload`, {
+      const res = await fetch(`${apiBasePath}/${initialEvent.id}/upload`, {
         method: 'POST',
         body: formData,
       });
@@ -323,7 +344,7 @@ export function InvitationEditorClientView({ event: initialEvent }: InvitationEd
         formData.append('file', file);
         formData.append('caption', newPhotoCaption.trim() || file.name.replace(/\.[^/.]+$/, ''));
 
-        const res = await fetch(`/api/admin/events/${initialEvent.id}/upload`, {
+        const res = await fetch(`${apiBasePath}/${initialEvent.id}/upload`, {
           method: 'POST',
           body: formData,
         });
@@ -390,7 +411,7 @@ export function InvitationEditorClientView({ event: initialEvent }: InvitationEd
       'infantil-monstrinhos-elementais';
 
     try {
-      const res = await fetch(`/api/admin/events/${initialEvent.id}`, {
+      const res = await fetch(`${apiBasePath}/${initialEvent.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -449,36 +470,49 @@ export function InvitationEditorClientView({ event: initialEvent }: InvitationEd
     }
   };
 
+  const resolvedBackHref =
+    backHref ||
+    (portalMode === 'app'
+      ? `/app/convite/${initialEvent.slug || initialEvent.id}`
+      : '/admin/convites');
+
+  const resolvedGuestsHref =
+    guestsHref ||
+    (portalMode === 'app'
+      ? `/app/convite/${initialEvent.slug || initialEvent.id}/convidados`
+      : `/admin/convites/${initialEvent.id}/convidados`);
+
   return (
     <div className="min-h-screen bg-slate-100 flex flex-col selection:bg-[#D9A4A0]/40">
       {/* Top Navbar */}
-      <header className="bg-white border-b border-[#713C48]/15 px-4 sm:px-6 h-16 flex items-center justify-between sticky top-0 z-30 shadow-xs">
-        <div className="flex items-center gap-3">
+      <header className="bg-white border-b border-[#713C48]/15 px-3 sm:px-6 h-16 flex items-center justify-between sticky top-0 z-30 shadow-xs">
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
           <Link
-            href="/admin/convites"
-            className="p-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-600 hover:text-[#713C48] hover:bg-slate-100 transition-colors"
-            title="Voltar para a lista"
+            href={resolvedBackHref}
+            className="p-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-600 hover:text-[#713C48] hover:bg-slate-100 transition-colors shrink-0"
+            title="Voltar"
           >
             <ArrowLeft className="w-4 h-4" />
           </Link>
 
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="font-serif font-bold text-base sm:text-lg text-[#713C48] truncate max-w-xs sm:max-w-md">
+          <div className="min-w-0">
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              <h1 className="font-serif font-bold text-sm sm:text-lg text-[#713C48] truncate max-w-[150px] sm:max-w-md">
                 {title || 'Sem título'}
               </h1>
-              <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-slate-100 text-slate-700">
+              <span className="text-[9px] sm:text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 shrink-0">
                 {status}
               </span>
             </div>
-            <p className="text-[11px] text-slate-500 font-mono">
+            <p className="text-[10px] sm:text-[11px] text-slate-500 font-mono truncate max-w-[180px] sm:max-w-xs">
               /convite/{slug}
             </p>
           </div>
         </div>
 
         {/* View Mode Controls & Action Buttons */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+          {/* Desktop View Switcher */}
           <div className="hidden lg:flex items-center bg-slate-100 p-0.5 rounded-xl border border-slate-200">
             <button
               type="button"
@@ -511,6 +545,31 @@ export function InvitationEditorClientView({ event: initialEvent }: InvitationEd
             </button>
           </div>
 
+          {/* Mobile / Tablet Toggle [Editar | Prévia] */}
+          <div className="flex lg:hidden items-center bg-slate-100 p-0.5 rounded-xl border border-slate-200">
+            <button
+              type="button"
+              onClick={() => setViewMode('editor')}
+              className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 transition-all ${
+                viewMode !== 'simulator' ? 'bg-white shadow-xs text-[#713C48]' : 'text-slate-600'
+              }`}
+            >
+              <Edit className="w-3.5 h-3.5" />
+              <span>Editar</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setViewMode('simulator')}
+              className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 transition-all ${
+                viewMode === 'simulator' ? 'bg-white shadow-xs text-[#713C48]' : 'text-slate-600'
+              }`}
+            >
+              <Smartphone className="w-3.5 h-3.5" />
+              <span>Prévia</span>
+            </button>
+          </div>
+
+          {/* Public Link */}
           <Link
             href={`/convite/${slug}`}
             target="_blank"
@@ -520,8 +579,22 @@ export function InvitationEditorClientView({ event: initialEvent }: InvitationEd
             <ExternalLink className="w-4 h-4" />
           </Link>
 
+          {/* App Switcher button for Admin */}
+          {portalMode === 'admin' && (
+            <Link
+              href={`/app/convite/${initialEvent.slug || initialEvent.id}`}
+              target="_blank"
+              className="hidden xl:inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-purple-50 text-purple-800 hover:bg-purple-100 text-xs font-semibold transition-colors border border-purple-200"
+              title="Abrir experiência no App do Anfitrião"
+            >
+              <Smartphone className="w-3.5 h-3.5" />
+              <span>App Anfitrião</span>
+            </Link>
+          )}
+
+          {/* Guests link */}
           <Link
-            href={`/admin/convites/${initialEvent.id}/convidados`}
+            href={resolvedGuestsHref}
             className="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#C96E5A]/10 text-[#C96E5A] hover:bg-[#C96E5A]/20 text-xs font-semibold transition-colors"
           >
             <Users className="w-3.5 h-3.5" />
@@ -543,17 +616,17 @@ export function InvitationEditorClientView({ event: initialEvent }: InvitationEd
             type="button"
             onClick={handleSave}
             disabled={isSaving}
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#713C48] text-white hover:bg-[#5a2e39] text-xs font-semibold transition-all shadow-sm disabled:opacity-50"
+            className="inline-flex items-center gap-1.5 px-3 sm:px-4 py-2 rounded-xl bg-[#713C48] text-white hover:bg-[#5a2e39] text-xs font-semibold transition-all shadow-sm disabled:opacity-50"
           >
             {isSaving ? (
               <>
                 <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                <span>Salvando...</span>
+                <span className="hidden sm:inline">Salvando...</span>
               </>
             ) : (
               <>
                 <Save className="w-3.5 h-3.5" />
-                <span>Salvar</span>
+                <span className="hidden sm:inline">Salvar</span>
               </>
             )}
           </button>
@@ -564,7 +637,7 @@ export function InvitationEditorClientView({ event: initialEvent }: InvitationEd
       <div className="flex-1 flex overflow-hidden">
         {/* Left Side: Modular Editor */}
         {viewMode !== 'simulator' && (
-          <div className="flex-1 flex flex-col overflow-y-auto max-w-4xl mx-auto p-4 sm:p-6 space-y-6">
+          <div className="flex-1 flex flex-col overflow-y-auto max-w-4xl mx-auto p-3 sm:p-6 space-y-4 sm:space-y-6">
             {/* Save Error Alert */}
             {saveError && (
               <div className="p-4 rounded-2xl bg-red-50 border border-red-200 text-red-700 text-xs sm:text-sm flex items-start gap-3 shadow-xs">
@@ -577,60 +650,66 @@ export function InvitationEditorClientView({ event: initialEvent }: InvitationEd
             )}
 
             {/* Tabs Bar */}
-            <div className="flex items-center gap-1 bg-white p-1 rounded-2xl border border-slate-200 overflow-x-auto shadow-xs">
+            <div className="flex items-center gap-1.5 bg-white p-1.5 rounded-2xl border border-slate-200 overflow-x-auto shadow-xs scrollbar-none snap-x touch-pan-x">
               <button
                 type="button"
                 onClick={() => setActiveTab('info')}
-                className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
+                className={`px-3 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all flex items-center gap-1.5 shrink-0 snap-start ${
                   activeTab === 'info' ? 'bg-[#713C48] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'
                 }`}
               >
-                Informações
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>Informações</span>
               </button>
               <button
                 type="button"
                 onClick={() => setActiveTab('datetime')}
-                className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
+                className={`px-3 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all flex items-center gap-1.5 shrink-0 snap-start ${
                   activeTab === 'datetime' ? 'bg-[#713C48] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'
                 }`}
               >
-                Data & Local
+                <Calendar className="w-3.5 h-3.5" />
+                <span>Data & Local</span>
               </button>
               <button
                 type="button"
                 onClick={() => setActiveTab('theme')}
-                className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
+                className={`px-3 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all flex items-center gap-1.5 shrink-0 snap-start ${
                   activeTab === 'theme' ? 'bg-[#713C48] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'
                 }`}
               >
-                Tema & Cores
+                <Palette className="w-3.5 h-3.5" />
+                <span>Tema & Cores</span>
               </button>
               <button
                 type="button"
                 onClick={() => setActiveTab('gallery')}
-                className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
+                className={`px-3 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all flex items-center gap-1.5 shrink-0 snap-start ${
                   activeTab === 'gallery' ? 'bg-[#713C48] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'
                 }`}
               >
-                Galeria ({mediaList.length})
+                <ImageIcon className="w-3.5 h-3.5" />
+                <span>Galeria ({mediaList.length})</span>
               </button>
               <button
                 type="button"
                 onClick={() => setActiveTab('gift')}
-                className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
+                className={`px-3 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all flex items-center gap-1.5 shrink-0 snap-start ${
                   activeTab === 'gift' ? 'bg-[#713C48] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'
                 }`}
               >
-                Presentes / Pix
+                <Gift className="w-3.5 h-3.5" />
+                <span>Presentes / Pix</span>
               </button>
               <button
                 type="button"
                 onClick={() => setActiveTab('rsvp')}
-                className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
+                className={`px-3 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all flex items-center gap-1.5 shrink-0 snap-start ${
                   activeTab === 'rsvp' ? 'bg-[#713C48] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'
                 }`}
               >
-                RSVP & Status
+                <Users className="w-3.5 h-3.5" />
+                <span>RSVP & Status</span>
               </button>
             </div>
 
@@ -653,7 +732,7 @@ export function InvitationEditorClientView({ event: initialEvent }: InvitationEd
                         setTitle(e.target.value);
                         setIsDirty(true);
                       }}
-                      className="w-full px-4 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#713C48]"
+                      className="w-full px-4 py-2.5 sm:py-2 rounded-xl border border-slate-200 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#713C48]"
                     />
                   </div>
 
@@ -668,7 +747,7 @@ export function InvitationEditorClientView({ event: initialEvent }: InvitationEd
                         setSlug(e.target.value);
                         setIsDirty(true);
                       }}
-                      className="w-full px-4 py-2 rounded-xl border border-slate-200 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-[#713C48]"
+                      className="w-full px-4 py-2.5 sm:py-2 rounded-xl border border-slate-200 text-base sm:text-sm font-mono focus:outline-none focus:ring-2 focus:ring-[#713C48]"
                     />
                   </div>
 
@@ -683,7 +762,7 @@ export function InvitationEditorClientView({ event: initialEvent }: InvitationEd
                         setHonoreeName(e.target.value);
                         setIsDirty(true);
                       }}
-                      className="w-full px-4 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#713C48]"
+                      className="w-full px-4 py-2.5 sm:py-2 rounded-xl border border-slate-200 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#713C48]"
                     />
                   </div>
 
@@ -698,7 +777,7 @@ export function InvitationEditorClientView({ event: initialEvent }: InvitationEd
                         setHostNames(e.target.value);
                         setIsDirty(true);
                       }}
-                      className="w-full px-4 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#713C48]"
+                      className="w-full px-4 py-2.5 sm:py-2 rounded-xl border border-slate-200 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#713C48]"
                     />
                   </div>
 
@@ -712,7 +791,7 @@ export function InvitationEditorClientView({ event: initialEvent }: InvitationEd
                         setEventType(e.target.value as InvitationEventType);
                         setIsDirty(true);
                       }}
-                      className="w-full px-4 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#713C48]"
+                      className="w-full px-4 py-2.5 sm:py-2 rounded-xl border border-slate-200 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#713C48]"
                     >
                       {INVITATION_EVENT_TYPES.map((t) => (
                         <option key={t.id} value={t.id}>
@@ -734,7 +813,7 @@ export function InvitationEditorClientView({ event: initialEvent }: InvitationEd
                         setIsDirty(true);
                       }}
                       placeholder="Ex: Nosso raio de sol completa seu primeiro aninho!"
-                      className="w-full px-4 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#713C48]"
+                      className="w-full px-4 py-2.5 sm:py-2 rounded-xl border border-slate-200 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#713C48]"
                     />
                   </div>
 
@@ -750,7 +829,7 @@ export function InvitationEditorClientView({ event: initialEvent }: InvitationEd
                         setIsDirty(true);
                       }}
                       placeholder="Recado afetuoso com a história ou mensagem aos convidados..."
-                      className="w-full px-4 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#713C48]"
+                      className="w-full px-4 py-2.5 sm:py-2 rounded-xl border border-slate-200 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#713C48]"
                     />
                   </div>
                 </div>
@@ -776,7 +855,7 @@ export function InvitationEditorClientView({ event: initialEvent }: InvitationEd
                         setEventDate(e.target.value);
                         setIsDirty(true);
                       }}
-                      className="w-full px-4 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#713C48]"
+                      className="w-full px-4 py-2.5 sm:py-2 rounded-xl border border-slate-200 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#713C48]"
                     />
                   </div>
 
@@ -791,7 +870,7 @@ export function InvitationEditorClientView({ event: initialEvent }: InvitationEd
                         setEventTime(e.target.value);
                         setIsDirty(true);
                       }}
-                      className="w-full px-4 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#713C48]"
+                      className="w-full px-4 py-2.5 sm:py-2 rounded-xl border border-slate-200 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#713C48]"
                     />
                   </div>
 
@@ -807,7 +886,7 @@ export function InvitationEditorClientView({ event: initialEvent }: InvitationEd
                         setIsDirty(true);
                       }}
                       placeholder="Ex: Villa Encantada"
-                      className="w-full px-4 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#713C48]"
+                      className="w-full px-4 py-2.5 sm:py-2 rounded-xl border border-slate-200 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#713C48]"
                     />
                   </div>
 
@@ -823,7 +902,7 @@ export function InvitationEditorClientView({ event: initialEvent }: InvitationEd
                         setIsDirty(true);
                       }}
                       placeholder="Ex: Esporte fino / Tons pastéis"
-                      className="w-full px-4 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#713C48]"
+                      className="w-full px-4 py-2.5 sm:py-2 rounded-xl border border-slate-200 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#713C48]"
                     />
                   </div>
 
@@ -839,7 +918,7 @@ export function InvitationEditorClientView({ event: initialEvent }: InvitationEd
                         setIsDirty(true);
                       }}
                       placeholder="Ex: Alameda das Hortênsias, 420 - Jardim América, São Paulo - SP"
-                      className="w-full px-4 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#713C48]"
+                      className="w-full px-4 py-2.5 sm:py-2 rounded-xl border border-slate-200 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#713C48]"
                     />
                   </div>
 
@@ -855,7 +934,7 @@ export function InvitationEditorClientView({ event: initialEvent }: InvitationEd
                         setIsDirty(true);
                       }}
                       placeholder="Deixe em branco para busca automática do endereço"
-                      className="w-full px-4 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#713C48]"
+                      className="w-full px-4 py-2.5 sm:py-2 rounded-xl border border-slate-200 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#713C48]"
                     />
                   </div>
                 </div>
@@ -1175,8 +1254,8 @@ export function InvitationEditorClientView({ event: initialEvent }: InvitationEd
                   </div>
 
                   {coverInputMode === 'file' ? (
-                    <div className="flex items-center gap-3">
-                      <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors shadow-2xs">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+                      <label className="cursor-pointer inline-flex items-center justify-center gap-2 px-4 py-3 sm:py-2.5 bg-white border border-slate-300 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors shadow-2xs w-full sm:w-auto">
                         {isUploadingCover ? (
                           <>
                             <Loader2 className="w-3.5 h-3.5 animate-spin text-[#C96E5A]" />
@@ -1271,8 +1350,8 @@ export function InvitationEditorClientView({ event: initialEvent }: InvitationEd
                   </div>
 
                   {galleryInputMode === 'file' ? (
-                    <div className="flex items-center gap-3">
-                      <label className="cursor-pointer inline-flex items-center gap-2 px-5 py-2.5 bg-[#713C48] hover:bg-[#5a2e39] text-white rounded-xl text-xs font-bold transition-all shadow-xs">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+                      <label className="cursor-pointer inline-flex items-center justify-center gap-2 px-5 py-3 sm:py-2.5 bg-[#713C48] hover:bg-[#5a2e39] text-white rounded-xl text-xs font-bold transition-all shadow-xs w-full sm:w-auto">
                         {isUploadingGallery ? (
                           <>
                             <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -1410,7 +1489,7 @@ export function InvitationEditorClientView({ event: initialEvent }: InvitationEd
                         setStatus(e.target.value as EventStatus);
                         setIsDirty(true);
                       }}
-                      className="w-full px-4 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#713C48]"
+                      className="w-full px-4 py-2.5 sm:py-2 rounded-xl border border-slate-200 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#713C48]"
                     >
                       <option value="draft">Rascunho</option>
                       <option value="awaiting_content">Aguardando Conteúdo</option>
@@ -1434,7 +1513,7 @@ export function InvitationEditorClientView({ event: initialEvent }: InvitationEd
                         setRsvpDeadline(e.target.value);
                         setIsDirty(true);
                       }}
-                      className="w-full px-4 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#713C48]"
+                      className="w-full px-4 py-2.5 sm:py-2 rounded-xl border border-slate-200 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#713C48]"
                     />
                   </div>
                 </div>
@@ -1447,16 +1526,32 @@ export function InvitationEditorClientView({ event: initialEvent }: InvitationEd
         {viewMode !== 'editor' && (
           <aside
             className={`${
-              viewMode === 'simulator' ? 'w-full max-w-md mx-auto p-4' : 'w-[440px] border-l border-slate-200 p-4'
-            } bg-slate-200/50 flex flex-col items-center justify-start overflow-hidden`}
+              viewMode === 'simulator' ? 'w-full max-w-md mx-auto p-2 sm:p-4' : 'w-[440px] border-l border-slate-200 p-4'
+            } bg-slate-200/50 flex flex-col items-center justify-start overflow-y-auto`}
           >
+            {/* Mobile Return to Editor Pill */}
+            <div className="w-full max-w-[340px] flex lg:hidden items-center justify-between pb-2">
+              <button
+                type="button"
+                onClick={() => setViewMode('editor')}
+                className="px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-[#713C48] text-xs font-bold flex items-center gap-1.5 shadow-xs"
+              >
+                <ArrowLeft className="w-3.5 h-3.5" />
+                <span>Voltar a Editar</span>
+              </button>
+              <span className="text-[11px] font-semibold text-slate-500">
+                Prévia ao vivo
+              </span>
+            </div>
+
             {/* Simulator Control Header */}
             <div className="w-full max-w-[340px] flex items-center justify-between pb-3 text-xs text-slate-600">
               <span className="flex items-center gap-1 font-semibold">
                 <Smartphone className="w-3.5 h-3.5 text-[#C96E5A]" />
-                <span>Simulador iPhone</span>
+                <span className="hidden sm:inline">Simulador iPhone</span>
+                <span className="sm:hidden">iPhone</span>
               </span>
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-1 sm:gap-1.5">
                 <button
                   type="button"
                   onClick={() => setSimulatorReducedMotion(!simulatorReducedMotion)}
@@ -1485,7 +1580,7 @@ export function InvitationEditorClientView({ event: initialEvent }: InvitationEd
                   }
                   title="Alternar entre ver o convite aberto ou testar a tela de abertura com o lacre"
                 >
-                  {testOpeningInSimulator ? 'Testando Lacre' : 'Ver Lacre'}
+                  {testOpeningInSimulator ? 'Lacre' : 'Ver Lacre'}
                 </button>
                 <button
                   type="button"
@@ -1503,16 +1598,16 @@ export function InvitationEditorClientView({ event: initialEvent }: InvitationEd
             </div>
 
             {/* iPhone Mockup Frame */}
-            <div className="phone-frame w-full max-w-[340px] h-[720px] bg-slate-900 rounded-[50px] p-3 shadow-2xl border-4 border-slate-800 relative overflow-hidden flex flex-col ring-1 ring-black/20">
+            <div className="phone-frame w-full max-w-[340px] h-[680px] sm:h-[720px] bg-slate-900 rounded-[44px] sm:rounded-[50px] p-2.5 sm:p-3 shadow-2xl border-4 border-slate-800 relative overflow-hidden flex flex-col ring-1 ring-black/20">
               {/* Dynamic Island Notch */}
-              <div className="absolute top-4 left-1/2 -translate-x-1/2 w-28 h-5 bg-slate-900 rounded-full z-30 flex items-center justify-center pointer-events-none">
-                <div className="w-2.5 h-2.5 rounded-full bg-slate-800 ml-auto mr-3" />
+              <div className="absolute top-3.5 left-1/2 -translate-x-1/2 w-26 sm:w-28 h-4 sm:h-5 bg-slate-900 rounded-full z-30 flex items-center justify-center pointer-events-none">
+                <div className="w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-full bg-slate-800 ml-auto mr-2.5" />
               </div>
 
               {/* Inner Screen */}
               <div
                 key={simulatorKey}
-                className="phone-screen w-full h-full rounded-[40px] overflow-y-auto relative scrollbar-none transition-colors duration-300"
+                className="phone-screen w-full h-full rounded-[36px] sm:rounded-[40px] overflow-y-auto relative scrollbar-none transition-colors duration-300"
                 style={{ backgroundColor: themeConfig.backgroundColor || '#FFF8F0' }}
               >
                 <InvitationPublicClientView
@@ -1528,41 +1623,53 @@ export function InvitationEditorClientView({ event: initialEvent }: InvitationEd
       </div>
 
       {/* Floating Save Status Bar */}
-      <footer className="bg-white border-t border-[#713C48]/15 px-4 sm:px-8 py-3 flex items-center justify-between gap-4 sticky bottom-0 z-40 shadow-lg text-xs">
-        <div className="flex items-center gap-3">
+      <footer className="bg-white border-t border-[#713C48]/15 px-3 sm:px-8 py-2.5 sm:py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] flex items-center justify-between gap-2 sm:gap-4 sticky bottom-0 z-40 shadow-lg text-xs">
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
           <span className="font-serif font-bold text-[#713C48] hidden sm:inline truncate max-w-xs">
             {title || 'Sem título'}
           </span>
           <span className="text-slate-300 hidden sm:inline">•</span>
           {isSaving ? (
-            <span className="flex items-center gap-1.5 text-slate-600 font-semibold">
+            <span className="flex items-center gap-1.5 text-slate-600 font-semibold text-[11px] sm:text-xs">
               <Loader2 className="w-3.5 h-3.5 animate-spin text-[#C96E5A]" />
-              Salvando no banco de dados...
+              <span className="hidden sm:inline">Salvando no banco de dados...</span>
+              <span className="sm:hidden">Salvando...</span>
             </span>
           ) : isDirty ? (
-            <span className="text-amber-800 font-semibold flex items-center gap-1">
-              <AlertCircle className="w-3.5 h-3.5 text-amber-600" />
-              Alterações não salvas
+            <span className="text-amber-800 font-semibold flex items-center gap-1 text-[11px] sm:text-xs">
+              <AlertCircle className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+              <span>Não salvo</span>
             </span>
           ) : lastSavedTime ? (
-            <span className="text-emerald-800 font-medium flex items-center gap-1">
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-              Salvo às {lastSavedTime}
+            <span className="text-emerald-800 font-medium flex items-center gap-1 text-[11px] sm:text-xs">
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+              <span>Salvo {lastSavedTime}</span>
             </span>
           ) : (
-            <span className="text-slate-500">Tudo sincronizado</span>
+            <span className="text-slate-500 text-[11px] sm:text-xs">Sincronizado</span>
           )}
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+          {viewMode === 'simulator' && (
+            <button
+              type="button"
+              onClick={() => setViewMode('editor')}
+              className="lg:hidden px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition-all flex items-center gap-1"
+            >
+              <Edit className="w-3.5 h-3.5" />
+              <span>Editar</span>
+            </button>
+          )}
+
           <button
             type="button"
             onClick={handleSave}
             disabled={isSaving}
-            className="px-5 py-2 bg-[#713C48] hover:bg-[#5a2e39] text-white rounded-xl text-xs font-bold transition-all shadow-sm flex items-center gap-1.5 disabled:opacity-50"
+            className="px-4 sm:px-5 py-2 bg-[#713C48] hover:bg-[#5a2e39] text-white rounded-xl text-xs font-bold transition-all shadow-sm flex items-center gap-1.5 disabled:opacity-50"
           >
             {isSaving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
-            <span>Salvar Alterações</span>
+            <span>Salvar</span>
           </button>
         </div>
       </footer>

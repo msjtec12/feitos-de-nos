@@ -13,6 +13,7 @@ import {
   ArrowRight,
   ShieldCheck,
   Calendar,
+  Smartphone,
 } from 'lucide-react';
 
 export function InvitationSuccessClientView() {
@@ -131,11 +132,21 @@ export function InvitationSuccessClientView() {
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-3">
           <Link
+            href={`/app/convite/${slug || 'matheus-akira-1-ano'}`}
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#713C48] bg-[#713C48]/8 hover:bg-[#713C48]/15 transition-colors py-2 px-3.5 rounded-xl border border-[#713C48]/15"
+          >
+            <Smartphone className="w-3.5 h-3.5 text-[#C96E5A]" />
+            <span>Acessar App do Anfitrião</span>
+          </Link>
+
+          <span className="hidden sm:inline text-xs text-[#302B2D]/40">•</span>
+
+          <Link
             href="/convite/matheus-akira-1-ano"
             className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#713C48] hover:text-[#C96E5A] transition-colors py-2 px-3"
           >
             <Sparkles className="w-3.5 h-3.5 text-[#C96E5A]" />
-            <span>Ver Exemplo de Demonstração (Matheus Akira)</span>
+            <span>Ver Exemplo Demo</span>
           </Link>
 
           <span className="hidden sm:inline text-xs text-[#302B2D]/40">•</span>

@@ -1,0 +1,320 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
+import { createSupabaseAdminClient } from '@/lib/supabase/server';
+import {
+  MATHEUS_INVITATION_DEMO,
+  MATHEUS_DEMO_SLUG,
+  MATHEUS_OFFICIAL_UUID,
+  MATHEUS_DEMO_LEGACY_ID,
+} from '@/data/matheus-invitation-demo';
+import { getInvitationTheme, mergeInvitationThemeConfig } from '@/data/invitation-themes';
+import { EventRow, EventMediaRow } from '@/types/invitation';
+
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+export async function GET(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await params;
+    const adminClient = createSupabaseAdminClient();
+
+    const isUUID = UUID_REGEX.test(id);
+    const isMatheusDemo =
+      id === MATHEUS_OFFICIAL_UUID ||
+      id === MATHEUS_DEMO_SLUG ||
+      id === MATHEUS_DEMO_LEGACY_ID;
+
+    let event: EventRow | null = null;
+
+    if (isUUID) {
+      const { data } = await adminClient
+        .from('events')
+        .select('*')
+        .eq('id', id)
+        .maybeSingle();
+      event = data as EventRow | null;
+    } else {
+      const { data } = await adminClient
+        .from('events')
+        .select('*')
+        .eq('slug', id === MATHEUS_DEMO_LEGACY_ID ? MATHEUS_DEMO_SLUG : id)
+        .maybeSingle();
+      event = data as EventRow | null;
+    }
+
+    if (!event && isMatheusDemo) {
+      return NextResponse.json({ event: MATHEUS_INVITATION_DEMO });
+    }
+
+    if (!event) {
+      return NextResponse.json({ error: 'Evento não encontrado' }, { status: 404 });
+    }
+
+    // Media
+    const { data: media } = await adminClient
+      .from('event_media')
+      .select('*')
+      .eq('event_id', event.id)
+      .order('sort_order', { ascending: true });
+
+    // Guests
+    const { data: guests } = await adminClient
+      .from('event_guests')
+      .select('*')
+      .eq('event_id', event.id)
+      .order('name', { ascending: true });
+
+    return NextResponse.json({
+      event: {
+        ...event,
+        media: media || [],
+        guests: guests || [],
+      },
+    });
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : 'Erro interno';
+    return NextResponse.json({ error: msg }, { status: 500 });
+  }
+}
+
+export async function PUT(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await params;
+    const body = await req.json();
+    const adminClient = createSupabaseAdminClient();
+
+    const isUUID = UUID_REGEX.test(id);
+    const isMatheusDemo =
+      id === MATHEUS_OFFICIAL_UUID ||
+      id === MATHEUS_DEMO_SLUG ||
+      id === MATHEUS_DEMO_LEGACY_ID ||
+      body.slug === MATHEUS_DEMO_SLUG;
+
+    // Resolver tema canônico com preset completo
+    const canonicalThemeKey =
+      body.theme_key ||
+      body.theme_config?.theme_key ||
+      body.theme_config?.themeId ||
+      body.theme_config?.slug ||
+      'infantil-monstrinhos-elementais';
+    const themePreset = getInvitationTheme(canonicalThemeKey);
+
+    const fullThemeConfig = mergeInvitationThemeConfig(themePreset, body.theme_config);
+
+    const updateData: Record<string, any> = {
+      title: body.title,
+      slug: body.slug,
+      theme_key: themePreset.id,
+      event_type: body.event_type,
+      plan: body.plan,
+      host_names: body.host_names,
+      honoree_name: body.honoree_name || null,
+      headline: body.headline || null,
+      opening_message: body.opening_message || null,
+      event_date: body.event_date,
+      venue_name: body.venue_name || null,
+      address: body.address || null,
+      maps_url: body.maps_url || null,
+      dress_code: body.dress_code || null,
+      gift_information: body.gift_information || null,
+      cover_url: body.cover_url || null,
+      theme_config: fullThemeConfig,
+      rsvp_deadline: body.rsvp_deadline || null,
+      status: body.status || 'published',
+      published_at: body.status === 'published' ? new Date().toISOString() : null,
+      updated_at: new Date().toISOString(),
+    };
+
+    // Helper para tentar update ou upsert
+    const runUpdate = async (dataToSave: Record<string, any>) => {
+      if (isUUID) {
+        return await adminClient
+          .from('events')
+          .update(dataToSave)
+          .eq('id', id)
+          .select('*')
+          .maybeSingle();
+      }
+
+      // Se id não for UUID, tenta atualizar por slug
+      const targetSlug = isMatheusDemo ? MATHEUS_DEMO_SLUG : id;
+      const res = await adminClient
+        .from('events')
+        .update(dataToSave)
+        .eq('slug', targetSlug)
+        .select('*')
+        .maybeSingle();
+
+      if (res.data) return res;
+
+      // Se não encontrou por slug e for o demo oficial, realiza UPSERT com UUID oficial
+      if (isMatheusDemo) {
+        return await adminClient
+          .from('events')
+          .upsert(
+            {
+              id: MATHEUS_OFFICIAL_UUID,
+              ...dataToSave,
+            },
+            { onConflict: 'slug' }
+          )
+          .select('*')
+          .single();
+      }
+
+      return res;
+    };
+
+    // 1ª tentativa: com theme_key top-level
+    let result = await runUpdate(updateData);
+
+    // Se o banco falhar por coluna theme_key inexistente na tabela, tenta novamente sem a coluna no nível raiz
+    if (
+      result.error &&
+      (result.error.message?.includes('theme_key') ||
+        result.error.details?.includes('theme_key'))
+    ) {
+      const fallbackData = { ...updateData };
+      delete fallbackData.theme_key;
+      result = await runUpdate(fallbackData);
+    }
+
+    const updatedEvent = result.data;
+    const updateError = result.error;
+
+    if (updateError) {
+      console.error('Error updating event:', updateError);
+      let friendlyError = updateError.message;
+      if (
+        updateError.code === 'PGRST205' ||
+        updateError.message?.includes('public.events') ||
+        updateError.message?.includes('does not exist')
+      ) {
+        friendlyError =
+          'A tabela "events" ainda não foi criada no Supabase. Execute o script SQL de migração no painel do Supabase para ativar a criação e edição de convites.';
+      } else if (
+        updateError.code === '23505' ||
+        updateError.message?.includes('duplicate key') ||
+        updateError.message?.includes('events_slug_key')
+      ) {
+        friendlyError = `O link/slug "${body.slug}" já está em uso por outro evento. Por favor, modifique o slug da URL.`;
+      }
+      return NextResponse.json({ error: friendlyError, details: updateError.message }, { status: 400 });
+    }
+
+    // Sincronização da galeria de mídias (event_media)
+    let finalMediaList: EventMediaRow[] = [];
+    const eventTargetId = updatedEvent?.id || (isUUID ? id : null);
+
+    if (eventTargetId && eventTargetId !== 'temp' && !eventTargetId.startsWith('demo-')) {
+      if (Array.isArray(body.media)) {
+        try {
+          const { data: currentMedia } = await adminClient
+            .from('event_media')
+            .select('*')
+            .eq('event_id', eventTargetId);
+
+          const existingInDb = (currentMedia || []) as EventMediaRow[];
+          const clientMedia = body.media as Array<{
+            id?: string;
+            url: string;
+            caption?: string | null;
+            sort_order?: number;
+            media_type?: string;
+          }>;
+
+          const desiredUrls = new Set(clientMedia.map((m) => m.url));
+          const desiredIds = new Set(
+            clientMedia
+              .filter((m) => m.id && !m.id.startsWith('media-'))
+              .map((m) => m.id)
+          );
+
+          // Remover fotos que não constam mais na lista do cliente
+          const toDeleteIds = existingInDb
+            .filter((dbItem) => !desiredIds.has(dbItem.id) && !desiredUrls.has(dbItem.url))
+            .map((dbItem) => dbItem.id);
+
+          if (toDeleteIds.length > 0) {
+            await adminClient.from('event_media').delete().in('id', toDeleteIds);
+          }
+
+          // Inserir novas ou atualizar existentes
+          for (let i = 0; i < clientMedia.length; i++) {
+            const item = clientMedia[i];
+            const sortOrder = i + 1;
+            const caption = item.caption || null;
+            const mediaType = (item.media_type as 'image' | 'audio' | 'video') || 'image';
+
+            const existingMatch = existingInDb.find(
+              (dbItem) =>
+                (item.id && !item.id.startsWith('media-') && dbItem.id === item.id) ||
+                dbItem.url === item.url
+            );
+
+            if (existingMatch) {
+              await adminClient
+                .from('event_media')
+                .update({
+                  sort_order: sortOrder,
+                  caption,
+                  media_type: mediaType,
+                })
+                .eq('id', existingMatch.id);
+            } else {
+              await adminClient
+                .from('event_media')
+                .insert({
+                  event_id: eventTargetId,
+                  media_type: mediaType,
+                  url: item.url,
+                  caption,
+                  sort_order: sortOrder,
+                });
+            }
+          }
+        } catch (mediaErr) {
+          console.error('Erro na sincronização de event_media:', mediaErr);
+        }
+      }
+
+      try {
+        const { data: refreshedMedia } = await adminClient
+          .from('event_media')
+          .select('*')
+          .eq('event_id', eventTargetId)
+          .order('sort_order', { ascending: true });
+        finalMediaList = (refreshedMedia || []) as EventMediaRow[];
+      } catch {}
+    }
+
+    // Invalidação de cache no Next.js
+    try {
+      revalidatePath(`/convite/${body.slug}`);
+      if (updatedEvent?.slug && updatedEvent.slug !== body.slug) {
+        revalidatePath(`/convite/${updatedEvent.slug}`);
+      }
+      revalidatePath(`/app/convite/${id}`);
+      revalidatePath(`/app/convite/${body.slug}`);
+      revalidatePath('/admin/convites');
+      revalidatePath(`/admin/convites/${id}/editar`);
+    } catch (e) {
+      console.warn('Erro ao revalidar cache:', e);
+    }
+
+    return NextResponse.json({
+      event: {
+        ...(updatedEvent || { ...updateData, id }),
+        media: finalMediaList,
+      },
+    });
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : 'Erro interno';
+    return NextResponse.json({ error: msg }, { status: 500 });
+  }
+}

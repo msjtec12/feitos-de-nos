@@ -19,11 +19,15 @@ import {
 interface CheckInScannerClientProps {
   event: EventRow;
   initialGuests: EventGuestRow[];
+  apiBasePath?: string;
+  backHref?: string;
 }
 
 export function CheckInScannerClient({
   event,
   initialGuests,
+  apiBasePath = '/api/admin/events',
+  backHref,
 }: CheckInScannerClientProps) {
   const [guests, setGuests] = useState<EventGuestRow[]>(initialGuests);
   const [inputToken, setInputToken] = useState('');
@@ -50,7 +54,7 @@ export function CheckInScannerClient({
     setErrorMessage(null);
 
     try {
-      const res = await fetch(`/api/admin/events/${event.id}/check-in`, {
+      const res = await fetch(`${apiBasePath}/${event.id}/check-in`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -70,20 +74,19 @@ export function CheckInScannerClient({
         (g) => g.id === updatedGuest.id && g.checked_in_at
       );
 
-      // Update local state
       setGuests((prev) =>
         prev.map((g) => (g.id === updatedGuest.id ? updatedGuest : g))
       );
-
       setLastCheckInResult({
         guest: updatedGuest,
-        isDuplicate: Boolean(wasAlreadyCheckedIn),
+        isDuplicate: Boolean(resData.isDuplicate || wasAlreadyCheckedIn),
       });
 
+      // Clear search inputs
       setInputToken('');
       setSearchName('');
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Erro no check-in';
+      const msg = err instanceof Error ? err.message : 'Falha ao realizar check-in';
       setErrorMessage(msg);
     } finally {
       setIsLoading(false);
@@ -93,7 +96,7 @@ export function CheckInScannerClient({
   const handleUndoCheckIn = async (guestId: string) => {
     setIsLoading(true);
     try {
-      const res = await fetch(`/api/admin/events/${event.id}/check-in`, {
+      const res = await fetch(`${apiBasePath}/${event.id}/check-in`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -125,7 +128,7 @@ export function CheckInScannerClient({
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Link
-            href={`/admin/convites/${event.id}/convidados`}
+            href={backHref || `/admin/convites/${event.id}/convidados`}
             className="p-2 rounded-xl bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />

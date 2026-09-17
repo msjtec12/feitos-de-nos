@@ -24,11 +24,17 @@ import {
 interface GuestsManagementClientProps {
   event: EventRow;
   initialGuests: EventGuestRow[];
+  apiBasePath?: string;
+  backHref?: string;
+  checkInHref?: string;
 }
 
 export function GuestsManagementClient({
   event,
   initialGuests,
+  apiBasePath = '/api/admin/events',
+  backHref = '/admin/convites',
+  checkInHref,
 }: GuestsManagementClientProps) {
   const [guests, setGuests] = useState<EventGuestRow[]>(initialGuests);
   const [searchTerm, setSearchTerm] = useState('');
@@ -130,7 +136,7 @@ export function GuestsManagementClient({
     setErrorMsg(null);
 
     try {
-      const res = await fetch(`/api/admin/events/${event.id}/guests`, {
+      const res = await fetch(`${apiBasePath}/${event.id}/guests`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -163,7 +169,7 @@ export function GuestsManagementClient({
     if (!confirm('Deseja realmente remover este convidado da lista?')) return;
 
     try {
-      const res = await fetch(`/api/admin/events/${event.id}/guests?guestId=${guestId}`, {
+      const res = await fetch(`${apiBasePath}/${event.id}/guests?guestId=${guestId}`, {
         method: 'DELETE',
       });
 
@@ -181,7 +187,7 @@ export function GuestsManagementClient({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <Link
-            href="/admin/convites"
+            href={backHref}
             className="p-2 rounded-xl bg-white border border-[#713C48]/15 hover:bg-slate-50 transition-colors text-[#713C48]"
           >
             <ArrowLeft className="w-4 h-4" />
@@ -198,7 +204,7 @@ export function GuestsManagementClient({
 
         <div className="flex items-center gap-2">
           <Link
-            href={`/admin/convites/${event.id}/check-in`}
+            href={checkInHref || `/admin/convites/${event.id}/check-in`}
             className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-50 text-emerald-700 hover:bg-emerald-100 text-xs font-semibold transition-colors border border-emerald-200"
           >
             <QrCode className="w-4 h-4" />
