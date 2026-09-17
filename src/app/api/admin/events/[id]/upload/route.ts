@@ -98,15 +98,26 @@ export async function POST(
     }
 
     // Also register in event_media if id is valid and not 'temp'
+    let insertedMediaId: string | null = null;
     if (id && id !== 'temp' && !id.startsWith('demo-')) {
       try {
-        await adminClient.from('event_media').insert({
-          event_id: id,
-          media_type: 'image',
-          url: finalUrl,
-          caption: caption || file.name,
-          sort_order: 99,
-        });
+        const { data: insertedData, error: dbErr } = await adminClient
+          .from('event_media')
+          .insert({
+            event_id: id,
+            media_type: 'image',
+            url: finalUrl,
+            caption: caption || file.name,
+            sort_order: 99,
+          })
+          .select('id')
+          .single();
+
+        if (!dbErr && insertedData) {
+          insertedMediaId = insertedData.id;
+        } else if (dbErr) {
+          console.warn('Could not insert event_media record immediately:', dbErr);
+        }
       } catch (dbErr) {
         console.warn('Could not insert event_media record immediately:', dbErr);
       }
@@ -115,6 +126,7 @@ export async function POST(
     return NextResponse.json({
       success: true,
       url: finalUrl,
+      mediaId: insertedMediaId,
       originalName: file.name,
       sizeBytes: file.size,
     });

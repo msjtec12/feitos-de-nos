@@ -9,7 +9,7 @@ import {
   MATHEUS_DEMO_LEGACY_ID,
 } from '@/data/matheus-invitation-demo';
 import { getInvitationTheme, mergeInvitationThemeConfig } from '@/data/invitation-themes';
-import { EventRow } from '@/types/invitation';
+import { EventRow, EventMediaRow } from '@/types/invitation';
 
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -219,6 +219,92 @@ export async function PUT(
       return NextResponse.json({ error: friendlyError, details: updateError.message }, { status: 400 });
     }
 
+    // Sincronização da galeria de mídias (event_media)
+    let finalMediaList: EventMediaRow[] = [];
+    const eventTargetId = updatedEvent?.id || (isUUID ? id : null);
+
+    if (eventTargetId && eventTargetId !== 'temp' && !eventTargetId.startsWith('demo-')) {
+      if (Array.isArray(body.media)) {
+        try {
+          const { data: currentMedia } = await adminClient
+            .from('event_media')
+            .select('*')
+            .eq('event_id', eventTargetId);
+
+          const existingInDb = (currentMedia || []) as EventMediaRow[];
+          const clientMedia = body.media as Array<{
+            id?: string;
+            url: string;
+            caption?: string | null;
+            sort_order?: number;
+            media_type?: string;
+          }>;
+
+          const desiredUrls = new Set(clientMedia.map((m) => m.url));
+          const desiredIds = new Set(
+            clientMedia
+              .filter((m) => m.id && !m.id.startsWith('media-'))
+              .map((m) => m.id)
+          );
+
+          // Remover fotos que não constam mais na lista do cliente
+          const toDeleteIds = existingInDb
+            .filter((dbItem) => !desiredIds.has(dbItem.id) && !desiredUrls.has(dbItem.url))
+            .map((dbItem) => dbItem.id);
+
+          if (toDeleteIds.length > 0) {
+            await adminClient.from('event_media').delete().in('id', toDeleteIds);
+          }
+
+          // Inserir novas ou atualizar existentes
+          for (let i = 0; i < clientMedia.length; i++) {
+            const item = clientMedia[i];
+            const sortOrder = i + 1;
+            const caption = item.caption || null;
+            const mediaType = (item.media_type as 'image' | 'audio' | 'video') || 'image';
+
+            const existingMatch = existingInDb.find(
+              (dbItem) =>
+                (item.id && !item.id.startsWith('media-') && dbItem.id === item.id) ||
+                dbItem.url === item.url
+            );
+
+            if (existingMatch) {
+              await adminClient
+                .from('event_media')
+                .update({
+                  sort_order: sortOrder,
+                  caption,
+                  media_type: mediaType,
+                })
+                .eq('id', existingMatch.id);
+            } else {
+              await adminClient
+                .from('event_media')
+                .insert({
+                  event_id: eventTargetId,
+                  media_type: mediaType,
+                  url: item.url,
+                  caption,
+                  sort_order: sortOrder,
+                });
+            }
+          }
+        } catch (mediaErr) {
+          console.error('Erro na sincronização de event_media:', mediaErr);
+        }
+      }
+
+      try {
+        const { data: refreshedMedia } = await adminClient
+          .from('event_media')
+          .select('*')
+          .eq('event_id', eventTargetId)
+          .order('sort_order', { ascending: true });
+        finalMediaList = (refreshedMedia || []) as EventMediaRow[];
+      } catch {}
+    }
+
     // Invalidação de cache no Next.js
     try {
       revalidatePath(`/convite/${body.slug}`);
@@ -234,7 +320,12 @@ export async function PUT(
       console.warn('Erro ao revalidar cache:', e);
     }
 
-    return NextResponse.json({ event: updatedEvent || { ...updateData, id } });
+    return NextResponse.json({
+      event: {
+        ...(updatedEvent || { ...updateData, id }),
+        media: finalMediaList,
+      },
+    });
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : 'Erro interno';
     return NextResponse.json({ error: msg }, { status: 500 });

@@ -204,9 +204,29 @@ export function InvitationEditorClientView({ event: initialEvent }: InvitationEd
     setIsDirty(true);
   };
 
-  const handleRemoveMedia = (idx: number) => {
+  const handleRemoveMedia = async (idx: number) => {
+    const itemToRemove = mediaList[idx];
     setMediaList((prev) => prev.filter((_, i) => i !== idx));
     setIsDirty(true);
+
+    if (itemToRemove) {
+      try {
+        const queryParams = new URLSearchParams();
+        if (itemToRemove.id && !itemToRemove.id.startsWith('media-')) {
+          queryParams.set('id', itemToRemove.id);
+        }
+        if (itemToRemove.url) {
+          queryParams.set('url', itemToRemove.url);
+        }
+        if (queryParams.toString()) {
+          await fetch(`/api/admin/events/${initialEvent.id}/media?${queryParams.toString()}`, {
+            method: 'DELETE',
+          });
+        }
+      } catch (err) {
+        console.warn('Falha ao excluir foto diretamente no backend:', err);
+      }
+    }
   };
 
   // Helper to optimize large images and convert mobile formats to universal JPEG
@@ -310,7 +330,7 @@ export function InvitationEditorClientView({ event: initialEvent }: InvitationEd
         const resData = await res.json();
         if (res.ok && resData.url) {
           const newItem: EventMediaRow = {
-            id: `media-${Date.now()}-${i}`,
+            id: resData.mediaId || `media-${Date.now()}-${i}`,
             event_id: initialEvent.id,
             media_type: 'image',
             url: resData.url,
@@ -398,12 +418,23 @@ export function InvitationEditorClientView({ event: initialEvent }: InvitationEd
             slug: canonicalKey,
           },
           rsvp_deadline: rsvpDeadline ? `${rsvpDeadline}T23:59:59-03:00` : null,
+          media: mediaList.map((m, idx) => ({
+            id: m.id && !m.id.startsWith('media-') ? m.id : undefined,
+            url: m.url,
+            caption: m.caption || null,
+            sort_order: idx + 1,
+            media_type: m.media_type || 'image',
+          })),
         }),
       });
 
       const resData = await res.json();
       if (!res.ok) {
         throw new Error(resData.error || 'Erro ao salvar alterações.');
+      }
+
+      if (resData.event?.media && Array.isArray(resData.event.media)) {
+        setMediaList(resData.event.media);
       }
 
       setIsDirty(false);
