@@ -4,15 +4,12 @@ import React from 'react';
 import { EventDetailWithMedia, EventGuestRow, EventGuestbookMessageRow } from '@/types/invitation';
 import { InvitationExperience, useInvitationTheme } from '../experience/InvitationExperience';
 import { InvitationOpening } from '../experience/InvitationOpening';
-import { GuestbookWall } from '../experience/GuestbookWall';
-import { SurpriseMessage } from '../experience/SurpriseMessage';
-import { InvitationGallery } from './InvitationGallery';
-import { InvitationGiftRegistry } from './InvitationGiftRegistry';
 import { InvitationFooter } from '../experience/InvitationFooter';
 import { getInvitationTheme } from '@/data/invitation-themes';
-import { ThemeScenery, ThemeSectionDivider } from '../experience/ThemeScenery';
+import { ThemeScenery } from '../experience/ThemeScenery';
 import { DinosaurPremiumInvitation } from '../experience/DinosaurPremiumInvitation';
 import { PremiumEditorialInvitation } from '../experience/PremiumEditorialInvitation';
+import { PremiumInvitationJourney } from '../experience/PremiumInvitationJourney';
 
 interface InvitationPublicClientViewProps {
   event: EventDetailWithMedia;
@@ -35,21 +32,8 @@ function InvitationContentSection({
       {theme.assetFolder === 'dinosaurs'
         ? <DinosaurPremiumInvitation />
         : <PremiumEditorialInvitation />}
-
-      {event.opening_message && (
-        <SurpriseMessage message={event.opening_message} themeConfig={themeConfig} />
-      )}
-
-      {event.media && event.media.length > 0 && (
-        <><ThemeSectionDivider /><InvitationGallery /></>
-      )}
-
-      {event.gift_information && (
-        <><ThemeSectionDivider /><InvitationGiftRegistry /></>
-      )}
-
-      {event.plan === 'completo' && (
-        <><ThemeSectionDivider /><GuestbookWall messages={guestbookMessages} /></>
+      {themeConfig.experienceMode !== 'poster-only' && (
+        <PremiumInvitationJourney guestbookMessages={guestbookMessages} />
       )}
     </main>
   );

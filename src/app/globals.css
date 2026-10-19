@@ -618,3 +618,308 @@
   animation-iteration-count: 1 !important;
   transition-duration: 0.01ms !important;
 }
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Narrativa premium dos convites
+   A capa continua sendo a peça principal; os capítulos abaixo usam os mesmos
+   tokens do tema e transformam o convite em uma experiência editorial longa.
+   ────────────────────────────────────────────────────────────────────────── */
+.invitation-story {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(4rem, 10vw, 7rem) clamp(1rem, 5vw, 3.5rem) 5rem;
+  color: var(--story-text, #302b2d);
+  background:
+    radial-gradient(circle at 8% 9%, color-mix(in srgb, var(--story-accent) 13%, transparent), transparent 25rem),
+    radial-gradient(circle at 93% 48%, color-mix(in srgb, var(--story-primary) 10%, transparent), transparent 27rem),
+    linear-gradient(180deg, color-mix(in srgb, var(--invitation-background) 92%, white 8%), color-mix(in srgb, var(--invitation-background) 83%, white 17%));
+}
+
+.invitation-story::before {
+  position: absolute;
+  inset: 0;
+  content: "";
+  pointer-events: none;
+  opacity: .28;
+  background-image: radial-gradient(circle, color-mix(in srgb, var(--story-primary) 28%, transparent) 0 1px, transparent 1.5px);
+  background-size: 34px 34px;
+  mask-image: linear-gradient(to bottom, transparent, black 12%, black 88%, transparent);
+}
+
+.invitation-story-rail {
+  position: absolute;
+  top: 1.5rem;
+  bottom: 1.5rem;
+  left: 50%;
+  width: 1px;
+  pointer-events: none;
+  background: linear-gradient(transparent, color-mix(in srgb, var(--story-accent) 38%, transparent) 12%, color-mix(in srgb, var(--story-accent) 38%, transparent) 88%, transparent);
+}
+
+.invitation-story-rail span {
+  position: sticky;
+  top: 50%;
+  display: block;
+  width: 7px;
+  height: 7px;
+  margin-left: -3px;
+  border-radius: 999px;
+  background: var(--story-accent);
+  box-shadow: 0 0 0 6px color-mix(in srgb, var(--story-accent) 13%, transparent);
+}
+
+.invitation-story-section {
+  position: relative;
+  z-index: 2;
+  width: min(100%, 650px);
+  margin-inline: auto;
+  margin-bottom: clamp(4.5rem, 12vw, 7.5rem);
+}
+
+.invitation-story-heading {
+  margin: 0 auto 1.8rem;
+  max-width: 34rem;
+  text-align: center;
+}
+
+.invitation-story-heading > span {
+  display: block;
+  margin-bottom: .65rem;
+  color: var(--story-accent);
+  font-size: .68rem;
+  font-weight: 900;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+}
+
+.invitation-story-heading h2 {
+  color: var(--story-primary);
+  font-family: var(--font-playfair, Georgia, serif);
+  font-size: clamp(2rem, 7vw, 3.7rem);
+  font-weight: 800;
+  line-height: 1.02;
+  letter-spacing: -.035em;
+  text-wrap: balance;
+}
+
+.invitation-story-heading p {
+  max-width: 29rem;
+  margin: .9rem auto 0;
+  color: color-mix(in srgb, var(--story-text) 72%, transparent);
+  font-size: .92rem;
+  line-height: 1.7;
+}
+
+.invitation-story-ornament {
+  display: grid;
+  width: 3.25rem;
+  height: 3.25rem;
+  margin: 0 auto 1.25rem;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--story-accent) 34%, transparent);
+  border-radius: 50%;
+  color: var(--story-accent);
+  background: color-mix(in srgb, var(--story-surface) 88%, transparent);
+  box-shadow: 0 14px 35px color-mix(in srgb, var(--story-primary) 11%, transparent);
+}
+
+.invitation-story-ornament svg { width: 1.2rem; height: 1.2rem; }
+
+.invitation-story-welcome {
+  padding: clamp(2.25rem, 7vw, 4.5rem) clamp(1.5rem, 7vw, 4.5rem);
+  border: 1px solid color-mix(in srgb, var(--story-primary) 18%, transparent);
+  border-radius: 2.2rem;
+  text-align: center;
+  background: color-mix(in srgb, var(--story-surface) 87%, transparent);
+  box-shadow: 0 28px 70px color-mix(in srgb, var(--story-primary) 12%, transparent), inset 0 0 0 7px color-mix(in srgb, white 42%, transparent);
+  backdrop-filter: blur(12px);
+}
+
+.invitation-story-welcome blockquote {
+  margin: 0 auto;
+  max-width: 31rem;
+  color: color-mix(in srgb, var(--story-text) 86%, var(--story-primary) 14%);
+  font-family: Georgia, serif;
+  font-size: clamp(1.05rem, 3vw, 1.3rem);
+  font-style: italic;
+  line-height: 1.85;
+}
+
+.invitation-story-signature {
+  margin-top: 1.5rem;
+  color: var(--story-accent);
+  font-size: .72rem;
+  font-weight: 900;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+}
+
+.invitation-reveal-card {
+  position: relative;
+  display: grid;
+  min-height: 16rem;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--story-accent) 32%, transparent);
+  border-radius: 2rem;
+  background: color-mix(in srgb, var(--story-surface) 88%, transparent);
+  box-shadow: 0 25px 60px color-mix(in srgb, var(--story-primary) 14%, transparent);
+}
+
+.invitation-reveal-content,
+.invitation-reveal-cover {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: .65rem;
+  text-align: center;
+  transition: opacity .35s ease;
+}
+
+.invitation-reveal-content svg { width: 1.6rem; color: var(--story-accent); }
+.invitation-reveal-content strong {
+  max-width: 90%;
+  color: var(--story-primary);
+  font-family: Georgia, serif;
+  font-size: clamp(1.45rem, 5vw, 2.4rem);
+  text-transform: capitalize;
+}
+.invitation-reveal-content span { color: var(--story-text); font-weight: 800; }
+
+.invitation-reveal-cover {
+  color: white;
+  background:
+    linear-gradient(115deg, transparent 0 42%, rgb(255 255 255 / .12) 49%, transparent 56%),
+    linear-gradient(135deg, color-mix(in srgb, var(--story-primary) 88%, #111 12%), color-mix(in srgb, var(--story-accent) 82%, var(--story-primary) 18%));
+}
+.invitation-reveal-cover::before {
+  position: absolute;
+  inset: .75rem;
+  border: 1px solid rgb(255 255 255 / .28);
+  border-radius: 1.5rem;
+  content: "";
+}
+.invitation-reveal-cover svg { width: 2rem; height: 2rem; }
+.invitation-reveal-cover span { font-size: .72rem; font-weight: 900; letter-spacing: .18em; text-transform: uppercase; }
+
+.invitation-reveal-slider {
+  position: absolute;
+  z-index: 3;
+  right: 1.4rem;
+  bottom: 1.25rem;
+  left: 1.4rem;
+}
+.invitation-reveal-slider input { width: 100%; accent-color: var(--story-accent); cursor: ew-resize; }
+
+.invitation-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.invitation-detail-grid article {
+  min-height: 14rem;
+  padding: 2rem 1.5rem;
+  border: 1px solid color-mix(in srgb, var(--story-primary) 18%, transparent);
+  border-radius: 1.7rem;
+  text-align: center;
+  background: color-mix(in srgb, var(--story-surface) 90%, transparent);
+  box-shadow: 0 18px 45px color-mix(in srgb, var(--story-primary) 9%, transparent);
+}
+.invitation-detail-grid article > svg { width: 1.55rem; height: 1.55rem; margin: 0 auto 1.2rem; color: var(--story-accent); }
+.invitation-detail-grid article > span { display: block; margin-bottom: .55rem; color: var(--story-accent); font-size: .63rem; font-weight: 900; letter-spacing: .18em; text-transform: uppercase; }
+.invitation-detail-grid strong { display: block; color: var(--story-primary); font-family: Georgia, serif; font-size: 1.2rem; line-height: 1.35; text-transform: capitalize; }
+.invitation-detail-grid p { margin-top: .75rem; color: color-mix(in srgb, var(--story-text) 68%, transparent); font-size: .78rem; line-height: 1.55; }
+.invitation-detail-grid p svg { display: inline; width: .9rem; height: .9rem; vertical-align: -.15rem; }
+
+.invitation-story-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: .75rem;
+  margin-top: 1rem;
+}
+.invitation-story-actions a {
+  display: inline-flex;
+  min-height: 3.4rem;
+  align-items: center;
+  justify-content: center;
+  gap: .55rem;
+  border-radius: 999px;
+  color: white;
+  background: var(--story-primary);
+  box-shadow: 0 13px 30px color-mix(in srgb, var(--story-primary) 24%, transparent);
+  font-size: .78rem;
+  font-weight: 900;
+  transition: transform .25s ease, filter .25s ease;
+}
+.invitation-story-actions a:last-child { color: var(--story-primary); background: color-mix(in srgb, var(--story-surface) 91%, transparent); border: 1px solid color-mix(in srgb, var(--story-primary) 28%, transparent); }
+.invitation-story-actions a:hover { transform: translateY(-2px); filter: brightness(1.06); }
+.invitation-story-actions svg { width: 1rem; height: 1rem; }
+
+.invitation-schedule-list { max-width: 31rem; margin-inline: auto; }
+.invitation-schedule-list article { display: grid; grid-template-columns: 4.2rem 1.2rem 1fr; gap: .8rem; align-items: start; }
+.invitation-schedule-list time { padding-top: .1rem; color: var(--story-accent); font-size: .74rem; font-weight: 900; text-align: right; }
+.invitation-schedule-list i { position: relative; width: .7rem; height: .7rem; margin-top: .15rem; border: 2px solid var(--story-accent); border-radius: 50%; background: var(--invitation-background); box-shadow: 0 0 0 5px color-mix(in srgb, var(--story-accent) 12%, transparent); }
+.invitation-schedule-list i::after { position: absolute; top: .85rem; bottom: -4rem; left: 50%; width: 1px; content: ""; background: color-mix(in srgb, var(--story-accent) 28%, transparent); }
+.invitation-schedule-list article:last-child i::after { display: none; }
+.invitation-schedule-list article > div { padding-bottom: 2.25rem; }
+.invitation-schedule-list strong { color: var(--story-primary); font-family: Georgia, serif; font-size: 1.12rem; }
+.invitation-schedule-list p { margin-top: .25rem; color: color-mix(in srgb, var(--story-text) 66%, transparent); font-size: .78rem; line-height: 1.55; }
+
+.invitation-dress-story {
+  padding: clamp(2rem, 7vw, 4rem);
+  border-radius: 2rem;
+  text-align: center;
+  background: color-mix(in srgb, var(--story-surface) 89%, transparent);
+  box-shadow: 0 25px 60px color-mix(in srgb, var(--story-primary) 11%, transparent);
+}
+.invitation-dress-palette { display: flex; justify-content: center; gap: .7rem; }
+.invitation-dress-palette span { width: 2.65rem; height: 2.65rem; border: 4px solid color-mix(in srgb, white 82%, transparent); border-radius: 50%; box-shadow: 0 6px 18px rgb(0 0 0 / .15); }
+
+.invitation-embedded-section > section,
+.invitation-rsvp-story > section { padding-inline: 0; }
+.invitation-rsvp-story { padding-top: 1rem; }
+.invitation-rsvp-story .invitation-story-heading { margin-bottom: .5rem; }
+
+/* Personalidade de composição por família de tema. */
+.invitation-story[data-story-theme="heroes"] .invitation-story-welcome,
+.invitation-story[data-story-theme="blocks"] .invitation-detail-grid article {
+  border-radius: .5rem;
+  box-shadow: 7px 7px 0 color-mix(in srgb, var(--story-primary) 75%, transparent);
+}
+.invitation-story[data-story-theme="pop"],
+.invitation-story[data-story-theme="celebration"] {
+  background: radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--story-accent) 32%, transparent), transparent 32rem), linear-gradient(180deg, #1e1230, #301544 55%, #170d25);
+  color: #fff;
+}
+.invitation-story[data-story-theme="pop"] .invitation-story-heading p,
+.invitation-story[data-story-theme="celebration"] .invitation-story-heading p { color: rgb(255 255 255 / .72); }
+.invitation-story[data-story-theme="pop"] .invitation-story-heading h2,
+.invitation-story[data-story-theme="celebration"] .invitation-story-heading h2 { color: #fff; text-shadow: 0 0 25px color-mix(in srgb, var(--story-accent) 50%, transparent); }
+.invitation-story[data-story-theme="minimal"] .invitation-story-welcome,
+.invitation-story[data-story-theme="minimal"] .invitation-detail-grid article,
+.invitation-story[data-story-theme="minimal"] .invitation-reveal-card { border-radius: 0; box-shadow: 9px 9px 0 rgb(0 0 0 / .09); }
+.invitation-story[data-story-theme="elegant"] .invitation-story-welcome,
+.invitation-story[data-story-theme="elegant"] .invitation-detail-grid article { border-radius: .4rem; border-color: color-mix(in srgb, var(--story-accent) 55%, transparent); }
+.invitation-story[data-story-theme="romantic"] .invitation-story-welcome,
+.invitation-story[data-story-theme="enchanted"] .invitation-story-welcome { border-radius: 6rem 6rem 2rem 2rem; }
+.invitation-story[data-story-theme="botanical"] .invitation-story-welcome,
+.invitation-story[data-story-theme="sacred"] .invitation-story-welcome,
+.invitation-story[data-story-theme="baby"] .invitation-story-welcome { border-radius: 48% 48% 2rem 2rem / 6rem 6rem 2rem 2rem; }
+
+@media (max-width: 640px) {
+  .invitation-story { padding-inline: .9rem; }
+  .invitation-story-rail { opacity: .45; }
+  .invitation-detail-grid { grid-template-columns: 1fr; }
+  .invitation-detail-grid article { min-height: auto; padding: 1.7rem 1.25rem; }
+  .invitation-story-actions { grid-template-columns: 1fr; }
+  .invitation-story-welcome,
+  .invitation-dress-story { border-radius: 1.5rem; }
+  .invitation-story[data-story-theme="romantic"] .invitation-story-welcome,
+  .invitation-story[data-story-theme="enchanted"] .invitation-story-welcome,
+  .invitation-story[data-story-theme="botanical"] .invitation-story-welcome,
+  .invitation-story[data-story-theme="sacred"] .invitation-story-welcome,
+  .invitation-story[data-story-theme="baby"] .invitation-story-welcome { border-radius: 3.5rem 3.5rem 1.5rem 1.5rem; }
+}
