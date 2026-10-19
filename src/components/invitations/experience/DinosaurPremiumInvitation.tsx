@@ -4,7 +4,6 @@ import React, { useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
 import { CalendarDays, MapPin } from 'lucide-react';
 import { useInvitationTheme } from './InvitationExperience';
-import { RsvpExperience } from './RsvpExperience';
 
 interface RemainingTime {
   days: number;
@@ -26,7 +25,6 @@ function remainingUntil(date: string): RemainingTime {
 export function DinosaurPremiumInvitation() {
   const { event, theme } = useInvitationTheme();
   const [time, setTime] = useState(() => remainingUntil(event.event_date));
-  const [rsvpSignal, setRsvpSignal] = useState(0);
 
   useEffect(() => {
     const interval = window.setInterval(() => setTime(remainingUntil(event.event_date)), 1000);
@@ -52,8 +50,7 @@ export function DinosaurPremiumInvitation() {
   ];
 
   const openRsvp = () => {
-    setRsvpSignal((current) => current + 1);
-    window.setTimeout(() => document.getElementById('rsvp')?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 80);
+    document.getElementById('rsvp')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
   };
 
   return (
@@ -149,9 +146,6 @@ export function DinosaurPremiumInvitation() {
         </button>
       </section>
 
-      <div className="dino-rsvp-form mx-auto max-w-2xl px-4">
-        <RsvpExperience hideCollapsedCta expansionSignal={rsvpSignal} />
-      </div>
     </>
   );
 }

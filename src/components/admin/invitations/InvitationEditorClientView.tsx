@@ -1207,6 +1207,127 @@ export function InvitationEditorClientView({
                       * A música inicia apenas após o convidado tocar para abrir o convite, respeitando as políticas dos navegadores.
                     </p>
                   </div>
+
+                  <div className="sm:col-span-4 rounded-2xl border border-[#713C48]/15 bg-[#FFF8F0]/70 p-4 sm:p-5 space-y-4">
+                    <div className="flex items-start gap-3">
+                      <div className="rounded-xl bg-[#713C48] p-2 text-white">
+                        <Sparkles className="h-4 w-4" />
+                      </div>
+                      <div>
+                        <h3 className="text-sm font-bold text-[#713C48]">Experiência premium em capítulos</h3>
+                        <p className="text-[11px] leading-relaxed text-slate-600">
+                          Continue o convite depois da capa com revelação da data, programação, traje, galeria e confirmação.
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="grid gap-3 sm:grid-cols-3">
+                      <label className="space-y-1">
+                        <span className="block text-xs font-semibold text-slate-700">Apresentação</span>
+                        <select
+                          value={themeConfig.experienceMode || 'premium-story'}
+                          onChange={(e) => {
+                            setThemeConfig((prev) => ({ ...prev, experienceMode: e.target.value as 'premium-story' | 'poster-only' }));
+                            setIsDirty(true);
+                          }}
+                          className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs"
+                        >
+                          <option value="premium-story">Narrativa premium completa</option>
+                          <option value="poster-only">Somente capa do convite</option>
+                        </select>
+                      </label>
+
+                      <label className="space-y-1">
+                        <span className="block text-xs font-semibold text-slate-700">Revelação da data</span>
+                        <select
+                          value={themeConfig.showDateReveal === false ? 'no' : 'yes'}
+                          onChange={(e) => {
+                            setThemeConfig((prev) => ({ ...prev, showDateReveal: e.target.value === 'yes' }));
+                            setIsDirty(true);
+                          }}
+                          className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs"
+                        >
+                          <option value="yes">Exibir interação</option>
+                          <option value="no">Ocultar</option>
+                        </select>
+                      </label>
+
+                      <label className="space-y-1">
+                        <span className="block text-xs font-semibold text-slate-700">Programação</span>
+                        <select
+                          value={themeConfig.showSchedule === false ? 'no' : 'yes'}
+                          onChange={(e) => {
+                            setThemeConfig((prev) => ({ ...prev, showSchedule: e.target.value === 'yes' }));
+                            setIsDirty(true);
+                          }}
+                          className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs"
+                        >
+                          <option value="yes">Exibir cronograma</option>
+                          <option value="no">Ocultar</option>
+                        </select>
+                      </label>
+                    </div>
+
+                    <label className="block space-y-1">
+                      <span className="block text-xs font-semibold text-slate-700">Chamada da revelação</span>
+                      <input
+                        type="text"
+                        value={themeConfig.revealEyebrow || ''}
+                        onChange={(e) => {
+                          setThemeConfig((prev) => ({ ...prev, revealEyebrow: e.target.value }));
+                          setIsDirty(true);
+                        }}
+                        placeholder="Ex: Reserve esta data"
+                        className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm"
+                      />
+                    </label>
+
+                    <div className="space-y-1.5">
+                      <span className="block text-xs font-semibold text-slate-700">Paleta sugerida para o traje</span>
+                      <div className="flex flex-wrap gap-3">
+                        {(themeConfig.dressCodeColors?.length
+                          ? themeConfig.dressCodeColors.slice(0, 3)
+                          : [themeConfig.primaryColor, themeConfig.accentColor, themeConfig.backgroundColor]
+                        ).map((color, index) => (
+                          <label key={index} className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2">
+                            <input
+                              type="color"
+                              value={color || '#ffffff'}
+                              onChange={(e) => {
+                                const colors = themeConfig.dressCodeColors?.length
+                                  ? [...themeConfig.dressCodeColors.slice(0, 3)]
+                                  : [themeConfig.primaryColor, themeConfig.accentColor, themeConfig.backgroundColor];
+                                colors[index] = e.target.value;
+                                setThemeConfig((prev) => ({ ...prev, dressCodeColors: colors }));
+                                setIsDirty(true);
+                              }}
+                              className="h-7 w-7 cursor-pointer rounded-lg border-0 bg-transparent p-0"
+                            />
+                            <span className="font-mono text-[10px] text-slate-500">{color}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+
+                    <label className="block space-y-1">
+                      <span className="block text-xs font-semibold text-slate-700">Cronograma personalizado</span>
+                      <textarea
+                        rows={4}
+                        value={(themeConfig.scheduleItems || []).map((item) => `${item.time} | ${item.label} | ${item.description || ''}`).join('\n')}
+                        onChange={(e) => {
+                          const scheduleItems = e.target.value.split('\n').map((line) => {
+                            const [time = '', label = '', description = ''] = line.split('|').map((part) => part.trim());
+                            return { time, label, description };
+                          }).filter((item) => item.time && item.label);
+                          setThemeConfig((prev) => ({ ...prev, scheduleItems }));
+                          setIsDirty(true);
+                        }}
+                        placeholder={'16:00 | Recepção | Chegada dos convidados\n16:30 | Celebração | Momento principal\n18:00 | Parabéns | Bolo e brinde'}
+                        className="w-full resize-y rounded-xl border border-slate-200 bg-white px-3 py-2 font-mono text-xs leading-relaxed"
+                      />
+                      <span className="block text-[10px] text-slate-500">Uma etapa por linha: horário | título | descrição. Se vazio, usamos uma programação elegante automática.</span>
+                    </label>
+                  </div>
                 </div>
               </div>
             )}

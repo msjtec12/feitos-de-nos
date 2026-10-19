@@ -170,6 +170,18 @@ export interface EventThemeConfig {
   musicTrackUrl?: string | null;
   hasSurpriseMessage?: boolean;
   surpriseMessageText?: string | null;
+  /** Configurações da narrativa longa do convite. Mantidas no JSON do tema
+   * para que convites antigos continuem compatíveis sem migração de banco. */
+  experienceMode?: 'premium-story' | 'poster-only';
+  showDateReveal?: boolean;
+  showSchedule?: boolean;
+  revealEyebrow?: string;
+  dressCodeColors?: string[];
+  scheduleItems?: Array<{
+    time: string;
+    label: string;
+    description?: string;
+  }>;
 }
 
 export interface EventRow {
