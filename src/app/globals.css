@@ -510,6 +510,91 @@
   background: color-mix(in srgb, var(--invitation-background) 90%, white 10%);
 }
 
+/* Monstrinhos Elementais — cartaz de aventura autoral para compartilhamento.
+   A ilustração já traz o cenário; estes estilos unem os dados dinâmicos à arte. */
+[data-invitation-theme="infantil-monstrinhos-elementais"] .editorial-premium-poster {
+  background: #fff8dc;
+}
+
+[data-invitation-theme="infantil-monstrinhos-elementais"] .editorial-premium-headline h1 {
+  color: #ffd928 !important;
+  letter-spacing: -.055em !important;
+  line-height: .86 !important;
+  text-transform: uppercase;
+  -webkit-text-stroke: clamp(1.5px, .42vw, 4px) #0b3b8f;
+  paint-order: stroke fill;
+  filter: drop-shadow(0 clamp(2px, .45vw, 5px) 0 #082c70) drop-shadow(0 5px 10px rgb(8 44 112 / .2));
+}
+
+[data-invitation-theme="infantil-monstrinhos-elementais"] .editorial-premium-headline p {
+  color: #082c70 !important;
+  font-weight: 900;
+}
+
+[data-invitation-theme="infantil-monstrinhos-elementais"] .editorial-premium-photo {
+  border: clamp(4px, .8vw, 8px) solid white !important;
+  outline: clamp(2px, .4vw, 4px) solid #0b3b8f;
+  box-shadow:
+    0 0 0 clamp(4px, .75vw, 8px) #ffd928,
+    0 clamp(10px, 2vw, 22px) clamp(20px, 4vw, 40px) rgb(8 44 112 / .25) !important;
+}
+
+[data-invitation-theme="infantil-monstrinhos-elementais"] .editorial-premium-countdown-title {
+  color: #082c70 !important;
+  letter-spacing: .12em;
+  text-shadow: 0 2px 0 white;
+}
+
+[data-invitation-theme="infantil-monstrinhos-elementais"] .editorial-premium-countdown-pods > div {
+  aspect-ratio: 1;
+  align-self: center;
+  border: clamp(1.5px, .32vw, 3px) solid #0b3b8f;
+  border-radius: 50%;
+  background: rgb(255 255 255 / .94);
+  box-shadow:
+    0 0 0 clamp(2px, .4vw, 4px) #ffd928,
+    0 clamp(4px, 1vw, 9px) clamp(8px, 2vw, 18px) rgb(8 44 112 / .18);
+}
+
+[data-invitation-theme="infantil-monstrinhos-elementais"] .editorial-premium-countdown-pods strong {
+  color: #0b3b8f !important;
+}
+
+[data-invitation-theme="infantil-monstrinhos-elementais"] .editorial-premium-countdown-pods span {
+  color: #ef3340 !important;
+}
+
+[data-invitation-theme="infantil-monstrinhos-elementais"] .editorial-premium-info-plaques > div {
+  border: clamp(1.5px, .3vw, 3px) solid #0b3b8f;
+  border-radius: clamp(.65rem, 2vw, 1.35rem);
+  background: rgb(255 255 255 / .94);
+  box-shadow: 0 clamp(5px, 1vw, 10px) clamp(12px, 2.5vw, 24px) rgb(8 44 112 / .16);
+}
+
+[data-invitation-theme="infantil-monstrinhos-elementais"] .editorial-premium-map {
+  border: clamp(1.5px, .3vw, 3px) solid #0b3b8f;
+  border-radius: 999px;
+  color: #082c70 !important;
+  background: rgb(255 255 255 / .95);
+  box-shadow: 0 clamp(4px, .8vw, 8px) clamp(10px, 2vw, 20px) rgb(8 44 112 / .15);
+}
+
+[data-invitation-theme="infantil-monstrinhos-elementais"] .editorial-premium-rsvp {
+  border: clamp(2px, .4vw, 4px) solid white;
+  border-radius: 999px;
+  color: white !important;
+  background: linear-gradient(180deg, #ff4b4b, #df1729);
+  box-shadow:
+    0 0 0 clamp(2px, .38vw, 4px) #0b3b8f,
+    0 clamp(6px, 1.3vw, 13px) 0 #8f1320,
+    0 clamp(12px, 2.8vw, 27px) clamp(16px, 3vw, 30px) rgb(8 44 112 / .24);
+  text-shadow: 0 2px 0 rgb(90 11 25 / .45);
+}
+
+[data-invitation-theme="infantil-monstrinhos-elementais"] .editorial-premium-rsvp:hover {
+  filter: saturate(1.08) brightness(1.04);
+}
+
 .editorial-rsvp-form:not(:empty) {
   padding-block: 1rem 2rem;
   background: color-mix(in srgb, var(--invitation-background) 88%, white 12%);
@@ -888,6 +973,53 @@
 .invitation-story[data-story-theme="blocks"] .invitation-detail-grid article {
   border-radius: .5rem;
   box-shadow: 7px 7px 0 color-mix(in srgb, var(--story-primary) 75%, transparent);
+}
+.invitation-story[data-story-theme="elemental"] {
+  background:
+    radial-gradient(circle at 8% 7%, rgb(255 217 40 / .23), transparent 18rem),
+    radial-gradient(circle at 92% 22%, rgb(34 174 234 / .17), transparent 22rem),
+    radial-gradient(circle at 12% 78%, rgb(239 51 64 / .12), transparent 20rem),
+    linear-gradient(180deg, #fff8dc, #f3fbff 48%, #fff8dc);
+}
+.invitation-story[data-story-theme="elemental"]::before {
+  opacity: .24;
+  background-image:
+    radial-gradient(circle, rgb(11 59 143 / .3) 0 1px, transparent 1.5px),
+    radial-gradient(circle, rgb(255 217 40 / .45) 0 2px, transparent 2.5px);
+  background-position: 0 0, 17px 17px;
+  background-size: 34px 34px;
+}
+.invitation-story[data-story-theme="elemental"] .invitation-story-heading h2 {
+  color: #0b3b8f;
+  font-family: var(--font-plus-jakarta, system-ui, sans-serif);
+  font-weight: 900;
+  letter-spacing: -.045em;
+}
+.invitation-story[data-story-theme="elemental"] .invitation-story-heading > span,
+.invitation-story[data-story-theme="elemental"] .invitation-story-signature {
+  color: #ef3340;
+}
+.invitation-story[data-story-theme="elemental"] .invitation-story-welcome,
+.invitation-story[data-story-theme="elemental"] .invitation-detail-grid article,
+.invitation-story[data-story-theme="elemental"] .invitation-dress-story,
+.invitation-story[data-story-theme="elemental"] .invitation-reveal-card {
+  border: 2px solid #0b3b8f;
+  background: rgb(255 255 255 / .92);
+  box-shadow: 0 0 0 5px rgb(255 217 40 / .55), 0 22px 55px rgb(8 44 112 / .14);
+}
+.invitation-story[data-story-theme="elemental"] .invitation-story-welcome {
+  border-radius: 2.5rem;
+}
+.invitation-story[data-story-theme="elemental"] .invitation-story-ornament {
+  border: 2px solid #0b3b8f;
+  color: #ef3340;
+  background: #fff;
+  box-shadow: 0 0 0 4px #ffd928;
+}
+.invitation-story[data-story-theme="elemental"] .invitation-story-actions a:first-child {
+  border: 2px solid white;
+  background: linear-gradient(180deg, #ff4b4b, #df1729);
+  box-shadow: 0 0 0 3px #0b3b8f, 0 10px 24px rgb(8 44 112 / .2);
 }
 .invitation-story[data-story-theme="pop"],
 .invitation-story[data-story-theme="celebration"] {
