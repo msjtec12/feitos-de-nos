@@ -74,7 +74,7 @@ export function PremiumEditorialInvitation() {
 
         {/* 2. Área do Homenageado: Título e Subtítulo */}
         <header
-          className="absolute flex flex-col items-center justify-center text-center"
+          className="editorial-premium-headline absolute flex flex-col items-center justify-center text-center"
           style={{
             top: visual.headline.top,
             height: visual.headline.height,
@@ -102,7 +102,7 @@ export function PremiumEditorialInvitation() {
 
         {/* 3. Moldura Central de Foto / Pergaminho */}
         <div
-          className="absolute overflow-hidden border-[clamp(3px,.65vw,7px)] border-white/85 shadow-[0_14px_35px_rgba(35,25,18,.25)]"
+          className="editorial-premium-photo absolute overflow-hidden border-[clamp(3px,.65vw,7px)] border-white/85 shadow-[0_14px_35px_rgba(35,25,18,.25)]"
           style={{
             left: visual.photo.left,
             top: visual.photo.top,
@@ -123,7 +123,7 @@ export function PremiumEditorialInvitation() {
 
         {/* 4. Faixa e Título da Contagem Regressiva */}
         <div
-          className="absolute flex items-center justify-center text-center font-black uppercase tracking-[.14em] [font-size:clamp(.46rem,1.7vw,.88rem)]"
+          className="editorial-premium-countdown-title absolute flex items-center justify-center text-center font-black uppercase tracking-[.14em] [font-size:clamp(.46rem,1.7vw,.88rem)]"
           style={{
             top: visual.countdownTitle.top,
             height: visual.countdownTitle.height,
@@ -137,7 +137,7 @@ export function PremiumEditorialInvitation() {
 
         {/* 5. Os 4 Pods / Círculos da Contagem Regressiva */}
         <div
-          className="absolute grid grid-cols-4 text-center"
+          className="editorial-premium-countdown-pods absolute grid grid-cols-4 text-center"
           style={{
             top: visual.countdownPods.top,
             height: visual.countdownPods.height,
@@ -166,7 +166,7 @@ export function PremiumEditorialInvitation() {
 
         {/* 6. Placas Ilustradas: Data e Local */}
         <div
-          className="absolute grid grid-cols-2"
+          className="editorial-premium-info-plaques absolute grid grid-cols-2"
           style={{
             top: visual.infoPlaques.top,
             height: visual.infoPlaques.height,
@@ -198,7 +198,7 @@ export function PremiumEditorialInvitation() {
           href={mapsUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="absolute flex items-center justify-center font-black transition-transform duration-300 hover:scale-[1.015] active:scale-[.99] [font-size:clamp(.48rem,1.8vw,.95rem)]"
+          className="editorial-premium-map absolute flex items-center justify-center font-black transition-transform duration-300 hover:scale-[1.015] active:scale-[.99] [font-size:clamp(.48rem,1.8vw,.95rem)]"
           style={{
             top: visual.mapBanner.top,
             height: visual.mapBanner.height,
@@ -214,7 +214,7 @@ export function PremiumEditorialInvitation() {
         <button
           type="button"
           onClick={openRsvp}
-          className="absolute flex items-center justify-center font-black drop-shadow-[0_2px_4px_rgba(0,0,0,.55)] transition-transform duration-300 hover:scale-[1.015] active:scale-[.985] [font-size:clamp(.72rem,2.85vw,1.55rem)]"
+          className="editorial-premium-rsvp absolute flex items-center justify-center font-black drop-shadow-[0_2px_4px_rgba(0,0,0,.55)] transition-transform duration-300 hover:scale-[1.015] active:scale-[.985] [font-size:clamp(.72rem,2.85vw,1.55rem)]"
           style={{
             top: visual.rsvpButton.top,
             height: visual.rsvpButton.height,

@@ -68,20 +68,21 @@ export const PREMIUM_THEME_VISUALS: Record<string, PremiumThemeVisual> = {
 
   // 2. Monstrinhos Elementais
   elemental: defaultVisual('elemental', {
-    primary: '#166534',
-    accent: '#c2410c',
-    plaqueText: '#5b351f',
+    background: '/invitations/themes/elemental/elemental-pocket-adventure-background.webp',
+    primary: '#0B3B8F',
+    accent: '#EF3340',
+    plaqueText: '#082C70',
     buttonText: '#ffffff',
-    topBadge: { top: '2.2%', height: '5.5%', insetX: '18%' },
-    headline: { top: '8.5%', height: '12.0%', insetX: '11%' },
-    photo: { left: '21.5%', top: '21.8%', width: '57.0%', height: '25.4%', radius: '14%' },
-    countdownTitle: { top: '50.5%', height: '3.2%', insetX: '14%' },
-    countdownPods: { top: '54.2%', height: '10.0%', insetX: '11%', gap: '2.5%' },
-    infoPlaques: { top: '66.8%', height: '8.4%', insetX: '11.5%', gap: '4%' },
-    mapBanner: { top: '76.8%', height: '4.4%', insetX: '16%' },
-    rsvpButton: { top: '84.2%', height: '6.4%', insetX: '19%' },
+    topBadge: { top: '16.3%', height: '3.8%', insetX: '27%' },
+    headline: { top: '20.3%', height: '9.2%', insetX: '18%', sizeClamp: 'clamp(1.35rem,6vw,3.25rem)' },
+    photo: { left: '25%', top: '30.2%', width: '50%', height: '21.8%', radius: '8%' },
+    countdownTitle: { top: '53.6%', height: '3.0%', insetX: '25%' },
+    countdownPods: { top: '57.0%', height: '8.7%', insetX: '18%', gap: '2.2%' },
+    infoPlaques: { top: '67.3%', height: '8.2%', insetX: '18%', gap: '3%' },
+    mapBanner: { top: '76.2%', height: '4.2%', insetX: '25%' },
+    rsvpButton: { top: '81.3%', height: '5.5%', insetX: '25%' },
     openingLabel: 'Jornada dos elementos',
-    openingMessage: 'Quatro forças, uma grande celebração',
+    openingMessage: 'Uma aventura cheia de energia espera por você',
   }),
 
   // 3. Super-Heróis
