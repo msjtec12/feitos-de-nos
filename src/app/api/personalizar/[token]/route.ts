@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { mediaName } from '@/lib/partners/model';
+import { mediaName, PartnerOrder } from '@/lib/partners/model';
 import {
   body,
   checkedContent,
@@ -64,7 +64,7 @@ export async function POST(req: Request, { params }: Context) {
       p_content: content,
       p_revision: input.revision,
       p_edit_version: order.edit_version,
-    });
+    }).single<PartnerOrder>();
     if (error) throw error;
     return NextResponse.json(
       customerView(data, storeName, await mediaUrls(data)),

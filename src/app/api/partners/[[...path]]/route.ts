@@ -183,7 +183,7 @@ export async function POST(req: Request, { params }: Context) {
         p_id: v.id,
         p_product: v.product,
         p_customer: v.customer_label,
-      });
+      }).single<PartnerOrder>();
       if (error) throw error;
       const o = data as PartnerOrder;
       return NextResponse.json(
@@ -198,7 +198,7 @@ export async function POST(req: Request, { params }: Context) {
         p_partner_id: p.id,
         p_id: id,
         p_action: action,
-      });
+      }).single<PartnerOrder>();
       if (error) throw error;
       return NextResponse.json({
         ok: true,
