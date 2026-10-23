@@ -38,6 +38,7 @@ export function AdminSidebar({
   };
 
   const navItems = [
+    { label: 'Lojas Parceiras', href: '/admin/parceiros', icon: ShoppingBag, exact: false },
     {
       label: 'Dashboard',
       href: '/admin',

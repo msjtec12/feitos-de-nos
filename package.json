@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test:partners": "tsc src/lib/partners/model.ts --outDir .partner-tests --module commonjs --target es2020 --esModuleInterop --skipLibCheck && node --test tests/partners/model.test.cjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",

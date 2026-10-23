@@ -22,6 +22,7 @@ export function HomeNavbar() {
 
         {/* Desktop Nav Links */}
         <nav className="hidden md:flex items-center gap-7 text-sm font-medium text-[#302B2D]/80">
+          <Link href="/parceiros" className="font-semibold text-[#713C48]">Para lojas</Link>
           <Link
             href="/convites"
             className="text-[#713C48] font-semibold hover:text-[#5a2e39] transition-colors flex items-center gap-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#713C48] rounded px-1"
@@ -91,6 +92,7 @@ export function HomeNavbar() {
       {mobileMenuOpen && (
         <div className="md:hidden border-t border-[#713C48]/10 bg-[#FFF8F0] px-4 pt-4 pb-6 space-y-4 shadow-lg animate-in slide-in-from-top-2 duration-200">
           <nav className="flex flex-col space-y-3 text-base font-medium text-[#302B2D]">
+            <Link href="/parceiros" className="py-2 px-3 font-semibold text-[#713C48]">Seja uma loja parceira</Link>
             <Link
               href="/convites"
               onClick={() => setMobileMenuOpen(false)}

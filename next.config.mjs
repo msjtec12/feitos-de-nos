@@ -32,6 +32,12 @@ const nextConfig = {
     ];
 
     return [
+      ...['/personalizar/:path*','/api/personalizar/:path*','/api/partners/:path*','/feito/:path*','/parceiros/painel/:path*'].map(source=>({source,headers:[
+        ...securityHeaders,
+        {key:'Referrer-Policy',value:'no-referrer'},
+        {key:'X-Robots-Tag',value:'noindex, nofollow, noarchive, nosnippet'},
+        {key:'Cache-Control',value:'private, no-store'},
+      ]})),
       {
         source: '/:path*',
         headers: securityHeaders,

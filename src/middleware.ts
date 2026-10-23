@@ -6,8 +6,10 @@ export async function middleware(request: NextRequest) {
   const isAdminPage = pathname.startsWith('/admin');
   const isAdminApi = pathname.startsWith('/api/admin');
   const isLoginPage = pathname === '/admin/login';
+  const isPartnerPage = pathname.startsWith('/parceiros/painel');
+  const isPartnerApi = pathname.startsWith('/api/partners');
 
-  if ((!isAdminPage && !isAdminApi) || isLoginPage) {
+  if ((!isAdminPage && !isAdminApi && !isPartnerPage && !isPartnerApi) || isLoginPage) {
     return NextResponse.next();
   }
 
@@ -17,14 +19,14 @@ export async function middleware(request: NextRequest) {
     process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
 
   if (!supabaseUrl || !supabaseAnonKey) {
-    if (isAdminApi) {
+    if (isAdminApi || isPartnerApi) {
       return NextResponse.json(
         { error: 'Configuração do Supabase indisponível' },
         { status: 503 }
       );
     }
 
-    return NextResponse.redirect(new URL('/admin/login', request.url));
+    return NextResponse.redirect(new URL(isPartnerPage ? '/parceiros/acesso' : '/admin/login', request.url));
   }
 
   let response = NextResponse.next({ request });
@@ -48,14 +50,16 @@ export async function middleware(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    if (isAdminApi) {
+    if (isAdminApi || isPartnerApi) {
       return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
     }
 
-    const loginUrl = new URL('/admin/login', request.url);
+    const loginUrl = new URL(isPartnerPage ? '/parceiros/acesso' : '/admin/login', request.url);
     loginUrl.searchParams.set('redirectTo', pathname);
     return NextResponse.redirect(loginUrl);
   }
+
+  if (isPartnerPage || isPartnerApi) return response;
 
   const { data: profile } = await supabase
     .from('admin_profiles')
@@ -76,5 +80,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/admin/:path*', '/api/admin/:path*'],
+  matcher: ['/admin/:path*', '/api/admin/:path*', '/parceiros/painel/:path*', '/api/partners/:path*'],
 };
