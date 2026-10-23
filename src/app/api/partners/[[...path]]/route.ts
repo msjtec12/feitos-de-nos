@@ -10,6 +10,7 @@ import {
   partnerDb,
   PartnerError,
   sameOrigin,
+  removeOrderMedia,
   verifiedUser,
 } from "@/lib/partners/server";
 import { PartnerOrder } from "@/lib/partners/model";
@@ -200,6 +201,7 @@ export async function POST(req: Request, { params }: Context) {
         p_action: action,
       }).single<PartnerOrder>();
       if (error) throw error;
+      if(action==='cancel')await removeOrderMedia(id,['0','1','2','3','4','audio']);
       return NextResponse.json({
         ok: true,
         ...(action === "rotate"

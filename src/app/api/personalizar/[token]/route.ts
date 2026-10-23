@@ -7,6 +7,7 @@ import {
   editableOrder,
   fail,
   mediaUrls,
+  removeOrderMedia,
   partnerDb,
   PartnerError,
   sameOrigin,
@@ -66,6 +67,12 @@ export async function POST(req: Request, { params }: Context) {
       p_edit_version: order.edit_version,
     }).single<PartnerOrder>();
     if (error) throw error;
+    if(input.action==='save') {
+      const previous=order.content;
+      const removed=(previous.photoSlots||[]).filter(slot=>!content.photoSlots.includes(slot)).map(String);
+      if(previous.audio&&!content.audio)removed.push('audio');
+      await removeOrderMedia(order.id,removed);
+    }
     return NextResponse.json(
       customerView(data, storeName, await mediaUrls(data)),
     );

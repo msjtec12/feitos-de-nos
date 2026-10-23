@@ -212,6 +212,16 @@ export async function mediaUrls(order: PartnerOrder) {
   );
   return Object.fromEntries(pairs);
 }
+
+export async function removeOrderMedia(orderId:string, slots:string[]) {
+  const safeSlots=slots.filter(slot=>/^(?:[0-4]|audio)$/.test(slot));
+  if(!safeSlots.length)return;
+  const paths=safeSlots.flatMap(slot=>[`${orderId}/${slot}-0`,`${orderId}/${slot}-1`]);
+  const {error}=await partnerDb().storage.from('partner-media').remove(paths);
+  // The financial/content mutation has already committed. Never report it as failed
+  // because an independent storage cleanup failed; keep it available for maintenance.
+  if(error)console.error('Partner media cleanup failed',{orderId,code:error.name});
+}
 export function customerView(
   o: PartnerOrder,
   storeName: string,
